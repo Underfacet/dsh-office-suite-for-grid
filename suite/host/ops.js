@@ -124,6 +124,14 @@ export const DEFAULT_CONFIG = Object.freeze({
   backupCopies: 3,
   parallel: 'auto',
   pythonPath: '',
+  /** P2 §7：Office 编辑/排版引擎（auto = COM 优先 → Python venv）。 */
+  officeEngine: 'auto',
+  /** P2 §7：显式指定建 venv 用的 python.exe；空 = 自动探测。 */
+  venvPython: '',
+  /** P2 §7：officeToPdf.convert 渲染优先级。 */
+  previewPriority: 'foreground',
+  /** P2 §7：用户模板/样式集目录；空 = runtime\templates。 */
+  officeTemplatesDir: '',
   visioVisible: false,
   allowExternalPaths: false,
   pdfPaper: 'A4-landscape',
@@ -150,6 +158,11 @@ export const WRITABLE_CONFIG_KEYS = Object.freeze([
   'sortMode',
   'allowExternalPaths',
   'odaPath',
+  // ── P2 §7 增量 ──
+  'officeEngine',
+  'venvPython',
+  'previewPriority',
+  'officeTemplatesDir',
 ]);
 
 /** 同步读取 runtime\ui-config.json 覆盖层；缺失/损坏时返回 {}。 */
@@ -224,6 +237,26 @@ export function validateConfigEntry(key, value) {
       if (typeof value !== 'string') return invalid('字符串（ODAFileConverter.exe 路径）');
       const trimmed = value.trim();
       if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = 自动探测）');
+      return { ok: true, value: trimmed };
+    }
+    case 'officeEngine': {
+      if (value === 'auto' || value === 'com' || value === 'python') return { ok: true, value };
+      return invalid("'auto' | 'com' | 'python'");
+    }
+    case 'venvPython': {
+      if (typeof value !== 'string') return invalid('字符串（python.exe 路径）');
+      const trimmed = value.trim();
+      if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = 自动探测本机 Python）');
+      return { ok: true, value: trimmed };
+    }
+    case 'previewPriority': {
+      if (value === 'foreground' || value === 'background') return { ok: true, value };
+      return invalid("'foreground' | 'background'");
+    }
+    case 'officeTemplatesDir': {
+      if (typeof value !== 'string') return invalid('字符串（自定义模板/样式集目录）');
+      const trimmed = value.trim();
+      if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = runtime\\templates）');
       return { ok: true, value: trimmed };
     }
     default:

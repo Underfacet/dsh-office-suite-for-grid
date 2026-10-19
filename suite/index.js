@@ -9,7 +9,10 @@ import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { runPs1 } from './host/engines.js';
-import { parseJson, sessionCwd, resolveInputPath, dirnameOf } from './host/ops.js';
+import { effectiveConfig, parseJson, sessionCwd, resolveInputPath, dirnameOf } from './host/ops.js';
+import { editOp } from './host/ops/office-edit.js';
+import { formatOp } from './host/ops/office-format.js';
+import { expandGridLinks, loadSymbols, validateGridModel } from './host/ops/grid-model.js';
 import { registerPanelCommands } from './host/commands-panel.js';
 
 void fileURLToPath;
@@ -58,16 +61,87 @@ export function apply(ctx, config = {}) {
     },
   }));
 
-  // ── 工具：Visio 绘图 ──
+  // ── 工具：Office 结构化编辑（Word / Excel） ──
   disposers.push(ctx.tools.register({
-    name: 'visio_draw',
+    name: 'office_edit',
     description:
-      '调用本机 Visio 绘制图表并保存为 .vsdx。v0.1 支持 flowchart（开始/结束为椭圆、判断为矩形、过程为矩形，箭头连线，按有向边自动分列布局）。需要本机装有 Visio。',
+      '结构化编辑 Word(.doc/.docx) 或 Excel(.xls/.xlsx)：Word 段落/标题/样式、表格单元格与行列；Excel 单元格/公式、行列与工作表。按 ops 数组顺序执行，修改前自动备份。需要本机 Word/Excel（COM）或已就绪的 Python venv。',
     parameters: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['flowchart'] },
+        path: { type: 'string', description: '文件路径（绝对路径，或相对当前会话工作目录）；不存在时可用 ops[0] 的 create 指令新建' },
+        ops: {
+          type: 'array',
+          items: { type: 'object', additionalProperties: true },
+          description:
+            '编辑指令数组（非空，顺序执行）。Word：create/paragraph(setText|setStyle|insert|delete|append)/heading/table(setCell|addRow|deleteRow|addColumn|deleteColumn)/saveAs；Excel：create/cell(value|formula)/row/column/sheet/saveAs。完整字段见 docs/P2-设计.md §3.2',
+        },
+        engine: {
+          type: 'string',
+          enum: ['auto', 'com', 'python'],
+          description: "引擎选择；缺省用配置 officeEngine（默认 'auto'：COM 优先，不可用时降级 Python venv）",
+        },
+      },
+      required: ['path', 'ops'],
+    },
+    output: jsonOutput,
+    async execute(args, exec) {
+      return editOp(ctx, effectiveConfig(config), args, exec);
+    },
+  }));
+
+  // ── 工具：Office 排版（Word） ──
+  disposers.push(ctx.tools.register({
+    name: 'office_format',
+    description:
+      'Word 排版：按 rules 应用标题/正文字体字号、行距段距、编号、页边距、页眉页脚；可按 styleSet 套用样式集，或按 template 套用 docx 模板并填充占位符。修改前自动备份；批量排版请用面板命令 suite.format.batch。',
+    parameters: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: 'Word(.doc/.docx) 文件路径（绝对路径，或相对当前会话工作目录）；套用模板时目标可以不存在' },
+        rules: {
+          type: 'array',
+          items: { type: 'object', additionalProperties: true },
+          description:
+            '排版规则数组。每条 {target: heading|body|page|header|footer, level?, font?{name,sizePt,bold}, paragraph?{lineSpacing,lineSpacingPt,spaceBeforePt,spaceAfterPt,align}, numbering?, page?{marginsMm}, header?/footer?{text,font}}；见 docs/P2-设计.md §3.3',
+        },
+        styleSet: { type: 'string', description: '样式集 id（suite\\templates\\styles 或 runtime\\templates\\styles 下的 <id>.json；同名用户样式集优先）' },
+        template: { type: 'string', description: '模板名或 docx 路径（suite\\templates\\docs / runtime\\templates\\docs）；套用模板=从模板新建并按 placeholders 填充' },
+        placeholders: {
+          type: 'object',
+          additionalProperties: true,
+          description: '模板占位符键值，如 {"标题":"关于 X 的通知","日期":"2026-10-20"}',
+        },
+        scope: { type: 'string', description: "作用范围，缺省 'all'（全部）；'all' 之外的标题/段落范围请通过命令 suite.format 传对象" },
+        engine: {
+          type: 'string',
+          enum: ['auto', 'com', 'python'],
+          description: "引擎选择；缺省用配置 officeEngine（默认 'auto'：COM 优先，不可用时降级 Python venv）",
+        },
+      },
+      required: ['path'],
+    },
+    output: jsonOutput,
+    async execute(args, exec) {
+      return formatOp(ctx, effectiveConfig(config), args, exec);
+    },
+  }));
+
+  // ── 工具：Visio 绘图（flowchart + 电网三图） ──
+  disposers.push(ctx.tools.register({
+    name: 'visio_draw',
+    description:
+      "调用本机 Visio 绘制图表并保存为 .vsdx。kind='flowchart'：流程图（开始/结束椭圆、过程/判断矩形、箭头连线，按有向边自动分列）；kind='singleLine'（电气主接线图）/ 'distribution'（配电系统图）/ 'networkTopology'（通信网络拓扑图）需提供 model 数据模型（见 docs/P2-设计.md §4.1），Host 先校验符号与接线再绘制。需要本机装有 Visio。",
+    parameters: {
+      type: 'object',
+      properties: {
+        kind: { type: 'string', enum: ['flowchart', 'singleLine', 'distribution', 'networkTopology'] },
         title: { type: 'string', description: '图表标题' },
+        model: {
+          type: 'object',
+          additionalProperties: true,
+          description: "电网图数据模型 JSON（kind 为 singleLine/distribution/networkTopology 时必填），见 docs/P2-设计.md §4.1",
+        },
         nodes: {
           type: 'array',
           items: {
@@ -90,18 +164,62 @@ export function apply(ctx, config = {}) {
         },
         outputPath: { type: 'string', description: '输出 .vsdx 路径；缺省保存到会话工作目录 output/diagrams/ 下并自动命名' },
       },
-      required: ['kind', 'nodes', 'edges'],
+      required: ['kind'],
     },
     output: jsonOutput,
     async execute(args, exec) {
       const cwd = await sessionCwd(ctx, exec);
+
+      // P1 行为不变：流程图走 visio-flowchart.ps1
+      if (args.kind === 'flowchart') {
+        const outputPath = args.outputPath
+          ? await resolveInputPath(ctx, exec, args.outputPath)
+          : join(cwd, 'output', 'diagrams', `flowchart-${Date.now()}.vsdx`);
+        mkdirSync(dirnameOf(outputPath), { recursive: true });
+        const payload = { kind: args.kind, title: args.title ?? '', nodes: args.nodes, edges: args.edges, outputPath };
+        const r = await runPs1(ctx, 'visio-flowchart.ps1', payload, { signal: exec.signal, timeoutMs: 300_000, cwd });
+        return parseJson(r.stdout) ?? { ok: false, error: { code: 'ENGINE_FAIL', message: r.stderr || r.stdout || '绘图失败' } };
+      }
+
+      // P2 电网三图：符号库 → 模型/接线校验 → 展开连线 → visio-grid.ps1
+      if (args.model == null || typeof args.model !== 'object' || Array.isArray(args.model)) {
+        return { ok: false, error: { code: 'E2021', message: '电网图需要 model 对象', hint: '模型结构见 docs/P2-设计.md §4.1' } };
+      }
+      const loaded = loadSymbols(args.kind);
+      if (!loaded.ok) return loaded;
+      const validated = validateGridModel(args.kind, args.model, { symbols: loaded.result.symbols });
+      if (!validated.ok) return validated;
+      const expanded = expandGridLinks(validated.result.model);
       const outputPath = args.outputPath
         ? await resolveInputPath(ctx, exec, args.outputPath)
-        : join(cwd, 'output', 'diagrams', `flowchart-${Date.now()}.vsdx`);
+        : join(cwd, 'output', 'diagrams', `${args.kind}-${Date.now()}.vsdx`);
       mkdirSync(dirnameOf(outputPath), { recursive: true });
-      const payload = { kind: args.kind, title: args.title ?? '', nodes: args.nodes, edges: args.edges, outputPath };
-      const r = await runPs1(ctx, 'visio-flowchart.ps1', payload, { signal: exec.signal, timeoutMs: 300_000, cwd });
-      return parseJson(r.stdout) ?? { ok: false, error: { code: 'ENGINE_FAIL', message: r.stderr || r.stdout || '绘图失败' } };
+      const payload = {
+        kind: args.kind,
+        title: typeof args.title === 'string' && args.title ? args.title : (validated.result.model.title ?? ''),
+        model: validated.result.model,
+        symbols: loaded.result.symbols,
+        outputPath,
+        validations: validated.result.validations,
+      };
+      const r = await runPs1(ctx, 'visio-grid.ps1', payload, { signal: exec.signal, timeoutMs: 300_000, cwd });
+      const parsed = parseJson(r.stdout);
+      if (!parsed) {
+        return { ok: false, error: { code: 'ENGINE_FAIL', message: r.stderr || r.stdout || '绘图失败' } };
+      }
+      if (!parsed.ok) return parsed;
+      const result = parsed.result ?? {};
+      const stats = { ...(result.stats ?? {}) };
+      if (stats.links == null) stats.links = expanded.length;
+      return {
+        ok: true,
+        result: {
+          ...result,
+          outputPath: result.outputPath ?? outputPath,
+          stats,
+          validations: Array.isArray(result.validations) ? result.validations : validated.result.validations,
+        },
+      };
     },
   }));
 
@@ -125,7 +243,7 @@ export function apply(ctx, config = {}) {
     name: 'tool:grid-office-suite',
     order: 900,
     text: () =>
-      'Office 与绘图任务优先使用本套件工具：suite_env 检测本机软件环境与版本；office_read 读取 doc/docx/xls/xlsx（大纲/概况/样例）；visio_draw 调用本机 Visio 绘制流程图并保存为 .vsdx。',
+      'Office 与绘图任务优先使用本套件工具：suite_env 检测本机软件环境与版本；office_read 读取 doc/docx/xls/xlsx（大纲/概况/样例）；office_edit 结构化编辑 Word/Excel（段落/标题/表格/单元格/公式，修改前自动备份）；office_format 排版 Word（rules/样式集/模板，批量用面板命令 suite.format.batch）；visio_draw 调用本机 Visio 绘图并保存为 .vsdx：flowchart 画流程图（nodes/edges），singleLine/distribution/networkTopology 画电气主接线图/配电系统图/通信网络拓扑图（需 model，结构见 docs/P2-设计.md §4.1）。',
   }));
 
   void config;
