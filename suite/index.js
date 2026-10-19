@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { runPs1 } from './host/engines.js';
 import { parseJson, sessionCwd, resolveInputPath, dirnameOf } from './host/ops.js';
+import { registerPanelCommands } from './host/commands-panel.js';
 
 void fileURLToPath;
 
@@ -113,6 +114,11 @@ export function apply(ctx, config = {}) {
       return { kind: 'success', text: r.stdout || '(no output)' };
     },
   }));
+
+  // ── P1 增量：面板远程命令（suite.env / suite.read / suite.draw / suite.files /
+  //    suite.cad.convert / suite.cad.status / suite.cad.cancel /
+  //    suite.config.get / suite.config.set / suite.preview） ──
+  disposers.push(registerPanelCommands(ctx, { config }));
 
   // ── 系统提示：指引模型使用本套件工具 ──
   disposers.push(ctx.systemPrompt.section({

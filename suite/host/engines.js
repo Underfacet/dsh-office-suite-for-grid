@@ -22,6 +22,43 @@ async function resolveShell(ctx, signal) {
 }
 
 /**
+ * 运行任意可执行文件（P1 增量，供 ODAFileConverter 等外部引擎使用）。
+ * 与 runPs1 相同的 stdout/stderr 上限、graceMs 与超时处理。
+ * @returns {{ exitCode: number|null, signal: string|null, stdout: string, stderr: string }}
+ */
+export async function runExe(ctx, exe, args = [], options = {}) {
+  const handle = ctx.subprocess.spawn({
+    argv: [exe, ...args.map((arg) => String(arg))],
+    cwd: options.cwd ?? process.cwd(),
+    stdio: {
+      stdin: 'ignore',
+      stdout: { maxBytes: 8 * 1024 * 1024, spill: { maxBytes: 64 * 1024 * 1024 } },
+      stderr: { maxBytes: 2 * 1024 * 1024 },
+    },
+    graceMs: options.graceMs ?? 60_000,
+    signal: options.signal,
+    env: { ...process.env, ...(options.env ?? {}) },
+  });
+
+  const timer = options.timeoutMs
+    ? setTimeout(() => { try { handle.terminate(); } catch { /* 已结束 */ } }, options.timeoutMs)
+    : null;
+  let outcome;
+  try {
+    outcome = await handle.done;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+
+  return {
+    exitCode: outcome.exitCode,
+    signal: outcome.signal,
+    stdout: handle.collected.stdout?.readFrom(0).text ?? '',
+    stderr: handle.collected.stderr?.readFrom(0).text ?? '',
+  };
+}
+
+/**
  * 运行随包 PowerShell 脚本，传入单个 JSON 参数（脚本以 -Json 接收）。
  * @returns {{ exitCode: number|null, signal: string|null, stdout: string, stderr: string }}
  */

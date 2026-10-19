@@ -20,6 +20,8 @@
     "host/*.js",
     "host/ops/*.js",
     "engines/*.ps1",
+    "symbols/**/*.json",
+    "symbols/*.md",
     "locale/*.json",
     "icon.svg",
     "cordis.patch.yml",
