@@ -1,0 +1,28 @@
+{
+  "name": "dsh-office-suite-for-grid",
+  "version": "0.1.0",
+  "description": "DSH office & grid drawing suite: Office docs/spreadsheets read, edit and format; Visio grid diagrams; CAD-to-PDF smart conversion.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "dsh": ">=0.2.0-rc.0 <0.3.0",
+    "node": ">=18"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "host/*.js",
+    "engines/*.ps1",
+    "locale/*.json",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  }
+}

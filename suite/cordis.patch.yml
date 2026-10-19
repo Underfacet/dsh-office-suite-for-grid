@@ -1,0 +1,10 @@
+- insert:
+    - id: dsh-office-suite-for-grid
+      name: dsh-office-suite-for-grid
+      config:
+        outputRoot: ''
+        backupCopies: 3
+        parallel: auto
+        pythonPath: ''
+        visioVisible: false
+        allowExternalPaths: false
