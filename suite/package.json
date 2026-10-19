@@ -24,6 +24,7 @@
     "requirements-office.txt",
     "symbols/**/*.json",
     "symbols/*.md",
+    "templates/**",
     "locale/*.json",
     "icon.svg",
     "cordis.patch.yml",
