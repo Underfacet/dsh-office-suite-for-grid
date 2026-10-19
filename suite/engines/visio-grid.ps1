@@ -1075,7 +1075,8 @@ function Group-Shapes {
     $window = $Visio.ActiveWindow
     if ($null -eq $window) { return }
     $window.DeselectAll()
-    foreach ($shape in $Shapes) { [void]$shape.Select(2, $false) }
+    # PS 5.1 late binding 取不到 Shape.Select，改用 Window.Select(shape, visSelect=2)
+    foreach ($shape in $Shapes) { [void]$window.Select($shape, 2) }
     [void]$window.Selection.Group()
     $script:Stats.groups += 1
   }
