@@ -192,7 +192,7 @@ function Get-TextBox {
   foreach ($ch in $Text.ToCharArray()) { if ([int]$ch -ge 128) { $cjk += 1 } }
   $ascii = $length - $cjk
   $w = ($ascii * $Size * 0.62) + ($cjk * $Size * 1.02) + ($Size * 0.8)
-  if ($w -lt ($Size * 6.0)) { $w = $Size * 6.0 }
+  if ($w -lt ($Size * 9.0)) { $w = $Size * 9.0 }
   $h = $Size * 2.0
   switch ($Anchor) {
     'top-center'    { return @(($X - $w / 2.0), $Y, $w, $h) }
@@ -556,7 +556,10 @@ function Invoke-ProtectionLayout {
       $ref = Get-Str $device 'symbolRef' ''
       $symbol = $script:Symbols[$ref]
       if ($null -eq $symbol) { throw "符号未注入：$ref（设备 $((Get-Str $device 'id' ''))）" }
-      $rot = Get-DeviceRot $symbol
+      # 回路横向串接：强制端子水平（Get-DeviceRot 的规则面向单线图竖列，需要取反）
+      $verticalRot = Get-DeviceRot $symbol
+      $rot = 0
+      if ($verticalRot -eq 0) { $rot = 90 }
       $size = Get-InstanceSize $symbol $rot 1.0
       $sizes.Add(@{ w = $size[0]; h = $size[1]; rot = $rot; ref = $ref; device = $device })
       if ($size[1] -gt $maxH) { $maxH = $size[1] }
@@ -937,6 +940,33 @@ function Invoke-GeoLayout {
       $points.Add($b)
     }
 
+    # 首末点落在厂站符号框内时沿线段方向裁剪到框外，避免线路穿过站符号
+    if ($stationsById.ContainsKey($fromId) -and $points.Count -ge 2) {
+      $p0 = $points[0]
+      $p1 = $points[1]
+      $dx = [double]$p1[0] - [double]$p0[0]
+      $dy = [double]$p1[1] - [double]$p0[1]
+      $len = [Math]::Sqrt($dx * $dx + $dy * $dy)
+      if ($len -gt 0.001) {
+        $trim = 8.0
+        if ([Math]::Abs($dx) -ge [Math]::Abs($dy)) { $trim = 12.0 }
+        $points[0] = @(([double]$p0[0] + $dx / $len * $trim), ([double]$p0[1] + $dy / $len * $trim))
+      }
+    }
+    if ($stationsById.ContainsKey($toId) -and $points.Count -ge 2) {
+      $lastIndex = $points.Count - 1
+      $pl = $points[$lastIndex]
+      $pp = $points[$lastIndex - 1]
+      $dx = [double]$pl[0] - [double]$pp[0]
+      $dy = [double]$pl[1] - [double]$pp[1]
+      $len = [Math]::Sqrt($dx * $dx + $dy * $dy)
+      if ($len -gt 0.001) {
+        $trim = 8.0
+        if ([Math]::Abs($dx) -ge [Math]::Abs($dy)) { $trim = 12.0 }
+        $points[$lastIndex] = @(([double]$pl[0] - $dx / $len * $trim), ([double]$pl[1] - $dy / $len * $trim))
+      }
+    }
+
     $key = "$fromId|$toId"
     if ([string]::CompareOrdinal($fromId, $toId) -gt 0) { $key = "$toId|$fromId" }
     $count = 1
@@ -1125,8 +1155,18 @@ function Draw-PowerFlowLinks {
     $pointB = Get-PagePoint $Page $toId $pointA
     if ($null -eq $pointA -or $null -eq $pointB) { continue }
     $points = New-Object System.Collections.Generic.List[object]
-    $points.Add(@([double]$pointA[0], [double]$pointA[1]))
-    $points.Add(@([double]$pointB[0], [double]$pointB[1]))
+    $ax = [double]$pointA[0]
+    $ay = [double]$pointA[1]
+    $bx = [double]$pointB[0]
+    $by = [double]$pointB[1]
+    $points.Add(@($ax, $ay))
+    if ([Math]::Abs($ay - $by) -lt 8.0 -and [Math]::Abs($ax - $bx) -gt 8.0) {
+      # 同一层内的联线：绕行母线下方 22mm，避免穿过同行节点符号
+      $routeY = $ay + 22.0
+      $points.Add(@($ax, $routeY))
+      $points.Add(@($bx, $routeY))
+    }
+    $points.Add(@($bx, $by))
     Add-LineItem -Page $Page -Points $points -Weight 0.35
     $script:Stats.links += 1
   }
@@ -1142,17 +1182,27 @@ function Draw-PowerFlowLinks {
     $style = Get-Str $flow 'style' 'solid'
     $dashed = $style -eq 'dashed'
     $points = New-Object System.Collections.Generic.List[object]
-    $points.Add(@([double]$pointA[0], [double]$pointA[1]))
     $ax = [double]$pointA[0]
     $ay = [double]$pointA[1]
     $bx = [double]$pointB[0]
     $by = [double]$pointB[1]
-    if (([Math]::Abs($ax - $bx) -gt 8.0) -and ([Math]::Abs($ay - $by) -gt 8.0)) {
-      $midX = ($ax + $bx) / 2.0
-      $points.Add(@($midX, $ay))
-      $points.Add(@($midX, $by))
+    $isBusPair = $Page.BusAnchor.ContainsKey($fromRef) -and $Page.BusAnchor.ContainsKey($toRef)
+    if ($isBusPair -and [Math]::Abs($ax - $bx) -lt 8.0) {
+      # 母线间潮流：沿母线向右偏 35mm 的竖直通道，避开跨层主变
+      $anchor = $Page.BusAnchor[$fromRef]
+      $offsetX = [Math]::Min([Math]::Max($ax + 35.0, [double]$anchor.x1 + 10.0), [double]$anchor.x2 - 10.0)
+      $points.Add(@($offsetX, $ay))
+      $points.Add(@($offsetX, $by))
     }
-    $points.Add(@($bx, $by))
+    else {
+      $points.Add(@($ax, $ay))
+      if (([Math]::Abs($ax - $bx) -gt 8.0) -and ([Math]::Abs($ay - $by) -gt 8.0)) {
+        $midX = ($ax + $bx) / 2.0
+        $points.Add(@($midX, $ay))
+        $points.Add(@($midX, $by))
+      }
+      $points.Add(@($bx, $by))
+    }
     Add-LineItem -Page $Page -Points $points -Weight 0.4 -Arrow $true -Dashed $dashed
     if ($style -eq 'double') {
       # 双线：在末段垂直方向 ±1mm 平行一条（不回退主箭头）
@@ -1173,7 +1223,11 @@ function Draw-PowerFlowLinks {
     $script:Stats.flows += 1
     $label = Get-Str $flow 'label' ''
     if ($label) {
-      Add-TextItem -Page $Page -X (($ax + $bx) / 2.0) -Y (($ay + $by) / 2.0 - 1.5) -Text $label -Size 2.3 -Anchor 'bottom-center'
+      # 标注取折线中段中点（母线间潮流会横向偏移，端点中点会压在主变上）
+      $midIndex = [int][Math]::Floor(($points.Count - 1) / 2)
+      $p0 = $points[$midIndex]
+      $p1 = $points[$midIndex + 1]
+      Add-TextItem -Page $Page -X ((([double]$p0[0] + [double]$p1[0]) / 2.0) + 1.5) -Y ((([double]$p0[1] + [double]$p1[1]) / 2.0) - 1.5) -Text $label -Size 2.3 -Anchor 'bottom-left'
     }
   }
 }
@@ -1183,12 +1237,12 @@ function Add-TerminalGround {
   param($Page, [double]$Cx, [double]$Cy)
   $stem = New-Object System.Collections.Generic.List[object]
   $stem.Add(@($Cx, ($Cy + 3.5)))
-  $stem.Add(@($Cx, ($Cy + 6.0)))
+  $stem.Add(@($Cx, ($Cy + 5.0)))
   Add-LineItem -Page $Page -Points $stem -Weight 0.35
   $bars = @(
-    @(($Cx - 4.0), ($Cy + 6.0), ($Cx + 4.0), ($Cy + 6.0)),
-    @(($Cx - 2.5), ($Cy + 7.2), ($Cx + 2.5), ($Cy + 7.2)),
-    @(($Cx - 1.0), ($Cy + 8.4), ($Cx + 1.0), ($Cy + 8.4))
+    @(($Cx - 3.5), ($Cy + 5.0), ($Cx + 3.5), ($Cy + 5.0)),
+    @(($Cx - 2.2), ($Cy + 6.0), ($Cx + 2.2), ($Cy + 6.0)),
+    @(($Cx - 1.0), ($Cy + 7.0), ($Cx + 1.0), ($Cy + 7.0))
   )
   foreach ($bar in $bars) {
     $points = New-Object System.Collections.Generic.List[object]

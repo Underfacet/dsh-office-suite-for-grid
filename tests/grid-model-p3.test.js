@@ -170,6 +170,10 @@ test('GRID_KINDS：P2 三类 + P3 五类共 8 类；GRID_LINK_KINDS 含 flow', (
   }
   assert.equal(GRID_KINDS.length, 8);
   assert.ok(GRID_LINK_KINDS.includes('flow'));
+  // P3 五类 kind 均可装载符号库（loadSymbols 不按 kind 过滤符号，仅校验 kind 合法性）
+  for (const kind of ['protection', 'substationPlan', 'geoNetwork', 'powerFlow', 'terminalStrip']) {
+    assert.equal(loadSymbols(kind).ok, true, `loadSymbols(${kind}) 失败`);
+  }
 });
 
 test('cableRoute：校验与符号装载均 → E2024（不静默）', () => {
