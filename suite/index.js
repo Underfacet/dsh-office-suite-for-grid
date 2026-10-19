@@ -1,9 +1,10 @@
 /**
- * DSH 办公·电网绘图套件 —— Host 半（v0.1）
+ * DSH 办公·电网绘图套件 —— Host 半（v0.1 + P1/P2/P3 接线）
  *
- * v0.1 能力：引擎环境探测（suite_env）、Office 文档/表格读取（office_read，
- * 本机 Word/Excel COM）、Visio 流程图绘制（visio_draw，本机 Visio COM）。
- * 面板与远程命令共用同一操作层，为 P1 的 Client 面板预留同一套 ops。
+ * 工具：suite_env（引擎环境探测）、office_read（Word/Excel 读取）、office_edit（结构化编辑）、
+ * office_format（Word 排版）、office_export（导出 PDF，P3 §5.3）、visio_draw（Visio 绘图：
+ * flowchart + P2 电网三图 + P3 五类图）。
+ * 面板与远程命令共用同一操作层（host/ops/*），命令见 host/commands-panel.js。
  */
 import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -12,7 +13,14 @@ import { runPs1 } from './host/engines.js';
 import { effectiveConfig, parseJson, sessionCwd, resolveInputPath, dirnameOf } from './host/ops.js';
 import { editOp } from './host/ops/office-edit.js';
 import { formatOp } from './host/ops/office-format.js';
-import { expandGridLinks, loadSymbols, validateGridModel } from './host/ops/grid-model.js';
+import { previewPdfOp } from './host/ops/office-pdf.js';
+import {
+  GRID_KINDS,
+  P3_GRID_KINDS,
+  expandGridLinks,
+  loadSymbols,
+  validateGridModel,
+} from './host/ops/grid-model.js';
 import { registerPanelCommands } from './host/commands-panel.js';
 
 void fileURLToPath;
@@ -127,20 +135,33 @@ export function apply(ctx, config = {}) {
     },
   }));
 
-  // ── 工具：Visio 绘图（flowchart + 电网三图） ──
+  // ── 工具：Visio 绘图（flowchart + 电网三图 + P3 五类） ──
   disposers.push(ctx.tools.register({
     name: 'visio_draw',
     description:
-      "调用本机 Visio 绘制图表并保存为 .vsdx。kind='flowchart'：流程图（开始/结束椭圆、过程/判断矩形、箭头连线，按有向边自动分列）；kind='singleLine'（电气主接线图）/ 'distribution'（配电系统图）/ 'networkTopology'（通信网络拓扑图）需提供 model 数据模型（见 docs/P2-设计.md §4.1），Host 先校验符号与接线再绘制。需要本机装有 Visio。",
+      "调用本机 Visio 绘制图表并保存为 .vsdx。kind='flowchart'：流程图（开始/结束椭圆、过程/判断矩形、箭头连线，按有向边自动分列）；kind='singleLine'（电气主接线图）/ 'distribution'（配电系统图）/ 'networkTopology'（通信网络拓扑图）需提供 model 数据模型（见 docs/P2-设计.md §4.1）；kind='protection'（二次回路/继保原理图）/ 'substationPlan'（变电站总平面布置示意图）/ 'geoNetwork'（地理接线图）/ 'powerFlow'（潮流图/系统接线图）/ 'terminalStrip'（端子排图，可多页）见 docs/P3-设计.md §4.4。Host 先校验符号与接线再绘制。需要本机装有 Visio。",
     parameters: {
       type: 'object',
       properties: {
-        kind: { type: 'string', enum: ['flowchart', 'singleLine', 'distribution', 'networkTopology'] },
+        kind: {
+          type: 'string',
+          enum: [
+            'flowchart',
+            'singleLine',
+            'distribution',
+            'networkTopology',
+            'protection',
+            'substationPlan',
+            'geoNetwork',
+            'powerFlow',
+            'terminalStrip',
+          ],
+        },
         title: { type: 'string', description: '图表标题' },
         model: {
           type: 'object',
           additionalProperties: true,
-          description: "电网图数据模型 JSON（kind 为 singleLine/distribution/networkTopology 时必填），见 docs/P2-设计.md §4.1",
+          description: "电网图数据模型 JSON（kind 为 P2/P3 八类电网图之一时必填）：P2 三类见 docs/P2-设计.md §4.1，P3 五类见 docs/P3-设计.md §4.4",
         },
         nodes: {
           type: 'array',
@@ -181,10 +202,26 @@ export function apply(ctx, config = {}) {
         return parseJson(r.stdout) ?? { ok: false, error: { code: 'ENGINE_FAIL', message: r.stderr || r.stdout || '绘图失败' } };
       }
 
-      // P2 电网三图：符号库 → 模型/接线校验 → 展开连线 → visio-grid.ps1
-      if (args.model == null || typeof args.model !== 'object' || Array.isArray(args.model)) {
-        return { ok: false, error: { code: 'E2021', message: '电网图需要 model 对象', hint: '模型结构见 docs/P2-设计.md §4.1' } };
+      // P2 电网三图（visio-grid.ps1）/ P3 五类（visio-layouts.ps1）：
+      // 符号库 → 模型/接线校验 → 展开连线 → 引擎（payload 同构）
+      if (args.kind === 'cableRoute') {
+        // P3 §4.4⑥：schema 定稿但本期未实现（E2024，不静默）
+        return loadSymbols(args.kind);
       }
+      if (!GRID_KINDS.includes(args.kind)) {
+        return {
+          ok: false,
+          error: {
+            code: 'E1041',
+            message: `kind 必须为 flowchart | ${GRID_KINDS.join(' | ')}，收到: ${JSON.stringify(args.kind)}`,
+            hint: 'flowchart 使用 nodes/edges；电网图使用 model（P2 §4.1 / P3 §4.4）',
+          },
+        };
+      }
+      if (args.model == null || typeof args.model !== 'object' || Array.isArray(args.model)) {
+        return { ok: false, error: { code: 'E2021', message: '电网图需要 model 对象', hint: '模型结构见 docs/P2-设计.md §4.1 与 docs/P3-设计.md §4.4' } };
+      }
+      const engineScript = P3_GRID_KINDS.includes(args.kind) ? 'visio-layouts.ps1' : 'visio-grid.ps1';
       const loaded = loadSymbols(args.kind);
       if (!loaded.ok) return loaded;
       const validated = validateGridModel(args.kind, args.model, { symbols: loaded.result.symbols });
@@ -202,7 +239,7 @@ export function apply(ctx, config = {}) {
         outputPath,
         validations: validated.result.validations,
       };
-      const r = await runPs1(ctx, 'visio-grid.ps1', payload, { signal: exec.signal, timeoutMs: 300_000, cwd });
+      const r = await runPs1(ctx, engineScript, payload, { signal: exec.signal, timeoutMs: 300_000, cwd });
       const parsed = parseJson(r.stdout);
       if (!parsed) {
         return { ok: false, error: { code: 'ENGINE_FAIL', message: r.stderr || r.stdout || '绘图失败' } };
@@ -215,11 +252,39 @@ export function apply(ctx, config = {}) {
         ok: true,
         result: {
           ...result,
+          kind: result.kind ?? args.kind,
+          engine: result.engine ?? engineScript,
           outputPath: result.outputPath ?? outputPath,
           stats,
           validations: Array.isArray(result.validations) ? result.validations : validated.result.validations,
         },
       };
+    },
+  }));
+
+  // ── 工具：导出 PDF（office_export，P3 §5.3） ──
+  disposers.push(ctx.tools.register({
+    name: 'office_export',
+    description:
+      '把 Word/Excel/PowerPoint（doc/docx/xls/xlsx/ppt/pptx）导出为 PDF 文件：output 为目录或 .pdf 路径，缺省写到会话工作区 output\\pdf\\<原名>.pdf（重名自动加 -<时间戳>）；渲染由宿主 officeToPdf 服务完成，缺失时报 E2012。导出是新文件，不触发备份。',
+    parameters: {
+      type: 'object',
+      properties: {
+        path: { type: 'string', description: '源文件路径（绝对路径，或相对当前会话工作目录）' },
+        output: { type: 'string', description: '导出目标：目录或 .pdf 文件路径；缺省 = 会话工作区 output\\pdf\\<原名>.pdf' },
+        engine: { type: 'string', enum: ['auto', 'officeToPdf'], description: "渲染引擎；固定走 Host officeToPdf（缺省 'auto'）" },
+      },
+      required: ['path'],
+    },
+    output: jsonOutput,
+    async execute(args, exec) {
+      const saveAs = typeof args.output === 'string' && args.output.trim() ? args.output.trim() : true;
+      return previewPdfOp(
+        ctx,
+        effectiveConfig(config),
+        { path: args.path, saveAs, ...(args.engine ? { engine: args.engine } : {}) },
+        exec,
+      );
     },
   }));
 
@@ -243,7 +308,7 @@ export function apply(ctx, config = {}) {
     name: 'tool:grid-office-suite',
     order: 900,
     text: () =>
-      'Office 与绘图任务优先使用本套件工具：suite_env 检测本机软件环境与版本；office_read 读取 doc/docx/xls/xlsx（大纲/概况/样例）；office_edit 结构化编辑 Word/Excel（段落/标题/表格/单元格/公式，修改前自动备份）；office_format 排版 Word（rules/样式集/模板，批量用面板命令 suite.format.batch）；visio_draw 调用本机 Visio 绘图并保存为 .vsdx：flowchart 画流程图（nodes/edges），singleLine/distribution/networkTopology 画电气主接线图/配电系统图/通信网络拓扑图（需 model，结构见 docs/P2-设计.md §4.1）。',
+      'Office 与绘图任务优先使用本套件工具：suite_env 检测本机软件环境与版本；office_read 读取 doc/docx/xls/xlsx（大纲/概况/样例）；office_edit 结构化编辑 Word/Excel（段落/标题/表格/单元格/公式，修改前自动备份）；office_format 排版 Word（rules/样式集/模板，批量用面板命令 suite.format.batch）；office_export 把 doc/docx/xls/xlsx/ppt/pptx 导出为 PDF 文件（output 传目录或 .pdf 路径，缺省写到 output\\pdf\\<原名>.pdf）；visio_draw 调用本机 Visio 绘图并保存为 .vsdx：flowchart 画流程图（nodes/edges），singleLine/distribution/networkTopology 画电气主接线图/配电系统图/通信网络拓扑图（需 model，见 docs/P2-设计.md §4.1），protection/substationPlan/geoNetwork/powerFlow/terminalStrip 画二次回路图/变电站总平面布置示意图/地理接线图/潮流图/端子排图（需 model，见 docs/P3-设计.md §4.4）。',
   }));
 
   void config;

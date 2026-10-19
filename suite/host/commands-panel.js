@@ -9,14 +9,18 @@
  * P2 新增：suite.edit / suite.format / suite.format.batch / suite.office.status /
  *         suite.office.cancel / suite.office.backup.list / suite.office.backup.restore /
  *         suite.templates；suite.draw 扩展电网三图；suite.preview 按 §3.7 契约修正。
+ * P3 新增（docs/P3-设计.md §2.1/§3.1/§5.3）：suite.cad.catalog（图纸目录表）、
+ *         suite.export（导出 PDF）；suite.cad.convert 增 inputs 批量队列；suite.draw 扩
+ *         P3 五类图（protection/substationPlan/geoNetwork/powerFlow/terminalStrip）；
+ *         suite.preview 改由 ops/office-pdf.js 的 previewPdfOp 实现；suite.cad.status
+ *         补齐任务 kind 与 cad.queue 父任务摘要。
  */
 import { existsSync, mkdirSync } from 'node:fs';
-import { readdir, readFile, stat } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 import { runPs1 } from './engines.js';
 import { assertInsideRoot, boundaryInfo, resolveBoundaryRoot } from './boundary.js';
 import {
-  OpsError,
   PACKAGE_DIR,
   RUNTIME_DIR,
   UI_CONFIG_PATH,
@@ -34,17 +38,27 @@ import {
 } from './ops.js';
 import { listDirectory } from './ops/files.js';
 import { cadCancel, cadStatus, convertCad, probeEngines } from './ops/cad.js';
+import { batchCadOp, QUEUE_KIND } from './ops/cad-batch.js';
+import { buildCatalogOp } from './ops/cad-catalog.js';
 import { editOp } from './ops/office-edit.js';
 import { batchFormatCancel, batchFormatOp, batchFormatStatus, formatOp } from './ops/office-format.js';
+import { previewPdfOp } from './ops/office-pdf.js';
 import { backupOp } from './ops/backup.js';
-import { expandGridLinks, loadSymbols, validateGridModel } from './ops/grid-model.js';
+import {
+  GRID_KINDS_PENDING,
+  P2_GRID_KINDS,
+  P3_GRID_KINDS,
+  expandGridLinks,
+  loadSymbols,
+  validateGridModel,
+} from './ops/grid-model.js';
 import { TaskStore, tasks as defaultTasks } from './tasks.js';
 
-/** suite.draw / visio_draw 支持的图类型（P1 流程图 + P2 电网三图）。 */
-export const DRAW_KINDS = Object.freeze(['flowchart', 'singleLine', 'distribution', 'networkTopology']);
-
-/** suite.preview 支持的扩展名（officeToPdf OfficeExtension 的子集，§3.7）。 */
-const PREVIEW_EXTENSIONS = Object.freeze(['.doc', '.docx', '.xls', '.xlsx']);
+/**
+ * suite.draw / visio_draw 支持的图类型：P1 流程图 + P2 电网三图 + P3 五类（共 9 类）。
+ * cableRoute 属 P4（GRID_KINDS_PENDING），命令层返回 E2024 而不是「未知 kind」。
+ */
+export const DRAW_KINDS = Object.freeze(['flowchart', ...P2_GRID_KINDS, ...P3_GRID_KINDS]);
 
 /** 用户模板根目录（与 ops/office-format.js 的 templatesRoot 口径一致）。 */
 function templatesRoot(config = {}) {
@@ -183,6 +197,45 @@ export function registerPanelCommands(ctx, options = {}) {
     warn: (message) => console.warn(`[office-suite] ${message}`),
   });
 
+  /**
+   * P3 §3.2 兼容层：ops/cad.js 的 cadStatus 只输出任务摘要（summary 无 kind 字段），
+   * 而批量队列父任务 kind='cad.queue' 与子任务同在一个 TaskStore 中。此处按 taskId
+   * 回查 kind 并给列表补 `queues` 摘要（itemsDone/itemsTotal、完成后的 failures），
+   * 不修改 cad.js（保持既有 cadStatus 契约与 P1/P2 行为）。
+   */
+  const augmentCadStatus = (result) => {
+    if (!result?.ok || !result.result) return result;
+    const value = result.result;
+    const kindOf = (taskId) => (typeof taskId === 'string' ? store.get(taskId)?.kind ?? null : null);
+    if (Array.isArray(value.tasks)) {
+      const tasks = value.tasks.map((summary) => {
+        const kind = kindOf(summary?.taskId);
+        if (!kind) return summary;
+        const entry = { ...summary, kind };
+        if (kind === QUEUE_KIND) {
+          const output = summary.output && typeof summary.output === 'object' ? summary.output : null;
+          entry.queue = {
+            itemsDone: summary.progress?.itemsDone ?? 0,
+            itemsTotal: summary.progress?.itemsTotal ?? 0,
+            succeeded: output?.succeeded ?? null,
+            failed: output?.failed ?? null,
+            failures: Array.isArray(output?.failures) ? output.failures : [],
+          };
+        }
+        return entry;
+      });
+      return ok({
+        ...value,
+        tasks,
+        queues: tasks.filter((item) => item.kind === QUEUE_KIND),
+      });
+    }
+    if (typeof value.taskId === 'string') {
+      return ok({ ...value, kind: kindOf(value.taskId) });
+    }
+    return result;
+  };
+
   /** 包装 handler：解析参数 + 统一异常 → ops 错误 JSON。 */
   const wrap = (fn) => async (invocation) => {
     try {
@@ -235,17 +288,21 @@ export function registerPanelCommands(ctx, options = {}) {
     }),
   });
 
-  // ── 3) suite.draw：Visio 绘图（flowchart + P2 电网三图） ──
+  // ── 3) suite.draw：Visio 绘图（flowchart + P2 电网三图 + P3 五类） ──
   register({
     name: 'suite.draw',
-    description: "调用本机 Visio 绘图并保存为 .vsdx：kind='flowchart'（nodes/edges）；kind='singleLine'|'distribution'|'networkTopology' 需 model（电网图数据模型，见 docs/P2-设计.md §4.1）",
+    description: "调用本机 Visio 绘图并保存为 .vsdx：kind='flowchart'（nodes/edges）；kind='singleLine'|'distribution'|'networkTopology'（docs/P2-设计.md §4.1）与 'protection'|'substationPlan'|'geoNetwork'|'powerFlow'|'terminalStrip'（docs/P3-设计.md §4.4）需 model；cableRoute 为 P4（E2024）",
     handler: wrap(async (args, invocation) => {
       const config = configNow();
+      if (GRID_KINDS_PENDING.includes(args.kind)) {
+        // P3 §4.4⑥：schema 定稿但本期未实现（E2024，不静默）
+        return commandSuccess(loadSymbols(args.kind));
+      }
       if (!DRAW_KINDS.includes(args.kind)) {
         return commandSuccess(fail(
           'E1041',
           `kind 必须为 ${DRAW_KINDS.join(' | ')}，收到: ${JSON.stringify(args.kind)}`,
-          'flowchart 使用 nodes/edges；电网三图使用 model',
+          'flowchart 使用 nodes/edges；电网图使用 model（P2 §4.1 / P3 §4.4）',
         ));
       }
       const cwd = await sessionCwd(ctx, invocation);
@@ -297,10 +354,11 @@ export function registerPanelCommands(ctx, options = {}) {
         }));
       }
 
-      // P2 电网三图：符号库 → 模型/接线校验 → 展开连线 → visio-grid.ps1
+      // P2 电网三图（visio-grid.ps1）/ P3 五类（visio-layouts.ps1）：payload 同构
       if (args.model == null || typeof args.model !== 'object' || Array.isArray(args.model)) {
-        return commandSuccess(fail('E2021', '电网图需要 model 对象', '模型结构见 docs/P2-设计.md §4.1'));
+        return commandSuccess(fail('E2021', '电网图需要 model 对象', '模型结构见 docs/P2-设计.md §4.1 与 docs/P3-设计.md §4.4'));
       }
+      const engineScript = P3_GRID_KINDS.includes(args.kind) ? 'visio-layouts.ps1' : 'visio-grid.ps1';
       const loaded = loadSymbols(args.kind);
       if (!loaded.ok) return commandSuccess(loaded);
       const validated = validateGridModel(args.kind, args.model, { symbols: loaded.result.symbols });
@@ -310,7 +368,7 @@ export function registerPanelCommands(ctx, options = {}) {
         ? assertInsideRoot(await resolveInputPath(ctx, invocation, String(args.outputPath)), boundaryOptions(config, true))
         : assertInsideRoot(join(cwd, 'output', 'diagrams', `${args.kind}-${Date.now()}.vsdx`), boundaryOptions(config, true));
       mkdirSync(dirname(outputPath), { recursive: true });
-      const result = await runPs1(ctx, 'visio-grid.ps1', {
+      const result = await runPs1(ctx, engineScript, {
         kind: args.kind,
         title: typeof args.title === 'string' && args.title ? args.title : (validated.result.model.title ?? ''),
         model: validated.result.model,
@@ -334,9 +392,12 @@ export function registerPanelCommands(ctx, options = {}) {
         outputPath: drawn.outputPath ?? outputPath,
         format: drawn.format ?? 'vsdx',
         kind: drawn.kind ?? args.kind,
+        engine: drawn.engine ?? engineScript,
         paper: drawn.paper ?? null,
+        ...(drawn.pages != null ? { pages: drawn.pages } : {}),
         stats: drawn.stats ?? { symbols: 0, shapes: 0, links: expanded.length, buses: 0, bays: 0, groups: 0 },
         validations: Array.isArray(drawn.validations) ? drawn.validations : validated.result.validations,
+        ...(Array.isArray(drawn.warnings) && drawn.warnings.length ? { warnings: drawn.warnings } : {}),
       }));
     }),
   });
@@ -356,12 +417,17 @@ export function registerPanelCommands(ctx, options = {}) {
     }),
   });
 
-  // ── 5) suite.cad.convert：校验 + 注册任务 + 异步启动 ──
+  // ── 5) suite.cad.convert：校验 + 注册任务 + 异步启动（P3：inputs 走批量队列） ──
   register({
     name: 'suite.cad.convert',
-    description: 'CAD→PDF 转换（merge 文件夹合并 / split 单文件多图框分割）；立即返回 taskId，进度用 suite.cad.status 轮询',
+    description: 'CAD→PDF 转换（merge 文件夹合并 / split 单文件多图框分割）：单任务用 input；批量队列用 inputs（1–100 项，父任务 kind=cad.queue）。立即返回 taskId，进度用 suite.cad.status 轮询',
     handler: wrap(async (args, invocation) => {
-      const result = await convertCad(ctx, args, invocation, configNow(), store);
+      const config = configNow();
+      if (Array.isArray(args.inputs) && args.inputs.length) {
+        // P3 §3.1：inputs 每项一个子任务，父任务聚合（与 input 互斥，由 ops 校验）
+        return commandSuccess(await batchCadOp(ctx, config, args, invocation, store));
+      }
+      const result = await convertCad(ctx, args, invocation, config, store);
       return commandSuccess(result);
     }),
   });
@@ -369,8 +435,8 @@ export function registerPanelCommands(ctx, options = {}) {
   // ── 6) suite.cad.status：任务状态（面板 800ms 轮询端点） ──
   register({
     name: 'suite.cad.status',
-    description: '查询 CAD 转换任务状态/进度/日志；无 taskId 时返回任务列表',
-    handler: wrap(async (args) => commandSuccess(cadStatus(store, args))),
+    description: "查询 CAD 任务状态/进度/日志（含 batch 队列父任务 kind='cad.queue'）；无 taskId 时返回任务列表（含 kind 与队列摘要）",
+    handler: wrap(async (args) => commandSuccess(augmentCadStatus(cadStatus(store, args)))),
   });
 
   // ── 7) suite.cad.cancel：取消任务（AbortController） ──
@@ -424,79 +490,11 @@ export function registerPanelCommands(ctx, options = {}) {
     }),
   });
 
-  // ── 10) suite.preview：officeToPdf 渲染预览（按 P2 §3.7 已核实契约修正） ──
+  // ── 10) suite.preview：officeToPdf 渲染预览（P3 §5.1：改由 ops/office-pdf.js 的 previewPdfOp 实现） ──
   register({
     name: 'suite.preview',
-    description: '通过 Host officeToPdf.convert 把 doc/docx/xls/xlsx 渲染为 PDF（base64）；服务缺失返回 PREVIEW_UNSUPPORTED',
-    handler: wrap(async (args, invocation) => {
-      const config = configNow();
-      // 先判空 Host 服务（access.optional：ctx.get 不存在时返回 undefined）
-      let service;
-      try {
-        service = typeof ctx.get === 'function' ? ctx.get('officeToPdf') : undefined;
-      } catch {
-        service = undefined;
-      }
-      if (!service || typeof service.convert !== 'function') {
-        return commandSuccess(fail(
-          'PREVIEW_UNSUPPORTED',
-          'Host officeToPdf 服务不可用',
-          '预览需要宿主提供 officeToPdf.convert；可改用系统应用打开文件，或在 Client 走 remote.officeToPdf 直连（§3.7 方案 A）',
-        ));
-      }
-
-      const rawPath = typeof args.path === 'string' ? args.path.trim() : '';
-      if (!rawPath) return commandSuccess(fail('E1041', '缺少 path'));
-      const abs = assertInsideRoot(await resolveInputPath(ctx, invocation, rawPath), boundaryOptions(config, false));
-      const ext = extname(abs).toLowerCase();
-      if (!PREVIEW_EXTENSIONS.includes(ext)) {
-        return commandSuccess(fail(
-          'PREVIEW_UNSUPPORTED',
-          `该类型不支持预览: ${ext || '(无扩展名)'}`,
-          `仅支持 ${PREVIEW_EXTENSIONS.join('/')}（officeToPdf 的 OfficeExtension 不含 ppt/vsdx/dwg/pdf）`,
-        ));
-      }
-      const info = await stat(abs).catch(() => null);
-      if (!info || !info.isFile()) return commandSuccess(fail('E1023', `文件不存在: ${abs}`));
-
-      const version = String(info.mtimeMs ?? 0);
-      const priority = config.previewPriority === 'background' ? 'background' : 'foreground';
-      try {
-        const request = {
-          extension: ext.slice(1), // 'doc' | 'docx' | 'xls' | 'xlsx'
-          priority,
-          source: {
-            key: 'suite-preview',
-            version,
-            bytes: info.size,
-            read: async (signal, maxBytes) => {
-              const limit = Number(maxBytes);
-              if (Number.isFinite(limit) && limit > 0 && info.size > limit) {
-                throw new OpsError('E2011', `文件超过预览大小上限（${info.size} > ${limit} 字节）`);
-              }
-              const bytes = await readFile(abs, { signal });
-              return { bytes, version };
-            },
-          },
-        };
-        const output = await service.convert(request, invocation.signal);
-        if (!output?.pdf) {
-          return commandSuccess(fail('E2011', 'officeToPdf.convert 返回结果缺少 pdf 字节'));
-        }
-        return commandSuccess(ok({
-          pdfBase64: Buffer.from(output.pdf).toString('base64'),
-          missingFonts: Array.isArray(output.missingFonts) ? output.missingFonts : [],
-          generation: output.generation ?? null,
-          cacheKey: output.cacheKey ?? null,
-        }));
-      } catch (err) {
-        return commandSuccess(fail(
-          'E2011',
-          `预览渲染失败: ${String(err?.message ?? err)}`,
-          '请确认文件未被占用且未超过渲染大小上限；也可改用系统应用打开',
-        ));
-      }
-    }),
+    description: '通过 Host officeToPdf.convert 把 doc/docx/xls/xlsx/ppt/pptx 渲染为 PDF（base64，供面板 iframe）；服务缺失/类型不支持返回 E2012',
+    handler: wrap(async (args, invocation) => commandSuccess(await previewPdfOp(ctx, configNow(), { path: args.path }, invocation))),
   });
 
   // ── 11) suite.edit：Office 结构化编辑（Word / Excel） ──
@@ -553,6 +551,29 @@ export function registerPanelCommands(ctx, options = {}) {
     name: 'suite.templates',
     description: '列出可用样式集（suite/runtime templates/styles/*.json 合并，同名用户优先）与 docx 模板；目录缺失时返回提示',
     handler: wrap(async () => commandSuccess(await listTemplateCatalog(configNow()))),
+  });
+
+  // ── 19) suite.cad.catalog：图纸目录表（P3 §2.1；同步执行，不走任务注册表） ──
+  register({
+    name: 'suite.cad.catalog',
+    description: '生成图纸目录表 xlsx（图号/图名/图幅/比例/张数）：{input(.dwg/.pdf/目录), output?, sort?, engine?}；同步返回 outputPath/rows/fields，超限报 E1041、空表报 E1061',
+    handler: wrap(async (args, invocation) => commandSuccess(await buildCatalogOp(ctx, configNow(), args, invocation))),
+  });
+
+  // ── 20) suite.export：导出 PDF 文件落地（P3 §5.3；与 office_export 工具同一 ops） ──
+  register({
+    name: 'suite.export',
+    description: '把 doc/docx/xls/xlsx/ppt/pptx 导出为 PDF 文件：{path, output?(目录或 .pdf 路径), engine?}；缺省 output\\pdf 下同名（重名加 -<时间戳>），服务缺失报 E2012、写盘失败报 E2013',
+    handler: wrap(async (args, invocation) => {
+      const output = typeof args.output === 'string' && args.output.trim() ? args.output.trim() : true;
+      const result = await previewPdfOp(
+        ctx,
+        configNow(),
+        { path: args.path, saveAs: output, ...(args.engine ? { engine: args.engine } : {}) },
+        invocation,
+      );
+      return commandSuccess(result);
+    }),
   });
 
   return () => {

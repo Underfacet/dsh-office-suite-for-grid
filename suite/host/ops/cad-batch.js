@@ -333,8 +333,19 @@ export async function batchCadOp(ctx, config = {}, args = {}, exec = {}, store =
     const outputs = await resolveQueueOutputs(ctx, exec, config, mode, resolved, args?.output);
 
     // 引擎预判（避免把全部必然失败的条目塞进队列）
-    const isPdfInputs = resolved.map((file) => extname(file).toLowerCase() === '.pdf');
-    const needsDwg = isPdfInputs.some((isPdf) => !isPdf);
+    // 条目真实类型：merge 条目是目录（按目录内是否含 .dwg 判定是否需要 CAD/ODA 引擎），
+    // split 条目是单文件（.pdf 无需引擎，.dwg 需要）；仅凭目录名的扩展名会把目录误判为 .dwg。
+    const needsCadEngine = [];
+    for (const inputAbs of resolved) {
+      const info = await statOrNull(inputAbs);
+      if (info?.isDirectory()) {
+        const names = await readdir(inputAbs).catch(() => []);
+        needsCadEngine.push(names.some((name) => !EXCLUDED_FILE.test(name) && /\.dwg$/i.test(name)));
+      } else {
+        needsCadEngine.push(extname(inputAbs).toLowerCase() !== '.pdf');
+      }
+    }
+    const needsDwg = needsCadEngine.some(Boolean);
     let engines = null;
     if (needsDwg) {
       const probe = await probeEngines(ctx, config);
@@ -354,7 +365,7 @@ export async function batchCadOp(ctx, config = {}, args = {}, exec = {}, store =
         warnings.push(`引擎降级：${engineChain(engines, false).join(' → ')}（选定 ${primary}）`);
       }
     }
-    const enginePerItem = resolved.map((file, index) => (isPdfInputs[index] ? 'pdf' : chooseEngine({ isPdf: false, engines })));
+    const enginePerItem = resolved.map((file, index) => (needsCadEngine[index] ? chooseEngine({ isPdf: false, engines }) : 'pdf'));
     const uniqueEngines = [...new Set(enginePerItem)];
     const engineSummary = uniqueEngines.length === 1 ? uniqueEngines[0] : 'mixed';
 

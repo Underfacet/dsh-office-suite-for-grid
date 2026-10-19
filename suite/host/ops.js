@@ -148,6 +148,26 @@ export const DEFAULT_CONFIG = Object.freeze({
   odaRecurse: true,
   keepTempFiles: false,
   logLevel: 'info',
+  // ── P3 §5.4 / §2.3 / §2.1 / §3.1 / §4.4⑤ 增量（默认值与各 ops 模块一致） ──
+  /** P3 §5.4：客户端预览 blob 缓存条数（LRU，1–10；可写）。 */
+  previewCacheSize: 5,
+  /** P3 §2.3：图纸目录表图名区相对坐标 [x0,y0,x1,y1]（原点左下；不可写，随包默认）。 */
+  catalogTitleNameZone: [0.3, 0.25, 1.0, 0.55],
+  /**
+   * P3 §2.3：比例提取正则（不可写，随包默认）。
+   * 第一则「比例: x:x」，第二则全框裸写比号（排除图号连字符干扰）；与
+   * suite/host/ops/cad-catalog.js 的 DEFAULT_CATALOG_SCALE_PATTERNS 保持逐字一致。
+   */
+  catalogScalePatterns: [
+    '比例\\s*[:：]?\\s*(\\d{1,3}\\s*[:：]\\s*\\d{1,4})',
+    '(?<![\\dA-Za-z])(\\d{1,3}\\s*[:：]\\s*\\d{1,4})(?![\\dA-Za-z])',
+  ],
+  /** P3 §2.1：目录表单次图框上限（同步命令防长阻塞；不可写）。 */
+  catalogMaxFrames: 500,
+  /** P3 §3.1：CAD 批量队列条目上限（1–100；不可写）。 */
+  queueMaxItems: 100,
+  /** P3 §4.4⑤：端子排每页行数（1–40；模型 meta.terminalsPerPage 优先；不可写）。 */
+  terminalPerPage: 20,
 });
 
 /** 面板可写配置键（suite.config.set 白名单，§2）。 */
@@ -163,6 +183,8 @@ export const WRITABLE_CONFIG_KEYS = Object.freeze([
   'venvPython',
   'previewPriority',
   'officeTemplatesDir',
+  // ── P3 §5.4 增量（P3 §6 标注可写者仅此一项） ──
+  'previewCacheSize',
 ]);
 
 /** 同步读取 runtime\ui-config.json 覆盖层；缺失/损坏时返回 {}。 */
@@ -196,12 +218,23 @@ export function effectiveConfig(pluginConfig = {}) {
   return merged;
 }
 
+/** P3 §6 标注「不可写（随包默认，真机校准后改默认值）」的只读配置键（取值仍走同一校验口径）。 */
+export const READONLY_CONFIG_KEYS = Object.freeze([
+  'catalogTitleNameZone',
+  'catalogScalePatterns',
+  'catalogMaxFrames',
+  'queueMaxItems',
+  'terminalPerPage',
+]);
+
 /**
- * 校验单个可写配置项；仅做语法/取值范围校验（路径是否越界由命令层经 boundary 校验）。
+ * 校验单个配置项；仅做语法/取值范围校验（路径是否越界由命令层经 boundary 校验）。
+ * 只读键（P3 §6）同样做取值校验，但合法值最终仍以 CONFIG_INVALID_KEY 拒绝写入——
+ * 这样「值非法」（CONFIG_INVALID_VALUE）与「键只读」（CONFIG_INVALID_KEY）两类错误各自明确。
  * @returns {{ok:true,value:any}|{ok:false,code:string,message:string}}
  */
 export function validateConfigEntry(key, value) {
-  if (!WRITABLE_CONFIG_KEYS.includes(key)) {
+  if (!WRITABLE_CONFIG_KEYS.includes(key) && !READONLY_CONFIG_KEYS.includes(key)) {
     return {
       ok: false,
       code: 'CONFIG_INVALID_KEY',
@@ -209,55 +242,103 @@ export function validateConfigEntry(key, value) {
     };
   }
   const invalid = (expect) => ({ ok: false, code: 'CONFIG_INVALID_VALUE', message: `配置项 ${key} 期望 ${expect}，收到: ${JSON.stringify(value)}` });
+  /** 取值校验通过后：可写键原样返回；只读键拒绝写入（值本身仍是合法的）。 */
+  const accept = (normalized) => {
+    if (WRITABLE_CONFIG_KEYS.includes(key)) return { ok: true, value: normalized };
+    return {
+      ok: false,
+      code: 'CONFIG_INVALID_KEY',
+      message: `配置键 ${key} 为只读（P3 §6：随包默认，真机校准后改默认值）；可写键：${WRITABLE_CONFIG_KEYS.join(', ')}`,
+    };
+  };
   switch (key) {
     case 'outputRoot': {
       if (typeof value !== 'string') return invalid('字符串');
       const trimmed = value.trim();
       if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = 会话工作区 output\\pdf）');
-      return { ok: true, value: trimmed };
+      return accept(trimmed);
     }
     case 'parallel': {
-      if (value === 'auto') return { ok: true, value: 'auto' };
-      if (Number.isInteger(value) && value >= 1 && value <= 8) return { ok: true, value };
+      if (value === 'auto') return accept('auto');
+      if (Number.isInteger(value) && value >= 1 && value <= 8) return accept(value);
       return invalid("'auto' 或 1–8 的整数");
     }
     case 'pdfPaper': {
-      if (value === 'A4-landscape' || value === 'keep') return { ok: true, value };
+      if (value === 'A4-landscape' || value === 'keep') return accept(value);
       return invalid("'A4-landscape' | 'keep'");
     }
     case 'sortMode': {
-      if (value === 'drawingNo' || value === 'filename') return { ok: true, value };
+      if (value === 'drawingNo' || value === 'filename') return accept(value);
       return invalid("'drawingNo' | 'filename'");
     }
     case 'allowExternalPaths': {
-      if (typeof value === 'boolean') return { ok: true, value };
+      if (typeof value === 'boolean') return accept(value);
       return invalid('布尔值');
     }
     case 'odaPath': {
       if (typeof value !== 'string') return invalid('字符串（ODAFileConverter.exe 路径）');
       const trimmed = value.trim();
       if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = 自动探测）');
-      return { ok: true, value: trimmed };
+      return accept(trimmed);
     }
     case 'officeEngine': {
-      if (value === 'auto' || value === 'com' || value === 'python') return { ok: true, value };
+      if (value === 'auto' || value === 'com' || value === 'python') return accept(value);
       return invalid("'auto' | 'com' | 'python'");
     }
     case 'venvPython': {
       if (typeof value !== 'string') return invalid('字符串（python.exe 路径）');
       const trimmed = value.trim();
       if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = 自动探测本机 Python）');
-      return { ok: true, value: trimmed };
+      return accept(trimmed);
     }
     case 'previewPriority': {
-      if (value === 'foreground' || value === 'background') return { ok: true, value };
+      if (value === 'foreground' || value === 'background') return accept(value);
       return invalid("'foreground' | 'background'");
     }
     case 'officeTemplatesDir': {
       if (typeof value !== 'string') return invalid('字符串（自定义模板/样式集目录）');
       const trimmed = value.trim();
       if (trimmed && !isAbsolute(trimmed)) return invalid('绝对路径（或空字符串 = runtime\\templates）');
-      return { ok: true, value: trimmed };
+      return accept(trimmed);
+    }
+    // ── P3 §5.4 / §2 / §3 增量 ──
+    case 'previewCacheSize': {
+      if (Number.isInteger(value) && value >= 1 && value <= 10) return accept(value);
+      return invalid('1–10 的整数（预览 blob 缓存条数）');
+    }
+    // 以下五个键 P3 §6 标注为「不可写（随包默认）」：取值照常校验，写入仍被 accept 拒绝。
+    case 'catalogMaxFrames': {
+      if (Number.isInteger(value) && value >= 1 && value <= 5000) return accept(value);
+      return invalid('1–5000 的整数（目录表单次图框上限）');
+    }
+    case 'queueMaxItems': {
+      if (Number.isInteger(value) && value >= 1 && value <= 100) return accept(value);
+      return invalid('1–100 的整数（CAD 批量队列条目上限）');
+    }
+    case 'terminalPerPage': {
+      if (Number.isInteger(value) && value >= 1 && value <= 40) return accept(value);
+      return invalid('1–40 的整数（端子排每页行数）');
+    }
+    case 'catalogTitleNameZone': {
+      if (!Array.isArray(value) || value.length !== 4) return invalid('[x0,y0,x1,y1] 四个 0–1 数字');
+      const zone = value.map((item) => Number(item));
+      if (zone.some((item) => !Number.isFinite(item) || item < 0 || item > 1)) return invalid('[x0,y0,x1,y1] 四个 0–1 数字');
+      if (!(zone[0] < zone[2]) || !(zone[1] < zone[3])) return invalid('x0 < x1 且 y0 < y1 的 0–1 数字四元组');
+      return accept(zone);
+    }
+    case 'catalogScalePatterns': {
+      if (!Array.isArray(value) || !value.length) return invalid('非空正则字符串数组');
+      const patterns = [];
+      for (const item of value) {
+        if (typeof item !== 'string' || !item.trim()) return invalid('非空正则字符串数组');
+        try {
+          new RegExp(item, 'i');
+        } catch {
+          return invalid(`可编译的正则（无法编译: ${item}）`);
+        }
+        patterns.push(item);
+      }
+      return accept(patterns);
     }
     default:
       return { ok: false, code: 'CONFIG_INVALID_KEY', message: `不支持的配置键: ${key}` };
