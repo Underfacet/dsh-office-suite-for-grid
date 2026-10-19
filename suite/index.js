@@ -74,7 +74,7 @@ export function apply(ctx, config = {}) {
           type: 'array',
           items: { type: 'object', additionalProperties: true },
           description:
-            '编辑指令数组（非空，顺序执行）。Word：create/paragraph(setText|setStyle|insert|delete|append)/heading/table(setCell|addRow|deleteRow|addColumn|deleteColumn)/saveAs；Excel：create/cell(value|formula)/row/column/sheet/saveAs。完整字段见 docs/P2-设计.md §3.2',
+            '编辑指令数组（非空，顺序执行）。每条为双字段 {action, op, ...}：action ∈ create|paragraph|heading|table|saveAs（Word）或 create|cell|row|column|sheet|saveAs（Excel）；op 为子操作（如 paragraph 的 setText/setStyle/insert/delete/append，table 的 setCell/addRow/deleteRow/addColumn/deleteColumn，cell 的 value/formula）。完整字段见 docs/P2-设计.md §3.2',
         },
         engine: {
           type: 'string',
