@@ -1,0 +1,24 @@
+{
+  "id": "gb4728.7.RING-MAIN",
+  "name": { "zh": "环网柜（组合）", "en": "Ring main unit (composite)" },
+  "category": "switchgear",
+  "standard": { "part": "GB/T 4728.7-2022", "clause": "" },
+  "view": { "widthMm": 56, "heightMm": 44 },
+  "primitives": [
+    { "type": "rect", "origin": [0, 0], "width": 56, "height": 44, "stroke": 0.35 },
+    { "type": "text", "at": [28, 39], "text": "环网柜", "sizeMm": 3, "anchor": "top-center" }
+  ],
+  "compose": [
+    { "symbolRef": "gb4728.3.BUS", "at": [4, 6], "scale": 0.4 },
+    { "symbolRef": "gb4728.7.QL", "at": [2, 12] },
+    { "symbolRef": "gb4728.7.QL", "at": [20, 12] },
+    { "symbolRef": "gb4728.7.QL", "at": [38, 12] },
+    { "symbolRef": "gb4728.7.FU", "at": [20, 26] }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [28, 0] },
+    { "id": "T2", "at": [56, 22] },
+    { "id": "T3", "at": [28, 44] },
+    { "id": "T4", "at": [0, 22] }
+  ]
+}

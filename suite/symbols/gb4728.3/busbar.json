@@ -1,0 +1,16 @@
+{
+  "id": "gb4728.3.BUS",
+  "name": { "zh": "母线（汇流排）", "en": "Busbar" },
+  "category": "connection",
+  "standard": { "part": "GB/T 4728.3-2022", "clause": "" },
+  "view": { "widthMm": 120, "heightMm": 8 },
+  "primitives": [
+    { "type": "polyline", "points": [[0, 4], [120, 4]], "stroke": 0.7 }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 4] },
+    { "id": "T2", "at": [40, 4] },
+    { "id": "T3", "at": [80, 4] },
+    { "id": "T4", "at": [120, 4] }
+  ]
+}

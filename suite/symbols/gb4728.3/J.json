@@ -1,0 +1,16 @@
+{
+  "id": "gb4728.3.J",
+  "name": { "zh": "连接点（T 接）", "en": "Junction point" },
+  "category": "connection",
+  "standard": { "part": "GB/T 4728.3-2022", "clause": "" },
+  "view": { "widthMm": 12, "heightMm": 12 },
+  "primitives": [
+    { "type": "polyline", "points": [[0, 6], [4.8, 6]], "stroke": 0.35 },
+    { "type": "circle", "center": [6, 6], "radius": 1.2, "stroke": 0.5 },
+    { "type": "polyline", "points": [[7.2, 6], [12, 6]], "stroke": 0.35 }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 6] },
+    { "id": "T2", "at": [12, 6] }
+  ]
+}

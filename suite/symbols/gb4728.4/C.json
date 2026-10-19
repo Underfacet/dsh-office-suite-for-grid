@@ -1,0 +1,18 @@
+{
+  "id": "gb4728.4.C",
+  "name": { "zh": "电容器", "en": "Capacitor" },
+  "category": "passive",
+  "standard": { "part": "GB/T 4728.4-2022", "clause": "" },
+  "view": { "widthMm": 16, "heightMm": 14 },
+  "primitives": [
+    { "type": "polyline", "points": [[0, 7], [6, 7]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[6, 3], [6, 11]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[10, 3], [10, 11]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[10, 7], [16, 7]], "stroke": 0.35 },
+    { "type": "text", "at": [8, 12], "text": "C", "sizeMm": 2.5, "anchor": "top-center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 7] },
+    { "id": "T2", "at": [16, 7] }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "gb4728.6.TV",
+  "name": { "zh": "电压互感器", "en": "Voltage transformer" },
+  "category": "instrument",
+  "standard": { "part": "GB/T 4728.6-2022", "clause": "" },
+  "view": { "widthMm": 20, "heightMm": 24 },
+  "primitives": [
+    { "type": "circle", "center": [10, 9], "radius": 4.5, "stroke": 0.5 },
+    { "type": "polyline", "points": [[0, 9], [5.5, 9]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[14.5, 9], [20, 9]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[10, 13.5], [10, 18]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[7, 18], [13, 18]], "stroke": 0.35 },
+    { "type": "text", "at": [10, 20], "text": "TV", "sizeMm": 2.5, "anchor": "top-center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 9] },
+    { "id": "T2", "at": [20, 9] }
+  ]
+}

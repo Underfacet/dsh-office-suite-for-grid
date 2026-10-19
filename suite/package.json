@@ -20,6 +20,8 @@
     "host/*.js",
     "host/ops/*.js",
     "engines/*.ps1",
+    "engines/*.py",
+    "requirements-office.txt",
     "symbols/**/*.json",
     "symbols/*.md",
     "locale/*.json",

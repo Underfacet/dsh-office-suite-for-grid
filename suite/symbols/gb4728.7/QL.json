@@ -1,0 +1,18 @@
+{
+  "id": "gb4728.7.QL",
+  "name": { "zh": "负荷开关", "en": "Switch-disconnector (load switch)" },
+  "category": "switchgear",
+  "standard": { "part": "GB/T 4728.7-2022", "clause": "" },
+  "view": { "widthMm": 16, "heightMm": 12 },
+  "primitives": [
+    { "type": "polyline", "points": [[0, 6], [7, 6]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[7, 6], [10.5, 1.5]], "stroke": 0.35 },
+    { "type": "arc", "center": [11.6, 6], "radius": 2, "fromDeg": -90, "toDeg": 0, "stroke": 0.35 },
+    { "type": "polyline", "points": [[13.6, 6], [16, 6]], "stroke": 0.35 },
+    { "type": "text", "at": [8, 8], "text": "QL", "sizeMm": 2.5, "anchor": "top-center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 6] },
+    { "id": "T2", "at": [16, 6] }
+  ]
+}

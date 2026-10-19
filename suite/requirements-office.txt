@@ -1,0 +1,4 @@
+# P2 Office 编辑/排版引擎依赖（顶层锁定；传递依赖由 pip 解析）
+# 由 ops/venv.js + engines/pyenv.ps1 安装到 runtime\venv
+python-docx==1.2.0
+openpyxl==3.1.5

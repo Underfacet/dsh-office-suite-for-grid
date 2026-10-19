@@ -1,5 +1,5 @@
 ﻿[CmdletBinding()]
-param([string]$Json = '{}')
+param([string]$Json = '{}', [switch]$Refresh)
 $ErrorActionPreference = 'SilentlyContinue'
 $result = [ordered]@{}
 
@@ -182,6 +182,108 @@ $result['oda'] = [ordered]@{
   converter = $odaConverter
   paths     = @($odaPaths)
   roots     = @($odaRoots)
+}
+
+# ───────────────────────── P2 新增：venv 状态（保留既有字段） ─────────────────────────
+$engineDir = $PSScriptRoot
+$packageDir = Split-Path -Parent $engineDir
+$projectDir = Split-Path -Parent $packageDir
+$venvDir = Join-Path $projectDir 'runtime\venv'
+$venvPython = Join-Path $venvDir 'Scripts\python.exe'
+$venvPresent = [bool](Test-Path -LiteralPath $venvPython)
+$suiteVersion = $null
+$packageJson = Join-Path $packageDir 'package.json'
+if (Test-Path -LiteralPath $packageJson) {
+  try { $suiteVersion = [string]((Get-Content -LiteralPath $packageJson -Raw -ErrorAction Stop) | ConvertFrom-Json).version } catch { }
+}
+$versionMarker = $null
+if (Test-Path -LiteralPath (Join-Path $venvDir 'SUITE_VERSION')) {
+  try { $versionMarker = ((Get-Content -LiteralPath (Join-Path $venvDir 'SUITE_VERSION') -Raw -ErrorAction Stop)).Trim() } catch { }
+}
+$venvPythonVersion = $null
+$pyvenvCfg = Join-Path $venvDir 'pyvenv.cfg'
+if (Test-Path -LiteralPath $pyvenvCfg) {
+  try {
+    $cfg = Get-Content -LiteralPath $pyvenvCfg -Raw -ErrorAction Stop
+    if ($cfg -match '(?im)^\s*version(?:_info)?\s*=\s*([^\r\n]+)') { $venvPythonVersion = $Matches[1].Trim() }
+  } catch { }
+}
+function Get-DistInfoVersion([string]$siteDir, [string]$prefix) {
+  if (-not (Test-Path -LiteralPath $siteDir)) { return $null }
+  $item = @(Get-ChildItem -LiteralPath $siteDir -Directory -Filter "$prefix-*.dist-info" -ErrorAction SilentlyContinue | Select-Object -First 1)
+  if ($item.Count -eq 0) { return $null }
+  $name = [string]$item[0].Name
+  $stem = $name.Substring(0, $name.Length - '.dist-info'.Length)
+  $rest = $stem.Substring($prefix.Length + 1)
+  return ($rest -split '-')[0]
+}
+$sitePackages = Join-Path $venvDir 'Lib\site-packages'
+$docxVersion = Get-DistInfoVersion $sitePackages 'python_docx'
+$openpyxlVersion = Get-DistInfoVersion $sitePackages 'openpyxl'
+$venvHealthy = [bool]($venvPresent -and $versionMarker -and $suiteVersion -and ($versionMarker -eq $suiteVersion) -and $docxVersion -and $openpyxlVersion)
+$result['venv'] = [ordered]@{
+  present       = $venvPresent
+  dir           = $venvDir
+  healthy       = $venvHealthy
+  pythonVersion = $venvPythonVersion
+  packages      = [ordered]@{ docx = $docxVersion; openpyxl = $openpyxlVersion }
+  suiteVersion  = $suiteVersion
+  versionMarker = $versionMarker
+}
+
+# ───────────────────────── P2 新增：Office COM 实例化实测（仅 refresh 强刷） ─────────────────────────
+$refreshRequired = [bool]$Refresh
+try {
+  $probeArg = $Json | ConvertFrom-Json
+  if ($probeArg.refresh -eq $true) { $refreshRequired = $true }
+} catch { }
+
+function Test-ComApplication([string]$progId, [int]$timeoutSec) {
+  $job = $null
+  try {
+    $job = Start-Job -ScriptBlock {
+      param($id)
+      try {
+        $app = New-Object -ComObject $id
+        try { $app.Visible = $false } catch { }
+        try { $app.Quit() } catch { }
+        return $true
+      } catch { return $false }
+    } -ArgumentList $progId
+    $completed = Wait-Job -Job $job -Timeout $timeoutSec
+    if (-not $completed) { return $false }
+    $out = Receive-Job -Job $job -ErrorAction SilentlyContinue
+    return [bool]($out -contains $true)
+  } catch {
+    return $false
+  } finally {
+    if ($null -ne $job) {
+      try { Stop-Job -Job $job -ErrorAction SilentlyContinue } catch { }
+      try { Remove-Job -Job $job -Force -ErrorAction SilentlyContinue } catch { }
+    }
+  }
+}
+
+$wordComUsable = $null
+$excelComUsable = $null
+if ($refreshRequired) {
+  $wordComUsable = Test-ComApplication 'Word.Application' 10
+  $excelComUsable = Test-ComApplication 'Excel.Application' 10
+}
+$wordInfo = $result['Word.Application']
+$excelInfo = $result['Excel.Application']
+$result['officeCom'] = [ordered]@{
+  refreshed = $refreshRequired
+  word      = [ordered]@{
+    present   = [bool]$wordInfo.present
+    curVer    = $wordInfo.curVer
+    comUsable = $wordComUsable
+  }
+  excel     = [ordered]@{
+    present   = [bool]$excelInfo.present
+    curVer    = $excelInfo.curVer
+    comUsable = $excelComUsable
+  }
 }
 
 $result['os'] = [System.Environment]::OSVersion.VersionString

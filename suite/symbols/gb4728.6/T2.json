@@ -1,0 +1,19 @@
+{
+  "id": "gb4728.6.T2",
+  "name": { "zh": "双绕组变压器", "en": "Two-winding transformer" },
+  "category": "transformer",
+  "standard": { "part": "GB/T 4728.6-2022", "clause": "" },
+  "view": { "widthMm": 26, "heightMm": 28 },
+  "primitives": [
+    { "type": "circle", "center": [13, 7.5], "radius": 5, "stroke": 0.5 },
+    { "type": "circle", "center": [13, 20.5], "radius": 5, "stroke": 0.5 },
+    { "type": "polyline", "points": [[13, 0], [13, 2.5]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[13, 12.5], [13, 15.5]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[13, 25.5], [13, 28]], "stroke": 0.35 },
+    { "type": "text", "at": [21, 14], "text": "T2", "sizeMm": 2.5, "anchor": "center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [13, 0] },
+    { "id": "T2", "at": [13, 28] }
+  ]
+}

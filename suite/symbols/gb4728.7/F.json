@@ -1,0 +1,20 @@
+{
+  "id": "gb4728.7.F",
+  "name": { "zh": "避雷器", "en": "Surge arrester" },
+  "category": "protective",
+  "standard": { "part": "GB/T 4728.7-2022", "clause": "" },
+  "view": { "widthMm": 16, "heightMm": 22 },
+  "primitives": [
+    { "type": "rect", "origin": [3, 5], "width": 10, "height": 12, "stroke": 0.35 },
+    { "type": "polyline", "points": [[0, 11], [3, 11]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[13, 11], [16, 11]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[4, 4], [12, 18]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[12, 18], [10.6, 17.4]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[12, 18], [11.6, 15.9]], "stroke": 0.5 },
+    { "type": "text", "at": [1, 20], "text": "F", "sizeMm": 2.5, "anchor": "top-left" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 11] },
+    { "id": "T2", "at": [16, 11] }
+  ]
+}

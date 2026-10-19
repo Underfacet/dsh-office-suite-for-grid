@@ -1,0 +1,15 @@
+{
+  "id": "gb4728.9.NODE",
+  "name": { "zh": "通信节点（通用）", "en": "Telecom node (generic)" },
+  "category": "telecom",
+  "standard": { "part": "GB/T 4728.9-2022", "clause": "" },
+  "view": { "widthMm": 26, "heightMm": 14 },
+  "primitives": [
+    { "type": "rect", "origin": [0, 0], "width": 26, "height": 14, "stroke": 0.35 },
+    { "type": "text", "at": [13, 7], "text": "NODE", "sizeMm": 2.5, "anchor": "center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [0, 7] },
+    { "id": "T2", "at": [26, 7] }
+  ]
+}

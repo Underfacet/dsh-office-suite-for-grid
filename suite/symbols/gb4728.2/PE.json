@@ -1,0 +1,17 @@
+{
+  "id": "gb4728.2.PE",
+  "name": { "zh": "接地（保护接地）", "en": "Earth (protective earth)" },
+  "category": "connection",
+  "standard": { "part": "GB/T 4728.2-2022", "clause": "" },
+  "view": { "widthMm": 16, "heightMm": 16 },
+  "primitives": [
+    { "type": "polyline", "points": [[8, 0], [8, 3]], "stroke": 0.35 },
+    { "type": "polyline", "points": [[0, 3], [16, 3]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[4, 6], [12, 6]], "stroke": 0.5 },
+    { "type": "polyline", "points": [[6.5, 9], [9.5, 9]], "stroke": 0.5 },
+    { "type": "text", "at": [8, 11], "text": "PE", "sizeMm": 2.5, "anchor": "top-center" }
+  ],
+  "terminals": [
+    { "id": "T1", "at": [8, 0] }
+  ]
+}
