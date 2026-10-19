@@ -15,5 +15,8 @@
 - P2：Office 编辑/排版（office_edit/office_format 工具、9 个新命令、COM+Python venv 双引擎、自动备份 3 份轮换、样式集/模板、批量排版任务）
 - P2：Visio 电网图（主接线图/配电系统图/网络拓扑图，接线校验，17 项 GB/T 4728 符号库，本机三图冒烟通过）
 - P2：suite.preview 契约修正、默认样式集、配置白名单扩展
+- P3：CAD 目录表（suite.cad.catalog，图号/图名/图幅/比例/张数 → xlsx/CSV）、批量队列（inputs[] 父任务聚合）、Office 导出（office_export/suite.export，走内置 officeToPdf，真 PDF 实测）
+- P3：五类新电网图（protection/substationPlan/geoNetwork/powerFlow/terminalStrip）+ visio-layouts 引擎（本机冒烟 5/5，terminalStrip 多页）
+- P3：visio_draw 九类分派、命令 21 个、cad-batch 引擎预判修复
 
 
