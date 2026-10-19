@@ -3,10 +3,15 @@
  *
  * 内存态（进程重启即失效）；每个任务：
  * - 状态机：queued → running → converting → splitting → merging → done | failed | cancelled
- * - 进度：progress { filesDone, filesTotal, framesDone, framesTotal, currentFile }
+ * - 进度：progress { filesDone, filesTotal, framesDone, framesTotal, itemsDone, itemsTotal, currentFile }
  * - 日志：环形缓冲 200 行/任务，元素 { t, level, msg }
  * - 取消：每个任务一个 AbortController；cancel() 后任务状态置 cancelled 并中止流水线
  * - 订阅：subscribe(fn) 供（可选的）Host→Client 事件推送使用；P1 面板以轮询 suite.cad.status 为主。
+ *
+ * P3 §3.3 最小扩展（向后兼容）：
+ * - initialProgress() 增加 itemsDone/itemsTotal（批量队列条目进度；旧任务快照多两个 0 字段）；
+ * - tick() 的 numericKeys 增加 'itemsDone'/'itemsTotal'；
+ * - create(meta) 支持 parentId（子任务归属，cad.queue 聚合器用），summary/snapshot 透传。
  */
 import { OpsError } from './ops.js';
 
@@ -46,6 +51,9 @@ function initialProgress() {
     filesTotal: 0,
     framesDone: 0,
     framesTotal: 0,
+    /** P3 §3.3：批量队列条目进度（父任务 cad.queue 聚合子任务终态数）。 */
+    itemsDone: 0,
+    itemsTotal: 0,
     currentFile: null,
   };
 }
@@ -74,6 +82,8 @@ export class TaskStore {
       engine: meta.engine ?? null,
       input: meta.input ?? null,
       output: meta.output ?? null,
+      /** P3 §3.3：子任务归属（批量队列父任务 taskId）；普通任务为 null。 */
+      parentId: meta.parentId ?? null,
       state: 'queued',
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -112,6 +122,7 @@ export class TaskStore {
       engine: task.engine,
       input: task.input,
       output: task.output,
+      parentId: task.parentId ?? null,
       progress: { ...task.progress },
       error: task.error ? { ...task.error } : null,
       logCount: task.log.length,
@@ -132,6 +143,7 @@ export class TaskStore {
       engine: task.engine,
       input: task.input,
       output: task.output,
+      parentId: task.parentId ?? null,
       progress: { ...task.progress },
       log: task.log.map((entry) => ({ ...entry })),
       error: task.error ? { ...task.error } : null,
@@ -160,7 +172,7 @@ export class TaskStore {
     const task = this.requireTask(taskId);
     if (isTerminal(task.state)) return { ...task.progress };
     const progress = task.progress;
-    const numericKeys = ['filesDone', 'filesTotal', 'framesDone', 'framesTotal'];
+    const numericKeys = ['filesDone', 'filesTotal', 'framesDone', 'framesTotal', 'itemsDone', 'itemsTotal'];
     for (const key of numericKeys) {
       if (patch[key] !== undefined && Number.isFinite(Number(patch[key]))) {
         progress[key] = Math.max(0, Math.floor(Number(patch[key])));
@@ -237,6 +249,18 @@ export class TaskStore {
     this.appendLog(task.id, 'warn', '任务已由用户取消（已产出的中间 PDF 保留在临时目录）');
     this.emit(task);
     return { taskId: task.id, state: 'cancelled' };
+  }
+
+  /**
+   * P3 §3.3：设置子任务归属（cad.queue 聚合器在提交子任务后回填 parentId）。
+   * 任务不存在时抛 TASK_NOT_FOUND。
+   */
+  setParent(taskId, parentId) {
+    const task = this.requireTask(taskId);
+    task.parentId = parentId == null ? null : String(parentId);
+    task.updatedAt = nowIso();
+    this.emit(task);
+    return task;
   }
 
   /** 订阅任务变化（可选事件推送用）；返回取消订阅函数。 */
