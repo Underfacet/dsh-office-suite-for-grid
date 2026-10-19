@@ -1,4 +1,4 @@
-# 安装前检查与指引脚本（PowerShell 5.1 兼容）
+﻿# 安装前检查与指引脚本（PowerShell 5.1 兼容）
 # 用法：powershell -NoProfile -ExecutionPolicy Bypass -File tools\install.ps1
 $ErrorActionPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8

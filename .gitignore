@@ -8,6 +8,7 @@ tests-local/*
 node_modules/
 suite/node_modules/
 dist/
+docs-site/
 *.tgz
 
 # ── 密钥与本地配置（绝不入库） ──

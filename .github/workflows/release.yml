@@ -1,0 +1,216 @@
+name: release
+
+# P4 发布工作流（docs/P4-发布与分发.md §6.2）
+# 触发：推送 tag release-*（与 tools/release.ps1 默认 tag 一致）。
+# 产物：GitHub Release（tgz + index.json + SHA256SUMS[+ 可选便携 Python]）
+#       + gh-pages（docs-site/index.json + icon.svg + README 摘要 index.html）。
+#
+# 注意：
+#   1. 不自动 npm publish。npm 实发需 NPM_TOKEN，由维护者在确认后另行执行（P4 §3.2）。
+#   2. python embed zip 为占位资产：market-entry.json 的 assets.pythonEmbed.enabled=true
+#      且填好 sha256 后才会下载并校验；P4 首版保持 false 并输出 TODO notice。
+#   3. 索引发布时间用 tag 提交时间（SOURCE_DATE_EPOCH），保证 Pages 与 Release 的
+#      index.json 字节一致。
+
+on:
+  push:
+    tags:
+      - 'release-*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: '已存在的发布 tag（例如 release-1.0.0）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: test (node 22 / windows-latest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: suite/package-lock.json
+
+      - name: npm ci（无 package-lock.json 则跳过）
+        working-directory: suite
+        shell: pwsh
+        run: |
+          if (Test-Path 'package-lock.json') {
+            npm ci
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } else {
+            Write-Host 'suite/package-lock.json 不存在：无 npm 依赖，跳过 npm ci'
+          }
+
+      - name: 全量单元测试
+        env:
+          SUITE_COM_SMOKE: '0'
+        run: node --test "tests/**/*.test.js"
+
+  package:
+    name: package (npm pack)
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 安装依赖
+        working-directory: suite
+        shell: pwsh
+        run: |
+          if (Test-Path 'package-lock.json') {
+            npm ci
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: npm pack
+        working-directory: suite
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          New-Item -ItemType Directory -Force -Path ..\dist | Out-Null
+          npm pack --pack-destination ..\dist
+          if ($LASTEXITCODE -ne 0) { throw 'npm pack 失败' }
+          $tgz = @(Get-ChildItem ..\dist -Filter '*.tgz')
+          if ($tgz.Count -ne 1) { throw "期望 1 个 tgz，实际 $($tgz.Count) 个" }
+          Write-Host "npm pack 产物：$($tgz[0].Name)（$($tgz[0].Length) bytes）"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-tgz
+          path: dist/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+
+  pages:
+    name: pages (gh-pages)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 生成 Pages 产物（index.json + icon.svg + index.html）
+        run: |
+          set -euo pipefail
+          # 用 tag 提交时间固定 publishTimestamp，保证与 release job 的 index.json 一致。
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+          export SOURCE_DATE_EPOCH
+          node tools/build-index.mjs --out docs-site/index.json --pages docs-site
+          test -s docs-site/index.json
+          test -s docs-site/icon.svg
+          test -s docs-site/index.html
+          node -e "const i=require('./docs-site/index.json'); if (i.format !== 1 || !Array.isArray(i.plugins) || !i.plugins[0] || i.plugins[0].versions.length === 0) { console.error('index.json 不符合格式 1'); process.exit(1); }"
+
+      - name: 部署 gh-pages（peaceiris/actions-gh-pages）
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs-site
+          publish_branch: gh-pages
+          force_orphan: true
+
+  release:
+    name: release (GitHub Releases)
+    needs: [package, pages]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-tgz
+          path: dist
+
+      - name: 生成索引资产（dist/index.json）
+        run: |
+          set -euo pipefail
+          SOURCE_DATE_EPOCH="$(git show -s --format=%ct HEAD)"
+          export SOURCE_DATE_EPOCH
+          node tools/build-index.mjs --out dist/index.json
+          test -s dist/index.json
+
+      - name: 可选便携 Python 资产（market-entry.json 声明后启用）
+        run: |
+          set -euo pipefail
+          PY_URL="$(node -e "const m=require('./market-entry.json'); const p=m.assets&&m.assets.pythonEmbed; if(p&&p.enabled===true&&typeof p.url==='string'&&p.url) process.stdout.write(p.url)")"
+          if [ -z "$PY_URL" ]; then
+            echo "::notice title=python-embed::market-entry.json assets.pythonEmbed.enabled 非 true：P4 首版跳过便携 Python 资产（TODO：填 sha256 后启用）"
+            exit 0
+          fi
+          PY_FILE="$(node -e "const p=require('./market-entry.json').assets.pythonEmbed; const u=new URL(p.url); process.stdout.write(typeof p.filename==='string'&&p.filename ? p.filename : u.pathname.split('/').pop())")"
+          echo "下载便携 Python：$PY_URL -> dist/$PY_FILE"
+          curl -fL --retry 3 --retry-delay 2 -o "dist/$PY_FILE" "$PY_URL"
+          PY_SHA="$(node -e "const p=require('./market-entry.json').assets.pythonEmbed; process.stdout.write(typeof p.sha256==='string'?p.sha256:'')")"
+          if [ -n "$PY_SHA" ]; then
+            echo "$PY_SHA  dist/$PY_FILE" | sha256sum -c -
+          else
+            echo "::warning title=python-embed::assets.pythonEmbed.sha256 为空，下载资产未做校验和验证"
+          fi
+
+      - name: 生成 SHA256SUMS.txt
+        run: |
+          set -euo pipefail
+          cd dist
+          shopt -s nullglob
+          files=(*.tgz index.json)
+          zips=(*.zip)
+          files+=("${zips[@]}")
+          sha256sum "${files[@]}" > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: 创建 / 更新 GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ inputs.tag || github.ref_name }}"
+          shopt -s nullglob
+          assets=(dist/*.tgz dist/index.json dist/SHA256SUMS.txt)
+          zips=(dist/*.zip)
+          assets+=("${zips[@]}")
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG 已存在：上传/覆盖资产（幂等）"
+            gh release upload "$TAG" "${assets[@]}" --clobber
+          else
+            gh release create "$TAG" \
+              --title "Release ${TAG#release-}" \
+              --generate-notes \
+              "${assets[@]}"
+          fi
+
+# npm publish 不在本工作流自动执行：需要 NPM_TOKEN，且发布不可回滚（P4 §3.2/§9 R-30）。
+# 维护者确认后手工执行：
+#   cd suite && npm publish --access public

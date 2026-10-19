@@ -1,0 +1,58 @@
+{
+  "$comment": "P4 市场条目元信息（手工维护）。tools/build-index.mjs 读取本文件 + suite/package.json 生成官方格式 1 的 index.json。字段说明见 docs/P4-发布与分发.md §1.2/§1.3。",
+  "name": "dsh-office-suite-for-grid",
+  "title": {
+    "en": "Office & Grid Suite for DSH",
+    "zh": "DSH 办公·电网绘图套件"
+  },
+  "description": {
+    "en": "Read, edit and format Word/Excel; draw GB/T 4728 Visio grid diagrams (single-line, protection, terminal strip...); smart CAD-to-PDF conversion with frame split, title-block catalog and batch queue. Windows, MIT.",
+    "zh": "Word/Excel 阅读编辑排版；GB/T 4728-2022 Visio 电网图（主接线/二次/端子排/地理接线/潮流图等）；CAD 转 PDF（图框自动分割、图签识别生成图纸目录表、批量队列）。Windows，MIT 开源。"
+  },
+  "author": "Underfacet",
+  "homepage": "https://github.com/Underfacet/dsh-office-suite-for-grid",
+  "repository": {
+    "url": "https://github.com/Underfacet/dsh-office-suite-for-grid",
+    "directory": "suite"
+  },
+  "indexUrl": "https://underfacet.github.io/dsh-office-suite-for-grid/index.json",
+  "icon": "icon.svg",
+  "category": "tools",
+  "categories": {
+    "tools": {
+      "title": {
+        "en": "Tools",
+        "zh": "工具"
+      }
+    }
+  },
+  "keywords": [
+    "office",
+    "word",
+    "excel",
+    "visio",
+    "cad",
+    "dwg",
+    "pdf",
+    "grid",
+    "电网",
+    "绘图"
+  ],
+  "labels": {
+    "windows": {
+      "title": {
+        "en": "Windows",
+        "zh": "Windows"
+      }
+    }
+  },
+  "assets": {
+    "pythonEmbed": {
+      "url": "https://www.python.org/ftp/python/3.12.10/python-3.12.10-embed-amd64.zip",
+      "filename": "python-3.12.10-embed-amd64.zip",
+      "sha256": "",
+      "enabled": false,
+      "note": "P4 首版占位：将 enabled 改为 true 并填写 sha256 后，release.yml 会下载该资产、校验后附到 GitHub Release；见 docs/P4-发布与分发.md §4.1。"
+    }
+  }
+}

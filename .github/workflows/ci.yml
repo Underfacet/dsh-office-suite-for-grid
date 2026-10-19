@@ -1,0 +1,157 @@
+name: ci
+
+# P4 CI（docs/P4-发布与分发.md §6.1）
+# GitHub 托管的 windows-latest 没有 Office/Visio/CAD，因此本工作流只做：
+#   JS 语法（node --check）→ 单元测试（node --test）→ PowerShell 5.1 语法 → npm 打包清单。
+# 真实 COM/Visio 冒烟放在文件末尾的 com-smoke（自托管 runner，默认不触发）。
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test (node 22 / windows-latest)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: suite/package-lock.json
+
+      - name: npm ci（无 package-lock.json 则跳过）
+        working-directory: suite
+        shell: pwsh
+        run: |
+          if (Test-Path 'package-lock.json') {
+            npm ci
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } else {
+            Write-Host 'suite/package-lock.json 不存在：无 npm 依赖，跳过 npm ci'
+          }
+
+      - name: 全量 JS 语法（node --check）
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = Get-ChildItem -Path . -Recurse -File | Where-Object {
+            $_.Extension -in '.js', '.mjs' -and
+            $_.FullName -notmatch '[\\/](node_modules|runtime|dist|output|tests-local)[\\/]'
+          }
+          Write-Host "node --check：$($files.Count) 个文件"
+          foreach ($file in $files) {
+            node --check $file.FullName
+            if ($LASTEXITCODE -ne 0) { throw "node --check 失败：$($file.FullName)" }
+          }
+          Write-Host 'node --check 全部通过'
+
+      - name: 单元测试（node --test）
+        env:
+          SUITE_COM_SMOKE: '0'
+        run: node --test "tests/**/*.test.js"
+
+      - name: PowerShell 5.1 语法检查（[scriptblock]::Create 逐文件）
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $files = @()
+          foreach ($root in @('tools', 'suite\engines')) {
+            if (Test-Path $root) {
+              $files += Get-ChildItem -Path $root -Recurse -File -Filter '*.ps1'
+            }
+          }
+          Write-Host "PowerShell 5.1 语法检查：$($files.Count) 个文件"
+          foreach ($file in $files) {
+            $bytes = [System.IO.File]::ReadAllBytes($file.FullName)
+            $hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
+            if (-not $hasBom) {
+              Write-Error "缺少 UTF-8 BOM（P2 约定，PS 5.1 读中文必需）：$($file.FullName)"
+              exit 1
+            }
+            $text = Get-Content -Raw -LiteralPath $file.FullName
+            try {
+              [void][scriptblock]::Create($text)
+            } catch {
+              Write-Error "语法错误：$($file.FullName) :: $($_.Exception.Message)"
+              exit 1
+            }
+          }
+          Write-Host 'PowerShell 5.1 语法与 BOM 检查通过'
+
+      - name: 打包清单校验（npm pack --dry-run --json）
+        working-directory: suite
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $raw = npm pack --dry-run --json 2>$null
+          if ($LASTEXITCODE -ne 0) { throw 'npm pack --dry-run 失败' }
+          $data = $raw | ConvertFrom-Json
+          $paths = @($data[0].files | ForEach-Object { $_.path -replace '\\', '/' })
+
+          $required = [ordered]@{
+            'engines/*.py'           = @($paths | Where-Object { $_ -match '^engines/[^/]+\.py$' })
+            'engines/*.ps1'          = @($paths | Where-Object { $_ -match '^engines/[^/]+\.ps1$' })
+            'requirements-office.txt' = @($paths | Where-Object { $_ -eq 'requirements-office.txt' })
+            'templates/**'           = @($paths | Where-Object { $_ -match '^templates/.+' })
+            'symbols/**'             = @($paths | Where-Object { $_ -match '^symbols/.+' })
+            'client.js'              = @($paths | Where-Object { $_ -eq 'client.js' })
+            'index.js'               = @($paths | Where-Object { $_ -eq 'index.js' })
+            'cordis.patch.yml'       = @($paths | Where-Object { $_ -eq 'cordis.patch.yml' })
+            'locale/*.json'          = @($paths | Where-Object { $_ -match '^locale/[^/]+\.json$' })
+            'icon.svg'               = @($paths | Where-Object { $_ -eq 'icon.svg' })
+          }
+          $missing = @($required.Keys | Where-Object { $required[$_].Count -eq 0 })
+          if ($missing.Count -gt 0) { throw "npm 包缺少必需文件：$($missing -join ', ')" }
+
+          Write-Host "npm pack OK：files=$($paths.Count) entryCount=$($data[0].entryCount)"
+          $paths | Sort-Object | ForEach-Object { Write-Host "  $_" }
+
+  # ───────────────────────── 自托管 runner 的 COM 冒烟（默认不运行） ─────────────────────────
+  # GitHub 托管 runner 没有 Office/Visio/CAD，COM 冒烟必须跑在自托管机器上：
+  #   1. 在装有 Office/Visio（及可选 CAD）的 Windows 机器注册 self-hosted runner，
+  #      标签：windows, office（CAD 再加 cad）；
+  #   2. 仓库 Settings → Secrets and variables → Actions → Variables 新建 SUITE_COM_SMOKE=1；
+  #   3. 本 job 的条件才成立；否则直接跳过，不阻塞普通 CI。
+  # 手动等效命令：
+  #   $env:SUITE_COM_SMOKE='1'; node --test tests/office-edit.test.js
+  #   powershell -NoProfile -ExecutionPolicy Bypass -File tools\grid-smoke.ps1
+  #   powershell -NoProfile -ExecutionPolicy Bypass -File tools\com-smoke.ps1 -Mode both
+  com-smoke:
+    name: COM smoke (self-hosted, optional)
+    if: ${{ vars.SUITE_COM_SMOKE == '1' }}
+    runs-on: [self-hosted, windows, office]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: npm ci（suite 依赖）
+        working-directory: suite
+        shell: pwsh
+        run: |
+          if (Test-Path 'package-lock.json') {
+            npm ci
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Office COM 冒烟（SUITE_COM_SMOKE=1）
+        env:
+          SUITE_COM_SMOKE: '1'
+        run: node --test tests/office-edit.test.js
+
+      - name: Visio 电网图冒烟
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File tools\grid-smoke.ps1
