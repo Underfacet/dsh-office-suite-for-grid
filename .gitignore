@@ -1,0 +1,30 @@
+# ── 运行时与产物（用户机生成，绝不入库） ──
+runtime/
+output/
+tests-local/*
+!tests-local/README.md
+
+# ── 依赖与构建 ──
+node_modules/
+suite/node_modules/
+dist/
+*.tgz
+
+# ── 密钥与本地配置（绝不入库） ──
+.env
+.env.*
+*.pem
+secrets/
+.github-token
+.gittoken
+
+# ── 系统与编辑器 ──
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── 日志、备份与临时 ──
+*.log
+*.bak
+*.tmp
+~$*
