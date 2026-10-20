@@ -67,7 +67,7 @@ jobs:
           node --test @files
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: PowerShell 5.1 语法检查（[scriptblock]::Create 逐文件）
+      - name: PowerShell 5.1 syntax check (scriptblock parse + BOM)
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -77,23 +77,17 @@ jobs:
               $files += Get-ChildItem -Path $root -Recurse -File -Filter '*.ps1'
             }
           }
-          Write-Host "PowerShell 5.1 语法检查：$($files.Count) 个文件"
+          Write-Host ("PowerShell 5.1 syntax check: {0} files" -f $files.Count)
           foreach ($file in $files) {
             $bytes = [System.IO.File]::ReadAllBytes($file.FullName)
             $hasBom = $bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF
             if (-not $hasBom) {
-              Write-Error "缺少 UTF-8 BOM（P2 约定，PS 5.1 读中文必需）：$($file.FullName)"
-              exit 1
+              throw ("missing UTF-8 BOM: " + $file.FullName)
             }
-            $text = Get-Content -Raw -LiteralPath $file.FullName
-            try {
-              [void][scriptblock]::Create($text)
-            } catch {
-              Write-Error "语法错误：$($file.FullName) :: $($_.Exception.Message)"
-              exit 1
-            }
+            $text = [System.IO.File]::ReadAllText($file.FullName, [System.Text.Encoding]::UTF8)
+            [void][scriptblock]::Create($text)
           }
-          Write-Host 'PowerShell 5.1 语法与 BOM 检查通过'
+          Write-Host 'PowerShell 5.1 syntax + BOM check passed'
 
       - name: 打包清单校验（npm pack --dry-run --json）
         working-directory: suite
