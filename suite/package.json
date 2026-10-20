@@ -1,6 +1,6 @@
 {
   "name": "dsh-office-suite-for-grid",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "DSH office & grid drawing suite: Office docs/spreadsheets read, edit and format; Visio grid diagrams; CAD-to-PDF smart conversion.",
   "license": "MIT",
   "type": "module",
