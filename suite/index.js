@@ -22,6 +22,7 @@ import {
   validateGridModel,
 } from './host/ops/grid-model.js';
 import { registerPanelCommands } from './host/commands-panel.js';
+import { registerPanelRpc } from './host/panel-rpc.js';
 
 void fileURLToPath;
 
@@ -302,6 +303,8 @@ export function apply(ctx, config = {}) {
   //    suite.cad.convert / suite.cad.status / suite.cad.cancel /
   //    suite.config.get / suite.config.set / suite.preview） ──
   disposers.push(registerPanelCommands(ctx, { config }));
+  // ── 面板本机 HTTP 路由：与命令注册共用 runSuiteCommand（规避 typert 网关 descriptor） ──
+  disposers.push(registerPanelRpc(ctx, config));
 
   // ── 系统提示：指引模型使用本套件工具 ──
   disposers.push(ctx.systemPrompt.section({

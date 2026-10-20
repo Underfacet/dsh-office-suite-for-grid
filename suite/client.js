@@ -7,10 +7,15 @@
  *   → 11 inject + apply
  *
  * 与设计文档 docs/P1-设计.md 的差异（均为有意修正，逐条注明）：
+ *  - 面板调用宿主命令改走插件自注册的同源 HTTP 路由 `/office-suite/rpc`（见 region 4）：
+ *    typert 网关按 descriptor 校验 `remote.commands.execute` 参数时报
+ *    missing "submittedAttachments"（框架层 descriptor 不一致），因此不再依赖
+ *    `remote.commands` / `remote.workspaceFiles`；工作区文件浏览改走同一路由的
+ *    workspace.list / workspace.stat，预览与诊断统一走 suite.preview。
  *  - §1.2 草图的 inject 把 `remote.commands` / `remote.workspaceFiles` /
  *    `remote.directoryPicker` 列为硬依赖。本实现改为**仅**硬依赖
  *    ['slots','layout','locale','theme','sessions','uiWorkspace','remote']，
- *    三个命名空间一律 `ctx.get(...)` 判空防御获取（见 region 4），缺挂时对应功能
+ *    命名空间一律 `ctx.get(...)` 判空防御获取（见 region 4），缺挂时对应功能
  *    禁用并提示 `common.remoteMissing`，避免命名空间未挂载导致整个插件 apply 崩溃。
  *  - §1.3/§0.5 说「浏览其他目录」模式用 uiWorkspace.listDirectory 即可。核实
  *    dsh-api-workspace-controller 的 directoryPicker/list 契约后确认：它只返回
@@ -191,7 +196,7 @@ window.__ModuleLoader__.load({
       'docs.preview.missingFonts': '缺失字体 {count} 个',
       'docs.preview.empty': '点击“预览”生成页面预览',
       'docs.preview.scheme.direct': '渲染方案：直连（A）',
-      'docs.preview.scheme.command': '渲染方案：命令（B）',
+      'docs.preview.scheme.command': '渲染方案：服务端命令通道',
       'docs.preview.cached': '预览缓存 {count}/{max}',
       'docs.export': '导出 PDF',
       'docs.export.running': '导出中…',
@@ -411,7 +416,7 @@ window.__ModuleLoader__.load({
       'diag.preview.unknown': '未知',
       'diag.preview.probing': '探测预览服务…',
       'diag.preview.direct': '直连（方案 A）',
-      'diag.preview.command': '命令（方案 B）',
+      'diag.preview.command': '服务端命令通道',
       'diag.preview.note': '探测方式：suite.preview（E2012 判定为不可用）',
       'diag.key.previewCacheSize': '预览缓存条数 previewCacheSize（1–10）',
       'diag.invalidCacheSize': '预览缓存条数只能是 1–10 的整数',
@@ -585,7 +590,7 @@ window.__ModuleLoader__.load({
       'docs.preview.missingFonts': '{count} missing font(s)',
       'docs.preview.empty': 'Press “Preview” to render this file',
       'docs.preview.scheme.direct': 'Render scheme: direct (A)',
-      'docs.preview.scheme.command': 'Render scheme: command (B)',
+      'docs.preview.scheme.command': 'Render scheme: server command channel',
       'docs.preview.cached': 'Preview cache {count}/{max}',
       'docs.export': 'Export PDF',
       'docs.export.running': 'Exporting…',
@@ -805,7 +810,7 @@ window.__ModuleLoader__.load({
       'diag.preview.unknown': 'Unknown',
       'diag.preview.probing': 'Probing the preview service…',
       'diag.preview.direct': 'Direct (scheme A)',
-      'diag.preview.command': 'Command (scheme B)',
+      'diag.preview.command': 'Server command channel',
       'diag.preview.note': 'Probed via suite.preview (E2012 means unavailable)',
       'diag.key.previewCacheSize': 'Preview cache entries previewCacheSize (1–10)',
       'diag.invalidCacheSize': 'Preview cache entries must be an integer between 1 and 10',
@@ -1716,10 +1721,10 @@ window.__ModuleLoader__.load({
     }
     //#endregion
 
-    //#region 4. remote 封装（callCommand / listWorkspace / externalList / subscribeProgress）
+    //#region 4. 命令路由封装（callCommand / listWorkspace / externalList / subscribeProgress）
     /**
-     * 防御式读取命名空间服务。`remote.commands` / `remote.workspaceFiles` /
-     * `remote.directoryPicker` 不写进 inject 硬依赖，缺挂时返回 null 由调用方降级。
+     * 防御式读取命名空间服务。`remote` / `uiWorkspace` 不写进 inject 硬依赖，
+     * 缺挂时返回 null 由调用方降级。
      */
     function safeService(ctx, key) {
       try {
@@ -1741,69 +1746,112 @@ window.__ModuleLoader__.load({
       return { code: 'UNKNOWN', message: String(error) };
     }
 
-    /**
-     * 面板 → Host：line = '/' + name + ' ' + JSON.stringify(args)，
-     * 经 remote.commands.execute(line, [], signal) 执行并展开
-     * `{ok:true,value}|{ok:false,error}`（§0.4），再解出 Host 的 `{ok,result}|{ok:false,error}`（§2）。
-     */
-    async function executeCommand(ctx, name, args, signal) {
-      const commands = safeService(ctx, 'remote.commands');
-      if (!commands || typeof commands.execute !== 'function') {
-        throw { code: 'COMMAND_MISSING', message: 'remote.commands is not mounted' };
-      }
-      const line = '/' + name + ' ' + JSON.stringify(args === undefined ? {} : args);
-      let wrapped;
+    /** 面板 → Host 的 RPC 路由（插件在 Host 侧自注册，与命令注册通道解耦）。 */
+    const RPC_PATH = '/office-suite/rpc';
+
+    /** 同源相对地址优先；必要时回退到 location.origin 拼出的绝对地址。 */
+    function rpcUrls() {
+      const urls = [RPC_PATH];
       try {
-        wrapped = await commands.execute(line, [], signal);
+        if (typeof location !== 'undefined' && location && typeof location.origin === 'string' && location.origin) {
+          const absolute = location.origin + RPC_PATH;
+          if (absolute !== RPC_PATH) urls.push(absolute);
+        }
+      } catch { /* location 不可用时只保留相对地址 */ }
+      return urls;
+    }
+
+    /** 从路由错误响应中尽量取出可读消息（响应体可能不是 JSON）。 */
+    function rpcErrorMessage(status, body) {
+      const error = body && typeof body === 'object' ? body.error : undefined;
+      if (error && typeof error.message === 'string' && error.message) return error.message;
+      if (body && typeof body.text === 'string') {
+        const parsed = parseJsonLoose(body.text);
+        const text = parsed && parsed.error && typeof parsed.error.message === 'string' ? parsed.error.message : '';
+        if (text) return text;
+      }
+      if (body && typeof body.message === 'string' && body.message) return body.message;
+      return 'RPC HTTP ' + status;
+    }
+
+    /** fetch 取消统一映射为旧网关的 gateway/cancelled（toPanelError 已识别）。 */
+    function cancelledError() {
+      return { code: 'gateway/cancelled', message: 'aborted' };
+    }
+
+    /**
+     * 面板 → Host：POST `/office-suite/rpc`，body = `{command, args}`；
+     * 响应信封沿用命令层现状 `{kind:'success'|'error', text}`（§2）：
+     *   - success：按既有 parseJsonLoose + `{ok,result}` 逻辑展开；
+     *   - error：沿用既有 normalizeThrown / COMMAND_FAILED 逻辑；
+     *   - 404/405：保留 COMMAND_MISSING（路由未注册 / 旧页面）。
+     * 不再依赖 remote.commands（typert descriptor 不一致）。
+     */
+    async function executeCommand(_ctx, name, args, signal) {
+      const payload = JSON.stringify({ command: name, args: args === undefined ? {} : args });
+      let response = null;
+      let lastError = null;
+      for (const url of rpcUrls()) {
+        try {
+          response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: payload,
+            signal,
+          });
+          lastError = null;
+          break;
+        } catch (error) {
+          if ((error && error.name === 'AbortError') || (signal && signal.aborted)) throw cancelledError();
+          lastError = error;
+        }
+      }
+      if (!response) {
+        throw normalizeThrown({
+          code: 'RPC_NETWORK',
+          message: '无法连接面板 RPC 路由' + (lastError && lastError.message ? '：' + lastError.message : ''),
+        });
+      }
+
+      // 路由未注册（如 Host 半未升级）时保持原命令缺失语义。
+      if (response.status === 404 || response.status === 405) {
+        throw { code: 'COMMAND_MISSING', message: 'command route not found: ' + name };
+      }
+
+      let body = null;
+      try {
+        body = await response.json();
       } catch (error) {
-        throw normalizeThrown(error);
+        if ((error && error.name === 'AbortError') || (signal && signal.aborted)) throw cancelledError();
+        throw { code: 'RPC_HTTP_' + response.status, message: rpcErrorMessage(response.status, null) };
       }
-      if (!wrapped || wrapped.ok !== true) throw normalizeThrown(wrapped && wrapped.error);
-      const execution = wrapped.value;
-      if (execution === undefined || execution === null) {
-        // §1.4 步骤 4：命令解析不到（升级插件后旧页面）
-        throw { code: 'COMMAND_MISSING', message: 'command not found: ' + name };
+      if (!response.ok) {
+        throw { code: 'RPC_HTTP_' + response.status, message: rpcErrorMessage(response.status, body) };
       }
-      const settled = execution.result ?? execution;
-      if (settled && settled.kind === 'error') {
-        const parsed = parseJsonLoose(settled.text);
+      if (!body || typeof body !== 'object' || (body.kind !== 'success' && body.kind !== 'error')) {
+        throw { code: 'BAD_RESPONSE', message: name + ': rpc returned an invalid envelope' };
+      }
+      if (body.kind === 'error') {
+        const parsed = parseJsonLoose(body.text);
         if (parsed && parsed.error) throw normalizeThrown(parsed.error);
-        throw { code: 'COMMAND_FAILED', message: typeof settled.text === 'string' && settled.text ? settled.text : 'command failed' };
+        throw { code: 'COMMAND_FAILED', message: typeof body.text === 'string' && body.text ? body.text : 'command failed' };
       }
-      const text = settled && typeof settled.text === 'string' ? settled.text : '';
-      const parsed = parseJsonLoose(text);
+      const parsed = parseJsonLoose(body.text);
       if (!parsed) {
-        throw { code: 'BAD_RESPONSE', message: (name + ': command returned non-JSON output') };
+        throw { code: 'BAD_RESPONSE', message: name + ': command returned non-JSON output' };
       }
       if (parsed.ok === false) throw normalizeThrown(parsed.error);
       return parsed.result;
     }
 
-    /** 会话工作区目录列举（remote.workspaceFiles.list，已展开结果包装）。 */
+    /** 工作区目录列举（经 RPC 路由 workspace.list；result 形状同 suite.files）。 */
     async function workspaceList(ctx, path, signal) {
-      const files = safeService(ctx, 'remote.workspaceFiles');
-      if (!files || typeof files.list !== 'function') {
-        throw { code: 'REMOTE_MISSING', name: 'remote.workspaceFiles', message: 'remote.workspaceFiles is not mounted' };
-      }
-      let wrapped;
-      try {
-        wrapped = await files.list(path, signal);
-      } catch (error) {
-        throw normalizeThrown(error);
-      }
-      if (!wrapped || wrapped.ok !== true) throw normalizeThrown(wrapped && wrapped.error);
-      return wrapped.value;
+      return executeCommand(ctx, 'workspace.list', path ? { path } : {}, signal);
     }
 
-    /** 会话工作区文件元信息（remote.workspaceFiles.stat，已展开结果包装）。 */
+    /** 工作区文件元信息（经 RPC 路由 workspace.stat：bytes/version/absolutePath）。 */
     async function workspaceStat(ctx, path, signal) {
-      const files = safeService(ctx, 'remote.workspaceFiles');
-      if (!files || typeof files.stat !== 'function') {
-        throw { code: 'REMOTE_MISSING', name: 'remote.workspaceFiles', message: 'remote.workspaceFiles is not mounted' };
-      }
-      const wrapped = await files.stat(path, signal);
-      if (!wrapped || wrapped.ok !== true) throw normalizeThrown(wrapped && wrapped.error);
-      return wrapped.value;
+      return executeCommand(ctx, 'workspace.stat', { path }, signal);
     }
 
     /** 任意目录列举（uiWorkspace.listDirectory，已是解开结果包装的接口，失败抛错）。 */
@@ -1903,9 +1951,6 @@ window.__ModuleLoader__.load({
 
     /** 组装注入给面板组件的 api 袋（组件不直接摸 ctx）。 */
     function buildApi(ctx) {
-      /** P3 §5.2 方案 A：remote.officeToPdf 命名空间（可缺挂，一律判空）。 */
-      const pdfNs = safeService(ctx, 'remote.officeToPdf');
-      const previewDirect = !!pdfNs && typeof pdfNs.render === 'function';
       return {
         currentSessionId: () => {
           const store = ctx.sessions && ctx.sessions.list;
@@ -1922,14 +1967,6 @@ window.__ModuleLoader__.load({
         subscribeSessions: (listener) => subscribeSessions(ctx, listener),
         subscribeReset: (listener) => subscribeReset(ctx, listener),
         subscribeProgress: (listener) => subscribeProgress(ctx, listener),
-        previewDirect,
-        renderPdf: (path, signal) => {
-          const namespace = safeService(ctx, 'remote.officeToPdf');
-          if (!namespace || typeof namespace.render !== 'function') {
-            return Promise.reject({ code: 'REMOTE_MISSING', name: 'remote.officeToPdf', message: 'remote.officeToPdf is not mounted' });
-          }
-          return namespace.render(path, 'foreground', signal);
-        },
       };
     }
 
@@ -2209,35 +2246,12 @@ window.__ModuleLoader__.load({
     }
 
     /**
-     * 渲染预览双方案（P3 §5.2）：
-     *   方案 A：api.renderPdf（remote.officeToPdf 直连，ctx.get 判空在 buildApi）；
-     *   方案 B：suite.preview 命令（pdfBase64 → Blob）。
-     * 方案 A 任何非取消失败都回落命令，命令仍失败则抛出原始错误（E2012 由调用方提示）。
-     * @returns {Promise<{url:string, missingFonts:string[], scheme:'direct'|'command', generation:any}>}
+     * 渲染预览（P3 §5.2 方案 B）：`suite.preview` 命令返回 pdfBase64 → Blob URL。
+     * 统一走服务端命令通道（原 remote.officeToPdf 直连方案 A 已移除）；
+     * E2012 由调用方提示不可用，其余错误按现状透传。
+     * @returns {Promise<{url:string, missingFonts:string[], scheme:'command', generation:any}>}
      */
     async function renderPdfPreview(api, path, signal) {
-      let directError = null;
-      if (api.previewDirect && typeof api.renderPdf === 'function') {
-        try {
-          const wrapped = await api.renderPdf(path, signal);
-          if (wrapped && wrapped.ok === true && wrapped.value) {
-            const value = wrapped.value;
-            const bytes = value.data instanceof Uint8Array ? value.data : new Uint8Array(value.data || []);
-            return {
-              url: createPdfObjectUrl(bytes),
-              missingFonts: Array.isArray(value.missingFonts) ? value.missingFonts.map((item) => String(item)) : [],
-              scheme: 'direct',
-              generation: value.generation !== undefined ? value.generation : null,
-            };
-          }
-          directError = normalizeThrown(wrapped && wrapped.error);
-          if (directError.code === 'gateway/cancelled') throw directError;
-        } catch (error) {
-          const normalized = normalizeThrown(error);
-          if (normalized.code === 'gateway/cancelled') throw normalized;
-          directError = normalized;
-        }
-      }
       try {
         const result = await api.callCommand('suite.preview', { path }, signal);
         const bytes = base64ToBytes(result && result.pdfBase64);
@@ -2248,9 +2262,7 @@ window.__ModuleLoader__.load({
           generation: result && result.generation !== undefined ? result.generation : null,
         };
       } catch (error) {
-        const normalized = normalizeThrown(error);
-        if (normalized.code === 'COMMAND_MISSING' && directError) throw directError;
-        throw normalized;
+        throw normalizeThrown(error);
       }
     }
 
@@ -2539,9 +2551,8 @@ window.__ModuleLoader__.load({
       }, [api, selected]);
 
       /**
-       * 渲染预览（P3 §5.2 双方案 + LRU 缓存）：
-       * 命中缓存直接复用 blob URL；未命中走 remote.officeToPdf 直连（方案 A），
-       * 不可用/失败时回落 suite.preview 命令（方案 B，返回 pdfBase64）。
+       * 渲染预览（P3 §5.2 + LRU 缓存）：
+       * 命中缓存直接复用 blob URL；未命中统一走 suite.preview 服务端命令通道（返回 pdfBase64）。
        */
       const renderPreview = React.useCallback(async (force) => {
         const file = selected;
@@ -2751,7 +2762,6 @@ window.__ModuleLoader__.load({
           subPanel = h(DocsPreviewPanel, {
             t,
             preview: previewForCurrent,
-            previewDirect: api.previewDirect === true,
             cacheSize: previewMax,
             cacheCount: previewCacheRef.current.size,
             displayPath: selected.path,
@@ -3631,7 +3641,7 @@ window.__ModuleLoader__.load({
     }
 
     /** 预览子页（P3 §5.2）：按钮 / iframe / missingFonts / E2012 提示 / 导出 PDF。 */
-    function DocsPreviewPanel({ t, preview, previewDirect, cacheSize, cacheCount, displayPath, onRender, onRetry, onExport, exporting, missingSession }) {
+    function DocsPreviewPanel({ t, preview, cacheSize, cacheCount, displayPath, onRender, onRetry, onExport, exporting, missingSession }) {
       const status = preview && typeof preview.status === 'string' ? preview.status : 'idle';
       const missingFonts = preview && Array.isArray(preview.missingFonts) ? preview.missingFonts : [];
       const head = h('div', { className: 'dso-inline' },
@@ -3644,7 +3654,7 @@ window.__ModuleLoader__.load({
           : (status === 'busy'
             ? t('docs.preview.rendering')
             : (status === 'unsupported' ? t('docs.preview.unsupported') : (status === 'error' ? t('common.error.title') : t('docs.preview.empty'))))),
-        h('span', { className: 'dso-faint' }, previewDirect ? t('docs.preview.scheme.direct') : t('docs.preview.scheme.command')),
+        h('span', { className: 'dso-faint' }, t('docs.preview.scheme.command')),
         missingFonts.length
           ? h('span', { className: 'dso-badge dso-badge--warn', title: missingFonts.join(', ') }, fmt(t('docs.preview.missingFonts'), { count: missingFonts.length }))
           : null,
@@ -4799,9 +4809,7 @@ window.__ModuleLoader__.load({
       const preview = previewState && typeof previewState === 'object' ? previewState : {};
       const previewAvailable = preview.available === true;
       const previewKnown = preview.available === true || preview.available === false;
-      const schemeLabel = preview.scheme === 'direct'
-        ? t('diag.preview.direct')
-        : (preview.scheme === 'command' ? t('diag.preview.command') : '');
+      const schemeLabel = preview.scheme === 'command' ? t('diag.preview.command') : '';
       rows.push({
         key: 'preview',
         label: t('diag.preview'),
@@ -4846,17 +4854,17 @@ window.__ModuleLoader__.load({
       }, [api, t]);
 
       /**
-       * 预览服务探测：spec 要求调用 suite.preview 一次。
+       * 预览服务探测：调用 suite.preview 一次（服务端命令通道）。
        * 说明：Host 先校验 path 再判 officeToPdf 服务（office-pdf.js），因此必须传一个
        * 非空但不存在的探针路径：服务缺失 → E2012（不可用）；服务存在 → E1023/E1041
-       * 等路径错误（可用）。
+       * 等路径错误（可用）；COMMAND_MISSING 表示路由/命令通道不可达。
        */
       const probePreview = React.useCallback(async () => {
         setProbingPreview(true);
         setPreviewState((prev) => Object.assign({}, prev || {}, { probing: true }));
         try {
           await api.callCommand('suite.preview', { path: '_preview_probe_.docx' });
-          setPreviewState({ available: true, scheme: api.previewDirect ? 'direct' : 'command' });
+          setPreviewState({ available: true, scheme: 'command' });
         } catch (error) {
           const normalized = toPanelError(error, t);
           if (normalized.code === 'E2012' || normalized.code === 'PREVIEW_UNSUPPORTED') {
@@ -4865,7 +4873,7 @@ window.__ModuleLoader__.load({
             setPreviewState({ available: null, scheme: null, code: normalized.code, message: normalized.message });
           } else {
             // 命令可达（仅探测参数被拒）：说明渲染服务存在
-            setPreviewState({ available: true, scheme: api.previewDirect ? 'direct' : 'command', note: normalized.code });
+            setPreviewState({ available: true, scheme: 'command', note: normalized.code });
           }
         } finally {
           setProbingPreview(false);
@@ -5119,6 +5127,7 @@ window.__ModuleLoader__.load({
      * 关键修正：草图中的 `remote.commands` / `remote.workspaceFiles` /
      * `remote.directoryPicker` 属于可缺挂的命名空间服务，列入硬依赖会让插件在缺挂时
      * apply 不执行；这里只保留 7 个稳定服务，命名空间统一用 ctx.get() 防御读取（region 4）。
+     * 宿主命令调用不再依赖 remote.commands，统一走 Host 自注册的 `/office-suite/rpc`。
      */
     const inject = ['slots', 'layout', 'locale', 'theme', 'sessions', 'uiWorkspace', 'remote'];
 
