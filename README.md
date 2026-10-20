@@ -1,5 +1,7 @@
 # dsh-office-suite-for-grid
 
+[![ci](https://github.com/Underfacet/dsh-office-suite-for-grid/actions/workflows/ci.yml/badge.svg)](https://github.com/Underfacet/dsh-office-suite-for-grid/actions) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 DSH 办公·电网绘图套件 —— 面向电网行业的 DeepSeek Harness（DSH）插件：在 DSH Web / Desktop 中一站式完成 Office 文档与表格的阅读、编辑、排版，驱动 Visio 绘制电网专业图表，并将 CAD 图纸智能转换为 PDF（自动分割 / 合并，适配 A4 打印）。
 
 ## 功能一览
