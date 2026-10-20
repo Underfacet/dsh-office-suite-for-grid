@@ -53,7 +53,7 @@ window.__ModuleLoader__.load({
       'docs.tree.back': '返回工作区',
       'docs.tree.external': '外部目录',
       'docs.tree.filterAll': '显示全部文件',
-      'docs.tree.filterHint': '默认仅显示 doc/docx/xls/xlsx/vsdx/dwg/pdf',
+      'docs.tree.filterHint': '默认仅显示 doc/docx/xls/xlsx/ppt/pptx/vsdx/dwg/pdf',
       'docs.tree.empty': '当前目录没有匹配文件',
       'docs.tree.loading': '加载中…',
       'docs.tree.up': '上级目录',
@@ -85,6 +85,127 @@ window.__ModuleLoader__.load({
       'docs.excel.sample': '数据样例',
       'docs.file.none': '未选择文件',
 
+      /* P2/P3 增量：编辑 / 排版 / 预览 / 备份 / 导出 */
+      'docs.sub.edit': '编辑',
+      'docs.sub.format': '排版',
+      'docs.sub.preview': '预览',
+      'docs.edit.title.word': 'Word 编辑',
+      'docs.edit.title.excel': 'Excel 编辑',
+      'docs.edit.action': '指令类型',
+      'docs.edit.op': '操作',
+      'docs.edit.at': '位置（1 起）',
+      'docs.edit.text': '文本',
+      'docs.edit.style': '样式名',
+      'docs.edit.level': '标题级别',
+      'docs.edit.table': '表格序号',
+      'docs.edit.row': '行号',
+      'docs.edit.col': '列号',
+      'docs.edit.sheet': '工作表名（留空 = 活动工作表）',
+      'docs.edit.sheetName': '工作表名',
+      'docs.edit.newName': '新工作表名',
+      'docs.edit.value': '值',
+      'docs.edit.formula': '公式（以 = 开头）',
+      'docs.edit.add': '加入队列',
+      'docs.edit.queue': '指令队列（{count} 条）',
+      'docs.edit.queue.empty': '尚未加入指令',
+      'docs.edit.remove': '移除',
+      'docs.edit.clear': '清空',
+      'docs.edit.apply': '应用编辑',
+      'docs.edit.applying': '应用中…',
+      'docs.edit.applied': '已应用 {count} 条指令',
+      'docs.edit.partial': '部分指令失败（见下方逐条结果）',
+      'docs.edit.engine': '引擎：{engine}',
+      'docs.edit.backup': '备份：{path}',
+      'docs.edit.result': '编辑结果',
+      'docs.edit.formInvalid': '指令参数不完整或格式错误',
+      'docs.edit.hint.word': 'Word 指令：段落 append/setText/setStyle/insert/delete · 标题 setStyle/setText · 表格 setCell/行列增删',
+      'docs.edit.hint.excel': 'Excel 指令：单元格 value/formula 二选一 · 行列 insert/delete · 工作表 rename/add/delete',
+      'docs.edit.action.paragraph': '段落',
+      'docs.edit.action.heading': '标题',
+      'docs.edit.action.table': '表格',
+      'docs.edit.action.cell': '单元格',
+      'docs.edit.action.row': '行',
+      'docs.edit.action.column': '列',
+      'docs.edit.action.sheet': '工作表',
+      'docs.edit.op.append': '追加段落',
+      'docs.edit.op.setText': '设置文本',
+      'docs.edit.op.setStyle': '设置样式',
+      'docs.edit.op.insert': '插入',
+      'docs.edit.op.delete': '删除',
+      'docs.edit.op.setCell': '设置单元格',
+      'docs.edit.op.addRow': '添加行',
+      'docs.edit.op.deleteRow': '删除行',
+      'docs.edit.op.addColumn': '添加列',
+      'docs.edit.op.deleteColumn': '删除列',
+      'docs.edit.op.rename': '重命名',
+      'docs.edit.op.add': '新增',
+      'docs.format.rules': '排版规则',
+      'docs.format.rule.add': '加入规则',
+      'docs.format.rule.empty': '尚未加入规则',
+      'docs.format.target': '规则目标',
+      'docs.format.target.heading': '标题',
+      'docs.format.target.body': '正文',
+      'docs.format.target.page': '页面',
+      'docs.format.target.header': '页眉',
+      'docs.format.target.footer': '页脚',
+      'docs.format.headingLevel': '级别',
+      'docs.format.fontName': '字体',
+      'docs.format.fontSize': '字号（pt）',
+      'docs.format.bold': '加粗',
+      'docs.format.paraLn': '行距（倍数）',
+      'docs.format.spaceBefore': '段前（pt）',
+      'docs.format.spaceAfter': '段后（pt）',
+      'docs.format.align': '对齐',
+      'docs.format.align.none': '不设置',
+      'docs.format.numbering': '编号',
+      'docs.format.numbering.chinese': '中文（一、）',
+      'docs.format.numbering.arabic': '阿拉伯数字（1.）',
+      'docs.format.numbering.decimalDot': '数字点（1.1）',
+      'docs.format.numbering.none': '无编号',
+      'docs.format.margins': '页边距（上/下/左/右，mm）',
+      'docs.format.styleSet': '样式集',
+      'docs.format.template': '模板',
+      'docs.format.placeholders': '模板占位符',
+      'docs.format.placeholder.add': '添加占位符',
+      'docs.format.placeholder.key': '键',
+      'docs.format.placeholder.value': '值',
+      'docs.format.scope': '作用范围',
+      'docs.format.scope.all': '全部',
+      'docs.format.scope.headings': '仅指定标题级别',
+      'docs.format.apply': '应用排版',
+      'docs.format.applying': '排版中…',
+      'docs.format.done': '排版完成：{path}',
+      'docs.format.needRule': '请先加入至少一条规则，或选择样式集/模板',
+      'docs.format.ruleEmpty': '该规则至少需要字体、段落或编号之一',
+      'docs.format.batch': '批量排版',
+      'docs.format.batch.dir': '目标目录',
+      'docs.format.batch.note': '仅处理目录内 .doc/.docx（排除 ~$ 临时文件）',
+      'docs.format.batch.start': '开始批量排版',
+      'docs.format.batch.started': '批量排版任务已启动：{taskId}',
+      'docs.format.batch.failures': '失败文件：{count}',
+      'docs.preview.render': '渲染预览',
+      'docs.preview.rendering': '预览渲染中…',
+      'docs.preview.retry': '重新渲染',
+      'docs.preview.unsupported': '预览服务不可用（E2012）',
+      'docs.preview.unsupported.hint': '宿主未提供 officeToPdf 渲染服务；可改用系统应用打开文件',
+      'docs.preview.missingFonts': '缺失字体 {count} 个',
+      'docs.preview.empty': '点击“预览”生成页面预览',
+      'docs.preview.scheme.direct': '渲染方案：直连（A）',
+      'docs.preview.scheme.command': '渲染方案：命令（B）',
+      'docs.preview.cached': '预览缓存 {count}/{max}',
+      'docs.export': '导出 PDF',
+      'docs.export.running': '导出中…',
+      'docs.export.done': '已导出：{path}',
+      'docs.backup.title': '自动备份',
+      'docs.backup.none': '暂无备份（首次修改后生成）',
+      'docs.backup.refresh': '刷新备份',
+      'docs.backup.restore': '恢复',
+      'docs.backup.confirm': '确认恢复该备份？当前版本会先自动备份',
+      'docs.backup.restored': '已恢复：{path}',
+      'docs.backup.id': '备份 ID',
+      'docs.backup.time': '时间',
+      'docs.backup.size': '大小',
+
       'visio.title': 'Visio 绘图',
       'visio.kind': '图类型',
       'visio.kind.flowchart': '流程图（P1）',
@@ -110,6 +231,47 @@ window.__ModuleLoader__.load({
       'visio.result': '运行结果',
       'visio.history': '本次运行历史',
       'visio.history.empty': '暂无运行记录',
+
+      /* P2/P3 增量：电网九类图 + 模型模板 + 校验提示 */
+      'visio.kind.singleLine': '电气主接线图（singleLine）',
+      'visio.kind.distribution': '配电系统图（distribution）',
+      'visio.kind.networkTopology': '通信网络拓扑图（networkTopology）',
+      'visio.kind.protection': '二次回路/继保原理图（protection）',
+      'visio.kind.substationPlan': '变电站总平面布置示意图（substationPlan）',
+      'visio.kind.geoNetwork': '地理接线图（geoNetwork）',
+      'visio.kind.powerFlow': '潮流图/系统接线图（powerFlow）',
+      'visio.kind.terminalStrip': '端子排图（terminalStrip）',
+      'visio.kind.cableRoute': '电缆路径图（cableRoute，P4）',
+      'visio.kind.cableRoute.p4hint': '电缆路径图（cableRoute）在 P4 提供，本期仅定稿 schema',
+      'visio.model': '模型 JSON（统一底座 + 类型专属字段）',
+      'visio.model.notObject': '模型必须是 JSON 对象',
+      'visio.model.kindMismatch': '模型 kind（{actual}）与所选图类型（{expected}）不一致',
+      'visio.model.required': '缺少必填字段 {key}（{kind} 图要求）',
+      'visio.template.model': '插入模型模板',
+      'visio.validations': '模型校验提示',
+      'visio.validations.empty': '无校验提示',
+      'visio.validations.warn': '警告',
+      'visio.validations.info': '提示',
+      'visio.result.pages': '页数：{pages}',
+      'visio.e2024': '电缆路径图（cableRoute）将在 P4 提供，本期请使用其他图类型',
+      'visio.stats.symbols': '符号',
+      'visio.stats.shapes': '图形',
+      'visio.stats.links': '连线',
+      'visio.stats.nodes': '节点',
+      'visio.stats.edges': '连线',
+      'visio.stats.items': '图元',
+      'visio.stats.levels': '电压等级',
+      'visio.stats.buses': '母线',
+      'visio.stats.bays': '间隔',
+      'visio.stats.groups': '组合',
+      'visio.stats.circuits': '回路',
+      'visio.stats.terminals': '端子',
+      'visio.stats.strips': '端子排',
+      'visio.stats.stations': '厂站',
+      'visio.stats.lines': '线路',
+      'visio.stats.flows': '潮流',
+      'visio.stats.transformers': '变压器',
+      'visio.stats.zones': '设备区',
 
       'cad.title': '图纸转换',
       'cad.mode': '转换场景',
@@ -157,6 +319,35 @@ window.__ModuleLoader__.load({
       'cad.result.output': '输出：{path}',
       'cad.result.openInDocs': '在文档中心查看',
 
+      /* P3 增量：图纸目录表 + 批量队列 */
+      'cad.catalog.title': '图纸目录表',
+      'cad.catalog.input': '图纸文件或目录',
+      'cad.catalog.run': '生成目录表',
+      'cad.catalog.running': '正在提取目录字段…',
+      'cad.catalog.done': '目录表已生成：{path}',
+      'cad.catalog.rows': '目录行数：{rows}',
+      'cad.catalog.sheets': '工作表数：{sheets}',
+      'cad.catalog.engine': '写表引擎：{engine}',
+      'cad.catalog.fields': '字段命中率',
+      'cad.catalog.field.drawingNo': '图号',
+      'cad.catalog.field.title': '图名',
+      'cad.catalog.field.frameSize': '图幅',
+      'cad.catalog.field.scale': '比例',
+      'cad.catalog.field.count': '张数',
+      'cad.catalog.hint': '支持 .dwg/.pdf 单文件或目录；规模上限由配置 catalogMaxFrames 控制',
+      'cad.queue.title': '批量队列（多文件/多文件夹）',
+      'cad.queue.inputs': '队列条目（{count}）',
+      'cad.queue.addFile': '添加文件…',
+      'cad.queue.addDir': '添加文件夹…',
+      'cad.queue.remove': '移除',
+      'cad.queue.clear': '清空',
+      'cad.queue.empty': '队列为空',
+      'cad.queue.note': '合并场景条目需为文件夹，分割场景条目需为单个 .dwg/.pdf；每项独立转换并汇总进度',
+      'cad.queue.start': '开始批量转换',
+      'cad.queue.started': '批量任务已启动：{taskId}',
+      'cad.queue.progress': '条目 {done}/{total}',
+      'cad.queue.failures': '失败条目：{count}',
+
       'diag.title': '设置与诊断',
       'diag.overview': '引擎概览',
       'diag.overview.available': '可用引擎：{list}',
@@ -201,6 +392,30 @@ window.__ModuleLoader__.load({
       'diag.cap.python': 'Python 引擎（P2 预留）',
       'diag.cap.oda': 'ODAFileConverter DWG → PDF',
 
+      /* P2/P3 增量：venv / Office COM / 预览服务状态行 + previewCacheSize */
+      'diag.engine.venv': 'Python venv',
+      'diag.cap.venv': 'Python 编辑/排版引擎（python-docx/openpyxl）',
+      'diag.venv.healthy': '健康',
+      'diag.venv.unhealthy': '需重建',
+      'diag.venv.missing': '尚未创建（首次编辑/排版时自动创建）',
+      'diag.venv.packages': '依赖：docx {docx} · openpyxl {openpyxl}',
+      'diag.engine.officeCom': 'Office COM',
+      'diag.cap.officeCom': 'Office 编辑/排版 COM 引擎',
+      'diag.com.usable': '可用',
+      'diag.com.unusable': '不可用',
+      'diag.com.unmeasured': '未实测（点击“重新探测”）',
+      'diag.preview': '预览渲染 officeToPdf',
+      'diag.cap.preview': '页面预览 / 导出 PDF 的渲染服务',
+      'diag.preview.available': '可用',
+      'diag.preview.unavailable': '不可用（E2012）',
+      'diag.preview.unknown': '未知',
+      'diag.preview.probing': '探测预览服务…',
+      'diag.preview.direct': '直连（方案 A）',
+      'diag.preview.command': '命令（方案 B）',
+      'diag.preview.note': '探测方式：suite.preview（E2012 判定为不可用）',
+      'diag.key.previewCacheSize': '预览缓存条数 previewCacheSize（1–10）',
+      'diag.invalidCacheSize': '预览缓存条数只能是 1–10 的整数',
+
       'common.ok': '确定',
       'common.cancel': '取消',
       'common.retry': '重试',
@@ -214,6 +429,7 @@ window.__ModuleLoader__.load({
       'common.remoteMissing': '远程服务 {name} 未挂载，相关功能不可用',
       'common.cancelled': '已取消',
       'common.unknownError': '未知错误：{message}',
+      'common.none': '无',
     };
 
     const en = {
@@ -231,7 +447,7 @@ window.__ModuleLoader__.load({
       'docs.tree.back': 'Back to workspace',
       'docs.tree.external': 'External folder',
       'docs.tree.filterAll': 'Show all files',
-      'docs.tree.filterHint': 'Showing doc/docx/xls/xlsx/vsdx/dwg/pdf only',
+      'docs.tree.filterHint': 'Showing doc/docx/xls/xlsx/ppt/pptx/vsdx/dwg/pdf only',
       'docs.tree.empty': 'No matching files in this folder',
       'docs.tree.loading': 'Loading…',
       'docs.tree.up': 'Parent folder',
@@ -263,6 +479,127 @@ window.__ModuleLoader__.load({
       'docs.excel.sample': 'Sample rows',
       'docs.file.none': 'No file selected',
 
+      /* P2/P3 additions: edit / format / preview / backup / export */
+      'docs.sub.edit': 'Edit',
+      'docs.sub.format': 'Format',
+      'docs.sub.preview': 'Preview',
+      'docs.edit.title.word': 'Word edit',
+      'docs.edit.title.excel': 'Excel edit',
+      'docs.edit.action': 'Command type',
+      'docs.edit.op': 'Operation',
+      'docs.edit.at': 'Position (1-based)',
+      'docs.edit.text': 'Text',
+      'docs.edit.style': 'Style name',
+      'docs.edit.level': 'Heading level',
+      'docs.edit.table': 'Table index',
+      'docs.edit.row': 'Row',
+      'docs.edit.col': 'Column',
+      'docs.edit.sheet': 'Sheet name (empty = active sheet)',
+      'docs.edit.sheetName': 'Sheet name',
+      'docs.edit.newName': 'New sheet name',
+      'docs.edit.value': 'Value',
+      'docs.edit.formula': 'Formula (starts with =)',
+      'docs.edit.add': 'Add to queue',
+      'docs.edit.queue': 'Command queue ({count})',
+      'docs.edit.queue.empty': 'No command queued yet',
+      'docs.edit.remove': 'Remove',
+      'docs.edit.clear': 'Clear',
+      'docs.edit.apply': 'Apply edits',
+      'docs.edit.applying': 'Applying…',
+      'docs.edit.applied': '{count} command(s) applied',
+      'docs.edit.partial': 'Some commands failed (see per-op results below)',
+      'docs.edit.engine': 'Engine: {engine}',
+      'docs.edit.backup': 'Backup: {path}',
+      'docs.edit.result': 'Edit result',
+      'docs.edit.formInvalid': 'Command arguments are incomplete or invalid',
+      'docs.edit.hint.word': 'Word commands: paragraph append/setText/setStyle/insert/delete · heading setStyle/setText · table setCell/row-column add-remove',
+      'docs.edit.hint.excel': 'Excel commands: cell value/formula (one of) · row/column insert/delete · sheet rename/add/delete',
+      'docs.edit.action.paragraph': 'Paragraph',
+      'docs.edit.action.heading': 'Heading',
+      'docs.edit.action.table': 'Table',
+      'docs.edit.action.cell': 'Cell',
+      'docs.edit.action.row': 'Row',
+      'docs.edit.action.column': 'Column',
+      'docs.edit.action.sheet': 'Sheet',
+      'docs.edit.op.append': 'Append paragraph',
+      'docs.edit.op.setText': 'Set text',
+      'docs.edit.op.setStyle': 'Set style',
+      'docs.edit.op.insert': 'Insert',
+      'docs.edit.op.delete': 'Delete',
+      'docs.edit.op.setCell': 'Set cell',
+      'docs.edit.op.addRow': 'Add row',
+      'docs.edit.op.deleteRow': 'Delete row',
+      'docs.edit.op.addColumn': 'Add column',
+      'docs.edit.op.deleteColumn': 'Delete column',
+      'docs.edit.op.rename': 'Rename',
+      'docs.edit.op.add': 'Add',
+      'docs.format.rules': 'Format rules',
+      'docs.format.rule.add': 'Add rule',
+      'docs.format.rule.empty': 'No rule added yet',
+      'docs.format.target': 'Rule target',
+      'docs.format.target.heading': 'Heading',
+      'docs.format.target.body': 'Body',
+      'docs.format.target.page': 'Page',
+      'docs.format.target.header': 'Header',
+      'docs.format.target.footer': 'Footer',
+      'docs.format.headingLevel': 'Level',
+      'docs.format.fontName': 'Font',
+      'docs.format.fontSize': 'Size (pt)',
+      'docs.format.bold': 'Bold',
+      'docs.format.paraLn': 'Line spacing (multiple)',
+      'docs.format.spaceBefore': 'Space before (pt)',
+      'docs.format.spaceAfter': 'Space after (pt)',
+      'docs.format.align': 'Alignment',
+      'docs.format.align.none': 'Not set',
+      'docs.format.numbering': 'Numbering',
+      'docs.format.numbering.chinese': 'Chinese (一、)',
+      'docs.format.numbering.arabic': 'Arabic (1.)',
+      'docs.format.numbering.decimalDot': 'Decimal dot (1.1)',
+      'docs.format.numbering.none': 'No numbering',
+      'docs.format.margins': 'Margins (top/bottom/left/right, mm)',
+      'docs.format.styleSet': 'Style set',
+      'docs.format.template': 'Template',
+      'docs.format.placeholders': 'Template placeholders',
+      'docs.format.placeholder.add': 'Add placeholder',
+      'docs.format.placeholder.key': 'Key',
+      'docs.format.placeholder.value': 'Value',
+      'docs.format.scope': 'Scope',
+      'docs.format.scope.all': 'All',
+      'docs.format.scope.headings': 'Selected heading levels only',
+      'docs.format.apply': 'Apply formatting',
+      'docs.format.applying': 'Formatting…',
+      'docs.format.done': 'Formatted: {path}',
+      'docs.format.needRule': 'Add at least one rule, or select a style set / template',
+      'docs.format.ruleEmpty': 'A rule needs at least font, paragraph or numbering',
+      'docs.format.batch': 'Batch format',
+      'docs.format.batch.dir': 'Target folder',
+      'docs.format.batch.note': 'Only .doc/.docx inside the folder are processed (~$ temp files excluded)',
+      'docs.format.batch.start': 'Start batch formatting',
+      'docs.format.batch.started': 'Batch format task started: {taskId}',
+      'docs.format.batch.failures': 'Failed files: {count}',
+      'docs.preview.render': 'Render preview',
+      'docs.preview.rendering': 'Rendering preview…',
+      'docs.preview.retry': 'Render again',
+      'docs.preview.unsupported': 'Preview service unavailable (E2012)',
+      'docs.preview.unsupported.hint': 'The host did not provide the officeToPdf render service; open the file with a system app instead',
+      'docs.preview.missingFonts': '{count} missing font(s)',
+      'docs.preview.empty': 'Press “Preview” to render this file',
+      'docs.preview.scheme.direct': 'Render scheme: direct (A)',
+      'docs.preview.scheme.command': 'Render scheme: command (B)',
+      'docs.preview.cached': 'Preview cache {count}/{max}',
+      'docs.export': 'Export PDF',
+      'docs.export.running': 'Exporting…',
+      'docs.export.done': 'Exported: {path}',
+      'docs.backup.title': 'Automatic backups',
+      'docs.backup.none': 'No backups yet (created after the first edit)',
+      'docs.backup.refresh': 'Refresh backups',
+      'docs.backup.restore': 'Restore',
+      'docs.backup.confirm': 'Restore this backup? The current version will be backed up first.',
+      'docs.backup.restored': 'Restored: {path}',
+      'docs.backup.id': 'Backup ID',
+      'docs.backup.time': 'Time',
+      'docs.backup.size': 'Size',
+
       'visio.title': 'Visio drawing',
       'visio.kind': 'Diagram type',
       'visio.kind.flowchart': 'Flowchart (P1)',
@@ -288,6 +625,47 @@ window.__ModuleLoader__.load({
       'visio.result': 'Result',
       'visio.history': 'Run history (this session)',
       'visio.history.empty': 'No runs yet',
+
+      /* P2/P3 additions: nine grid diagram kinds + model templates + validations */
+      'visio.kind.singleLine': 'Single-line diagram (singleLine)',
+      'visio.kind.distribution': 'Distribution system (distribution)',
+      'visio.kind.networkTopology': 'Telecom topology (networkTopology)',
+      'visio.kind.protection': 'Protection circuit (protection)',
+      'visio.kind.substationPlan': 'Substation plan (substationPlan)',
+      'visio.kind.geoNetwork': 'Geographic network (geoNetwork)',
+      'visio.kind.powerFlow': 'Power flow (powerFlow)',
+      'visio.kind.terminalStrip': 'Terminal strip (terminalStrip)',
+      'visio.kind.cableRoute': 'Cable route (cableRoute, P4)',
+      'visio.kind.cableRoute.p4hint': 'cableRoute arrives in P4; this release only finalizes its schema',
+      'visio.model': 'Model JSON (shared base + kind-specific fields)',
+      'visio.model.notObject': 'The model must be a JSON object',
+      'visio.model.kindMismatch': 'Model kind ({actual}) does not match the selected kind ({expected})',
+      'visio.model.required': 'Missing required field {key} (required by {kind})',
+      'visio.template.model': 'Insert model template',
+      'visio.validations': 'Model validation notices',
+      'visio.validations.empty': 'No validation notices',
+      'visio.validations.warn': 'Warning',
+      'visio.validations.info': 'Notice',
+      'visio.result.pages': 'Pages: {pages}',
+      'visio.e2024': 'The cable route diagram (cableRoute) arrives in P4; use another kind for now',
+      'visio.stats.symbols': 'Symbols',
+      'visio.stats.shapes': 'Shapes',
+      'visio.stats.links': 'Links',
+      'visio.stats.nodes': 'Nodes',
+      'visio.stats.edges': 'Edges',
+      'visio.stats.items': 'Items',
+      'visio.stats.levels': 'Voltage levels',
+      'visio.stats.buses': 'Buses',
+      'visio.stats.bays': 'Bays',
+      'visio.stats.groups': 'Groups',
+      'visio.stats.circuits': 'Circuits',
+      'visio.stats.terminals': 'Terminals',
+      'visio.stats.strips': 'Strips',
+      'visio.stats.stations': 'Stations',
+      'visio.stats.lines': 'Lines',
+      'visio.stats.flows': 'Flows',
+      'visio.stats.transformers': 'Transformers',
+      'visio.stats.zones': 'Zones',
 
       'cad.title': 'Drawing conversion',
       'cad.mode': 'Mode',
@@ -335,6 +713,35 @@ window.__ModuleLoader__.load({
       'cad.result.output': 'Output: {path}',
       'cad.result.openInDocs': 'Show in Document center',
 
+      /* P3 additions: drawing catalog + batch queue */
+      'cad.catalog.title': 'Drawing catalog',
+      'cad.catalog.input': 'Drawing file or folder',
+      'cad.catalog.run': 'Build catalog',
+      'cad.catalog.running': 'Extracting catalog fields…',
+      'cad.catalog.done': 'Catalog created: {path}',
+      'cad.catalog.rows': 'Catalog rows: {rows}',
+      'cad.catalog.sheets': 'Sheets: {sheets}',
+      'cad.catalog.engine': 'Writer engine: {engine}',
+      'cad.catalog.fields': 'Field hit rate',
+      'cad.catalog.field.drawingNo': 'Drawing no.',
+      'cad.catalog.field.title': 'Title',
+      'cad.catalog.field.frameSize': 'Frame size',
+      'cad.catalog.field.scale': 'Scale',
+      'cad.catalog.field.count': 'Sheet count',
+      'cad.catalog.hint': 'Accepts a .dwg/.pdf file or a folder; limits follow catalogMaxFrames',
+      'cad.queue.title': 'Batch queue (multiple files/folders)',
+      'cad.queue.inputs': 'Queue items ({count})',
+      'cad.queue.addFile': 'Add file…',
+      'cad.queue.addDir': 'Add folder…',
+      'cad.queue.remove': 'Remove',
+      'cad.queue.clear': 'Clear',
+      'cad.queue.empty': 'The queue is empty',
+      'cad.queue.note': 'Merge items must be folders; split items must be single .dwg/.pdf files; each item converts independently with aggregated progress',
+      'cad.queue.start': 'Start batch conversion',
+      'cad.queue.started': 'Batch task started: {taskId}',
+      'cad.queue.progress': 'Items {done}/{total}',
+      'cad.queue.failures': 'Failed items: {count}',
+
       'diag.title': 'Settings & diagnostics',
       'diag.overview': 'Engine overview',
       'diag.overview.available': 'Available engines: {list}',
@@ -379,6 +786,30 @@ window.__ModuleLoader__.load({
       'diag.cap.python': 'Python engine (P2 reserved)',
       'diag.cap.oda': 'ODAFileConverter DWG → PDF',
 
+      /* P2/P3 additions: venv / Office COM / preview status rows + previewCacheSize */
+      'diag.engine.venv': 'Python venv',
+      'diag.cap.venv': 'Python edit/format engine (python-docx/openpyxl)',
+      'diag.venv.healthy': 'Healthy',
+      'diag.venv.unhealthy': 'Needs rebuild',
+      'diag.venv.missing': 'Not created yet (created automatically on first edit/format)',
+      'diag.venv.packages': 'Packages: docx {docx} · openpyxl {openpyxl}',
+      'diag.engine.officeCom': 'Office COM',
+      'diag.cap.officeCom': 'Office edit/format COM engine',
+      'diag.com.usable': 'Usable',
+      'diag.com.unusable': 'Not usable',
+      'diag.com.unmeasured': 'Not measured (press “Probe again”)',
+      'diag.preview': 'Preview renderer officeToPdf',
+      'diag.cap.preview': 'Render service for page preview / PDF export',
+      'diag.preview.available': 'Available',
+      'diag.preview.unavailable': 'Unavailable (E2012)',
+      'diag.preview.unknown': 'Unknown',
+      'diag.preview.probing': 'Probing the preview service…',
+      'diag.preview.direct': 'Direct (scheme A)',
+      'diag.preview.command': 'Command (scheme B)',
+      'diag.preview.note': 'Probed via suite.preview (E2012 means unavailable)',
+      'diag.key.previewCacheSize': 'Preview cache entries previewCacheSize (1–10)',
+      'diag.invalidCacheSize': 'Preview cache entries must be an integer between 1 and 10',
+
       'common.ok': 'OK',
       'common.cancel': 'Cancel',
       'common.retry': 'Retry',
@@ -392,6 +823,7 @@ window.__ModuleLoader__.load({
       'common.remoteMissing': 'Remote service {name} is not mounted; related features are disabled',
       'common.cancelled': 'Cancelled',
       'common.unknownError': 'Unknown error: {message}',
+      'common.none': 'None',
     };
     //#endregion
 
@@ -417,6 +849,13 @@ window.__ModuleLoader__.load({
       '.dso-tab:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}',
       '.dso-tab[aria-current=page]{background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);box-shadow:inset 0 -2px 0 var(--dsw-alias-state-business-primary)}',
       '.dso-tab:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:-2px}',
+      /* 子页签（P2/P3：编辑 / 排版 / 预览） */
+      '.dso-subtabs{display:flex;gap:2px;border-bottom:.5px solid var(--dsw-alias-border-l1);overflow-x:auto;padding-bottom:0}',
+      '.dso-subtab{appearance:none;border:0;background:transparent;color:var(--dsw-alias-label-secondary);font:inherit;font-size:12px;line-height:18px;padding:4px 10px;border-radius:var(--dsw-radius-sm) var(--dsw-radius-sm) 0 0;cursor:pointer;white-space:nowrap;transition:background var(--ds-transition-duration-fast) var(--ds-ease-in-out),color var(--ds-transition-duration-fast) var(--ds-ease-in-out)}',
+      '.dso-subtab:hover{background:var(--dsw-alias-interactive-bg-hover);color:var(--dsw-alias-label-primary)}',
+      '.dso-subtab[aria-current=page]{background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-primary);box-shadow:inset 0 -2px 0 var(--dsw-alias-state-business-primary)}',
+      '.dso-subtab:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-state-business-primary));outline-offset:-2px}',
+      '.dso-previewFrame{width:100%;height:60vh;min-height:320px;border:.5px solid var(--dsw-alias-border-l2);border-radius:var(--dsw-radius-md);background:#fff}',
 
       /* 页体 */
       '.dso-body{flex:1;min-height:0;display:flex;overflow:hidden}',
@@ -526,14 +965,28 @@ window.__ModuleLoader__.load({
     //#endregion
 
     //#region 3. 工具函数（结果展开、命令 JSON 解析、自然排序、扩展名过滤、格式化）
-    /** 文档中心默认显示的文件扩展名（§1.3）。 */
-    const DEFAULT_EXTS = ['doc', 'docx', 'xls', 'xlsx', 'vsdx', 'dwg', 'pdf'];
+    /** 文档中心默认显示的文件扩展名（§1.3；P3 增补 ppt/pptx 以便页面预览）。 */
+    const DEFAULT_EXTS = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'vsdx', 'dwg', 'pdf'];
     /** 可直接读取渲染的 Office 扩展名。 */
     const OFFICE_EXTS = ['doc', 'docx', 'xls', 'xlsx'];
     /** P1 只显示元信息的扩展名。 */
     const META_EXTS = ['vsdx', 'dwg', 'pdf'];
     /** 图纸转换可接受的输入扩展名（.pdf 供 PDF 级引擎链路）。 */
     const CAD_INPUT_EXTS = ['dwg', 'dxf', 'pdf'];
+    /** 可页面预览 / 导出 PDF 的扩展名（P3 §5.1：officeToPdf 的 OfficeExtension）。 */
+    const PREVIEW_EXTS = ['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'];
+    /** Word 编辑 / 排版支持的扩展名。 */
+    const WORD_EXTS = ['doc', 'docx'];
+    /** Excel 编辑支持的扩展名。 */
+    const EXCEL_EXTS = ['xls', 'xlsx'];
+    /** 通用任务终态（与 CadTab 的 CAD_TERMINAL 同义，供通用轮询 Hook 使用）。 */
+    const TASK_TERMINAL = ['done', 'failed', 'cancelled'];
+    /** 预览 blob 缓存默认容量（P3 §5.4 previewCacheSize 默认 5）。 */
+    const PREVIEW_CACHE_DEFAULT = 5;
+    /** P2/P3 电网图类型（flowchart 之外的 8 类；cableRoute 属 P4，命令层 E2024）。 */
+    const GRID_MODEL_KINDS = ['singleLine', 'distribution', 'networkTopology', 'protection', 'substationPlan', 'geoNetwork', 'powerFlow', 'terminalStrip'];
+    /** P4 预留的图类型（VisioTab 置灰提示）。 */
+    const GRID_KIND_PENDING = 'cableRoute';
     /** CAD 任务终态。 */
     const CAD_TERMINAL = ['done', 'failed', 'cancelled'];
     /** 页签记忆键（§1.3）。 */
@@ -687,6 +1140,519 @@ window.__ModuleLoader__.load({
         const stored = window.localStorage.getItem(TAB_STORAGE_KEY);
         return TABS.some((tab) => tab.id === stored) ? stored : 'docs';
       } catch { return 'docs'; }
+    }
+
+    // ───────── P2/P3 增量：编辑 / 排版 / 电网模型 纯函数（便于冒烟测试与复用） ─────────
+
+    /** 宽松 plain object 判定。 */
+    function isPlainObjectLoose(value) {
+      return !!value && typeof value === 'object' && !Array.isArray(value);
+    }
+
+    /** 正整数解析（1 起）；非法返回 null。 */
+    function parsePositiveInt(value) {
+      const text = String(value ?? '').trim();
+      if (!/^\d+$/.test(text)) return null;
+      const number = Number(text);
+      return Number.isInteger(number) && number >= 1 ? number : null;
+    }
+
+    /** 有限数字解析（空串 → undefined；非法 → null）。 */
+    function parseOptionalNumber(value) {
+      const text = String(value ?? '').trim();
+      if (!text) return undefined;
+      const number = Number(text);
+      return Number.isFinite(number) ? number : null;
+    }
+
+    /** 表单字段（标签 + 控件）。 */
+    function formField(label, node) {
+      return h('div', { className: 'dso-field' }, h('span', { className: 'dso-label' }, label), node);
+    }
+
+    /** base64 → Uint8Array（按 4 的倍数分块 atob，避免超大 base64 一次性解码卡顿；P3 §5.2）。 */
+    function base64ToBytes(text) {
+      const clean = String(text ?? '').replace(/^data:[^,]*,/, '').replace(/\s+/g, '');
+      if (!clean) return new Uint8Array(0);
+      const chunkChars = 4 * 65536;
+      const chunks = [];
+      let total = 0;
+      for (let offset = 0; offset < clean.length; offset += chunkChars) {
+        const binary = window.atob(clean.slice(offset, offset + chunkChars));
+        const bytes = new Uint8Array(binary.length);
+        for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
+        chunks.push(bytes);
+        total += bytes.length;
+      }
+      const output = new Uint8Array(total);
+      let cursor = 0;
+      for (const chunk of chunks) {
+        output.set(chunk, cursor);
+        cursor += chunk.length;
+      }
+      return output;
+    }
+
+    /**
+     * 构造单条编辑指令（P2 §3.2）。
+     * @param {Function} t i18n
+     * @param {'word'|'excel'} family
+     * @param {object} form 表单值（字符串为主）
+     * @returns {{ok:true, op:object}|{ok:false, message:string}}
+     */
+    function buildEditOp(t, family, form) {
+      const invalid = () => ({ ok: false, message: t('docs.edit.formInvalid') });
+      const f = form || {};
+      if (family === 'word') {
+        const action = typeof f.action === 'string' ? f.action : 'paragraph';
+        if (action === 'paragraph') {
+          const op = typeof f.op === 'string' ? f.op : 'append';
+          if (!['append', 'setText', 'setStyle', 'insert', 'delete'].includes(op)) return invalid();
+          if (op === 'append') return { ok: true, op: { action: 'paragraph', op, text: String(f.text ?? '') } };
+          const at = parsePositiveInt(f.at);
+          if (at === null) return invalid();
+          const built = { action: 'paragraph', op, at };
+          if (op === 'setText' || op === 'insert') built.text = String(f.text ?? '');
+          if (op === 'setStyle') {
+            const style = String(f.style ?? '').trim();
+            if (!style) return invalid();
+            built.style = style;
+          }
+          return { ok: true, op: built };
+        }
+        if (action === 'heading') {
+          const op = typeof f.op === 'string' ? f.op : 'setStyle';
+          if (!['setText', 'setStyle', 'insert', 'delete'].includes(op)) return invalid();
+          const at = parsePositiveInt(f.at);
+          const level = parsePositiveInt(f.level);
+          if (at === null || level === null || level > 3) return invalid();
+          const built = { action: 'heading', op, level, at };
+          if (op === 'setText' || op === 'insert') built.text = String(f.text ?? '');
+          if (op === 'setStyle') {
+            const style = String(f.style ?? '').trim();
+            if (style) built.style = style;
+          }
+          return { ok: true, op: built };
+        }
+        if (action === 'table') {
+          const op = typeof f.op === 'string' ? f.op : 'setCell';
+          if (!['setCell', 'addRow', 'deleteRow', 'addColumn', 'deleteColumn'].includes(op)) return invalid();
+          const table = parsePositiveInt(f.table);
+          if (table === null) return invalid();
+          const built = { action: 'table', table, op };
+          if (op === 'setCell') {
+            const row = parsePositiveInt(f.row);
+            const col = parsePositiveInt(f.col);
+            if (row === null || col === null) return invalid();
+            built.row = row;
+            built.col = col;
+            built.text = String(f.text ?? '');
+          } else if (op === 'deleteRow') {
+            const row = parsePositiveInt(f.row);
+            if (row === null) return invalid();
+            built.row = row;
+          } else if (op === 'addRow') {
+            const at = String(f.at ?? '').trim();
+            if (at && at !== 'end') {
+              const row = parsePositiveInt(at);
+              if (row === null) return invalid();
+              built.at = row;
+            } else {
+              built.at = 'end';
+            }
+          } else if (op === 'addColumn') {
+            const col = parsePositiveInt(f.col);
+            if (col !== null) built.col = col;
+            else built.at = 'end';
+          } else if (op === 'deleteColumn') {
+            const col = parsePositiveInt(f.col);
+            if (col === null) return invalid();
+            built.col = col;
+          }
+          return { ok: true, op: built };
+        }
+        return invalid();
+      }
+      if (family === 'excel') {
+        const action = typeof f.action === 'string' ? f.action : 'cell';
+        const sheet = String(f.sheet ?? '').trim();
+        if (action === 'cell') {
+          const at = String(f.at ?? '').trim().toUpperCase();
+          if (!/^[A-Z]{1,3}[1-9]\d{0,6}$/.test(at)) return invalid();
+          const formula = String(f.formula ?? '').trim();
+          const built = { action: 'cell', at };
+          if (sheet) built.sheet = sheet;
+          if (formula) {
+            if (!formula.startsWith('=')) return invalid();
+            built.formula = formula;
+          } else {
+            const raw = String(f.value ?? '');
+            if (/^-?\d+(\.\d+)?$/.test(raw.trim())) built.value = Number(raw.trim());
+            else if (raw.trim() === 'true') built.value = true;
+            else if (raw.trim() === 'false') built.value = false;
+            else built.value = raw;
+          }
+          return { ok: true, op: built };
+        }
+        if (action === 'row') {
+          const op = typeof f.op === 'string' ? f.op : 'insert';
+          if (!['insert', 'delete'].includes(op)) return invalid();
+          const at = parsePositiveInt(f.at);
+          if (at === null) return invalid();
+          const built = { action: 'row', op, at };
+          if (sheet) built.sheet = sheet;
+          return { ok: true, op: built };
+        }
+        if (action === 'column') {
+          const op = typeof f.op === 'string' ? f.op : 'insert';
+          if (!['insert', 'delete'].includes(op)) return invalid();
+          const raw = String(f.at ?? '').trim().toUpperCase();
+          if (!/^[A-Z]{1,3}$/.test(raw) && parsePositiveInt(raw) === null) return invalid();
+          const built = { action: 'column', op, at: /^[A-Z]+$/.test(raw) ? raw : parsePositiveInt(raw) };
+          if (sheet) built.sheet = sheet;
+          return { ok: true, op: built };
+        }
+        if (action === 'sheet') {
+          const op = typeof f.op === 'string' ? f.op : 'rename';
+          if (!['rename', 'add', 'delete'].includes(op)) return invalid();
+          const name = String(f.name ?? '').trim();
+          if (!name) return invalid();
+          const built = { action: 'sheet', op, name };
+          if (op === 'rename') {
+            const newName = String(f.newName ?? '').trim();
+            if (!newName) return invalid();
+            built.newName = newName;
+          }
+          return { ok: true, op: built };
+        }
+        return invalid();
+      }
+      return invalid();
+    }
+
+    /**
+     * 构造一条排版规则（P2 §3.3）。
+     * @returns {{ok:true, rule:object}|{ok:false, message:string}}
+     */
+    function buildFormatRule(t, form) {
+      const f = form || {};
+      const invalid = () => ({ ok: false, message: t('docs.edit.formInvalid') });
+      const target = typeof f.target === 'string' ? f.target : 'body';
+      if (!['heading', 'body', 'page', 'header', 'footer'].includes(target)) return invalid();
+      const rule = { target };
+      if (target === 'heading') {
+        const level = parsePositiveInt(f.level);
+        if (level === null || level > 3) return invalid();
+        rule.level = level;
+      }
+      if (target === 'header' || target === 'footer') {
+        rule[target] = { text: String(target === 'header' ? (f.headerText ?? '') : (f.footerText ?? '')) };
+        return { ok: true, rule };
+      }
+      if (target === 'page') {
+        const margins = {};
+        for (const side of ['top', 'bottom', 'left', 'right']) {
+          const value = parseOptionalNumber(f['margin.' + side]);
+          if (value === null || (value !== undefined && (value < 1 || value > 500))) return invalid();
+          if (value !== undefined) margins[side] = value;
+        }
+        if (!Object.keys(margins).length) return invalid();
+        rule.page = { marginsMm: margins };
+        return { ok: true, rule };
+      }
+      const font = {};
+      const fontName = String(f.fontName ?? '').trim();
+      if (fontName) font.name = fontName;
+      const size = parseOptionalNumber(f.fontSize);
+      if (size === null || (size !== undefined && (size < 1 || size > 200))) return invalid();
+      if (size !== undefined) font.sizePt = size;
+      if (f.bold === true) font.bold = true;
+      if (Object.keys(font).length) rule.font = font;
+      const paragraph = {};
+      const lineSpacing = parseOptionalNumber(f.lineSpacing);
+      if (lineSpacing === null || (lineSpacing !== undefined && (lineSpacing < 0.5 || lineSpacing > 10))) return invalid();
+      if (lineSpacing !== undefined) paragraph.lineSpacing = lineSpacing;
+      const before = parseOptionalNumber(f.spaceBefore);
+      if (before === null || (before !== undefined && (before < 0 || before > 500))) return invalid();
+      if (before !== undefined) paragraph.spaceBeforePt = before;
+      const after = parseOptionalNumber(f.spaceAfter);
+      if (after === null || (after !== undefined && (after < 0 || after > 500))) return invalid();
+      if (after !== undefined) paragraph.spaceAfterPt = after;
+      if (typeof f.align === 'string' && f.align) {
+        if (!['left', 'center', 'right', 'justify'].includes(f.align)) return invalid();
+        paragraph.align = f.align;
+      }
+      if (Object.keys(paragraph).length) rule.paragraph = paragraph;
+      if (typeof f.numbering === 'string' && f.numbering) {
+        if (!['chinese', 'arabic', 'decimalDot', 'none'].includes(f.numbering)) return invalid();
+        rule.numbering = f.numbering;
+      }
+      if (!rule.font && !rule.paragraph && rule.numbering === undefined) return { ok: false, message: t('docs.format.ruleEmpty') };
+      return { ok: true, rule };
+    }
+
+    /**
+     * 构造 suite.format / suite.format.batch 参数（rules / styleSet / template / placeholders / scope）。
+     * @returns {{ok:true, args:object}|{ok:false, message:string}}
+     */
+    function buildFormatSpec(t, state) {
+      const s = state || {};
+      const args = {};
+      const rules = Array.isArray(s.rules) ? s.rules : [];
+      if (rules.length) args.rules = rules;
+      const styleSet = String(s.styleSet ?? '').trim();
+      if (styleSet) args.styleSet = styleSet;
+      const template = String(s.template ?? '').trim();
+      if (template) args.template = template;
+      if (template) {
+        const placeholders = {};
+        for (const row of Array.isArray(s.placeholders) ? s.placeholders : []) {
+          const key = String(row && row.key !== undefined ? row.key : '').trim();
+          if (!key) continue;
+          placeholders[key] = String(row.value ?? '');
+        }
+        if (Object.keys(placeholders).length) args.placeholders = placeholders;
+      }
+      if (s.scope === 'headings') {
+        const levels = (Array.isArray(s.headingLevels) ? s.headingLevels : [1, 2, 3])
+          .map((value) => Number(value))
+          .filter((value) => Number.isInteger(value) && value >= 1 && value <= 3);
+        if (!levels.length) return { ok: false, message: t('docs.format.needRule') };
+        args.scope = { headings: [...new Set(levels)].sort((a, b) => a - b) };
+      } else {
+        args.scope = 'all';
+      }
+      if (!args.rules && !args.styleSet && !args.template) return { ok: false, message: t('docs.format.needRule') };
+      return { ok: true, args };
+    }
+
+    /** 每个电网图类型的必填字段（与 host/ops/grid-model.js 的校验口径对齐）。 */
+    const GRID_REQUIRED_FIELDS = {
+      singleLine: ['buses', 'bays'],
+      distribution: ['sources', 'feeders'],
+      networkTopology: ['rings'],
+      protection: ['circuits'],
+      substationPlan: ['plot', 'zones'],
+      geoNetwork: ['stations'],
+      powerFlow: ['levels', 'buses'],
+      terminalStrip: ['strips'],
+    };
+
+    /**
+     * 轻量模型校验（P2 §6.2）：JSON 解析 + kind 匹配 + 必填字段类型。
+     * 结构细节与符号引用由 Host（E2021/E2022）给出，Client 不重复实现完整 schema。
+     */
+    function parseGridModel(t, kind, text) {
+      let model;
+      try {
+        model = JSON.parse(text);
+      } catch (error) {
+        return { ok: false, message: fmt(t('visio.json.invalid'), { message: error.message }) };
+      }
+      if (!isPlainObjectLoose(model)) return { ok: false, message: t('visio.model.notObject') };
+      if (model.kind !== undefined && model.kind !== null && model.kind !== kind) {
+        return { ok: false, message: fmt(t('visio.model.kindMismatch'), { actual: String(model.kind), expected: kind }) };
+      }
+      const required = GRID_REQUIRED_FIELDS[kind] || [];
+      for (const key of required) {
+        const value = model[key];
+        const expectedObject = key === 'plot';
+        if (value === undefined || value === null || (expectedObject ? !isPlainObjectLoose(value) : !Array.isArray(value))) {
+          return { ok: false, message: fmt(t('visio.model.required'), { key, kind }) };
+        }
+      }
+      return { ok: true, model };
+    }
+
+    /** 电网图类型 → i18n 键（dynamic 使用）。 */
+    function gridKindLabel(t, kind) {
+      return t('visio.kind.' + kind);
+    }
+
+    /** 统计字段 → i18n 键（未收录的字段原样展示）。 */
+    const STAT_LABEL_KEYS = {
+      symbols: 'visio.stats.symbols',
+      shapes: 'visio.stats.shapes',
+      links: 'visio.stats.links',
+      nodes: 'visio.stats.nodes',
+      edges: 'visio.stats.edges',
+      items: 'visio.stats.items',
+      levels: 'visio.stats.levels',
+      buses: 'visio.stats.buses',
+      bays: 'visio.stats.bays',
+      groups: 'visio.stats.groups',
+      circuits: 'visio.stats.circuits',
+      terminals: 'visio.stats.terminals',
+      strips: 'visio.stats.strips',
+      stations: 'visio.stats.stations',
+      lines: 'visio.stats.lines',
+      flows: 'visio.stats.flows',
+      transformers: 'visio.stats.transformers',
+      zones: 'visio.stats.zones',
+    };
+
+    /**
+     * 电网图模型模板（与 docs/P2-设计.md §4.1 / docs/P3-设计.md §4.4 的 schema 一致的最小示例）。
+     * 说明：P3 §4.5 的 KCOIL/KA/KB/XT 符号尚未随包（属符号库交付），protection 模板暂用
+     * 现有符号 TA/QF/J 表达同类图元，保证「插入模板 → 运行」链路可用。
+     */
+    const GRID_TEMPLATES = {
+      singleLine: {
+        kind: 'singleLine',
+        title: '110kV 白云变电气主接线图（示例）',
+        meta: { paper: 'A3-landscape', standard: 'GB/T 4728-2022' },
+        buses: [
+          { id: 'B1', label: '110kV I 母', voltage: 110, section: 'I' },
+          { id: 'B2', label: '10kV I 母', voltage: 10, section: 'I' },
+        ],
+        nodes: [],
+        bays: [
+          { id: 'X1', bus: 'B1', label: '1# 主变高压侧', devices: [
+            { id: 'QS11', symbolRef: 'gb4728.7.QS', state: 'closed' },
+            { id: 'QF11', symbolRef: 'gb4728.7.QF', state: 'closed' },
+            { id: 'QS12', symbolRef: 'gb4728.7.QS', state: 'closed' },
+          ] },
+          { id: 'X5', bus: 'B2', label: '1# 主变低压侧', devices: [
+            { id: 'QF21', symbolRef: 'gb4728.7.QF', state: 'closed' },
+            { id: 'QS21', symbolRef: 'gb4728.7.QS', state: 'closed' },
+          ] },
+        ],
+        transformers: [
+          { id: 'T1', symbolRef: 'gb4728.6.T2', label: '1# 主变（110/10kV）', fromBay: 'X1', toBay: 'X5', voltage: [110, 10] },
+        ],
+      },
+      distribution: {
+        kind: 'distribution',
+        title: '10kV 配电系统图（示例）',
+        meta: { paper: 'A3-landscape', standard: 'GB/T 4728-2022' },
+        sources: [
+          { id: 'S1', symbolRef: 'gb4728.3.BUS', label: '110kV 站 10kV 母线', tags: { source: true } },
+        ],
+        nodes: [
+          { id: 'R1', symbolRef: 'gb4728.7.RING-MAIN', label: '1# 环网柜' },
+          { id: 'T1', symbolRef: 'gb4728.6.T2', label: '1# 台区变压器' },
+        ],
+        feeders: [
+          { id: 'F1', label: '馈线 101', from: 'S1', to: 'R1', kind: 'feeder' },
+          { id: 'F2', label: '馈线 102', from: 'R1', to: 'T1', kind: 'feeder' },
+        ],
+        links: [],
+      },
+      networkTopology: {
+        kind: 'networkTopology',
+        title: '光纤环网拓扑图（示例）',
+        meta: { paper: 'A3-landscape', standard: 'GB/T 4728-2022' },
+        nodes: [
+          { id: 'C1', symbolRef: 'gb4728.9.NODE', label: '变电站 A' },
+          { id: 'C2', symbolRef: 'gb4728.9.NODE', label: '变电站 B' },
+          { id: 'C3', symbolRef: 'gb4728.9.NODE', label: '变电站 C' },
+        ],
+        rings: [{ id: 'RING1', label: '光纤环 1', nodes: ['C1', 'C2', 'C3'] }],
+        links: [
+          { id: 'K1', from: 'C1', to: 'C2', kind: 'fiber', label: '光纤 1' },
+          { id: 'K2', from: 'C2', to: 'C3', kind: 'fiber' },
+          { id: 'K3', from: 'C3', to: 'C1', kind: 'fiber' },
+        ],
+      },
+      protection: {
+        kind: 'protection',
+        title: '110kV 线路保护电流回路图（示例）',
+        meta: { paper: 'A3-landscape', standard: 'GB/T 4728-2022' },
+        circuits: [
+          { id: 'C1', label: '电流回路', voltage: 'DC110V', devices: [
+            { id: 'TAa', symbolRef: 'gb4728.6.TA', label: '1TAa' },
+            { id: 'QF1', symbolRef: 'gb4728.7.QF', label: '保护出口' },
+            { id: 'XT1', symbolRef: 'gb4728.3.J', label: 'X1:1' },
+          ] },
+          { id: 'C2', label: '控制回路', voltage: 'DC110V', devices: [
+            { id: 'QF2', symbolRef: 'gb4728.7.QF', label: '控制开关' },
+            { id: 'XT2', symbolRef: 'gb4728.3.J', label: 'X1:2' },
+          ] },
+        ],
+        loops: [{ id: 'L1', from: 'QF1', to: 'QF2', kind: 'signal', label: 'KA1-1' }],
+        terminalStrips: [
+          { id: 'TP1', label: '端子排 1X', side: 'top', terminals: [{ no: 1, ref: 'A411' }, { no: 2, ref: 'B411' }] },
+        ],
+      },
+      substationPlan: {
+        kind: 'substationPlan',
+        title: '110kV 白云变总平面布置示意图（示例）',
+        meta: { paper: 'A3-landscape', compass: true },
+        plot: { widthMm: 800, heightMm: 600, gridMm: 50 },
+        zones: [
+          { id: 'Z1', label: '110kV 配电装置区', xMm: 0, yMm: 0, widthMm: 300, heightMm: 200 },
+          { id: 'Z2', label: '主变区', xMm: 300, yMm: 0, widthMm: 200, heightMm: 200 },
+          { id: 'Z3', label: '综合楼及生活区', xMm: 0, yMm: 200, widthMm: 500, heightMm: 200 },
+        ],
+        items: [
+          { id: 'T1', label: '1# 主变', symbolRef: 'gb4728.6.T2', xMm: 350, yMm: 60, rot: 0 },
+          { id: 'RD1', label: '进站道路', xMm: 0, yMm: 400, widthMm: 500, heightMm: 24, primitive: 'rect' },
+          { id: 'F1', label: '站区围墙', xMm: 0, yMm: 0, widthMm: 800, heightMm: 600, primitive: 'rect', dashed: true },
+        ],
+        links: [],
+      },
+      geoNetwork: {
+        kind: 'geoNetwork',
+        title: '××供电区 35kV 及以上地理接线示意图（示例）',
+        meta: { paper: 'A3-landscape' },
+        viewport: { west: 112.0, south: 30.0, east: 114.0, north: 32.0 },
+        stations: [
+          { id: 'S1', label: '白云变', symbolRef: 'gb4728.9.NODE', lng: 113.2, lat: 31.1, voltage: 110 },
+          { id: 'S2', label: '金亭变', symbolRef: 'gb4728.9.NODE', lng: 113.6, lat: 31.4, voltage: 110 },
+        ],
+        lines: [
+          { id: 'LN1', label: '白-金 I 回', from: 'S1', to: 'S2', voltage: 110, points: [['S1', null], [113.4, 31.3], ['S2', null]] },
+        ],
+        labels: [{ id: 'LBL1', text: '××工业园', lng: 113.1, lat: 30.9 }],
+      },
+      powerFlow: {
+        kind: 'powerFlow',
+        title: '××电网 110kV 系统接线潮流图（示例）',
+        meta: { paper: 'A3-landscape' },
+        levels: [
+          { id: 'LV110', voltage: 110, label: '110kV' },
+          { id: 'LV35', voltage: 35, label: '35kV' },
+        ],
+        buses: [
+          { id: 'B1', level: 'LV110', label: '白云 110kV 母线' },
+          { id: 'B2', level: 'LV35', label: '白云 35kV 母线' },
+        ],
+        nodes: [
+          { id: 'G1', symbolRef: 'gb4728.6.G', label: '金亭电厂', level: 'LV110', tags: { source: true } },
+          { id: 'S3', symbolRef: 'gb4728.9.NODE', label: '外部系统', level: 'LV110', tags: { source: true } },
+        ],
+        transformers: [{ id: 'T1', symbolRef: 'gb4728.6.T2', label: '白 1# 主变', from: 'B1', to: 'B2' }],
+        flows: [
+          { id: 'F1', from: 'B1', to: 'B2', kind: 'flow', direction: 'B1→B2', label: 'P=85.4MW Q=12.1Mvar', style: 'solid' },
+          { id: 'F2', from: 'G1', to: 'B1', kind: 'flow', direction: 'G1→B1', label: 'P=120MW' },
+        ],
+        links: [{ id: 'L1', from: 'B1', to: 'S3' }],
+      },
+      terminalStrip: {
+        kind: 'terminalStrip',
+        title: '端子排图 1X（示例）',
+        meta: { paper: 'A4-landscape', terminalsPerPage: 20 },
+        strips: [
+          { id: 'XT1', label: '端子排 1X（保护屏）', columns: 1, terminals: [
+            { no: 1, ref: 'A411', desc: '1TAa 电流', type: 'normal', link: null },
+            { no: 2, ref: 'B411', desc: '1TAb 电流', type: 'shorting', link: 1 },
+            { no: 3, ref: 'N411', desc: '1TAn 中性', type: 'ground', link: null },
+          ] },
+        ],
+      },
+    };
+
+    /** 模板 JSON 文本。 */
+    function gridTemplateText(kind) {
+      const template = GRID_TEMPLATES[kind];
+      return template ? JSON.stringify(template, null, 2) : '';
+    }
+
+    /** 判断文本是否仍等于某个内置模板（用于切换类型时安全地刷新模板）。 */
+    function isBuiltinTemplateText(text) {
+      const trimmed = String(text ?? '').trim();
+      if (!trimmed) return true;
+      return GRID_MODEL_KINDS.some((kind) => gridTemplateText(kind).trim() === trimmed);
     }
 
     /** 当前主视图会话 id（§0.5：retainedBy.mainView > 0 的那一行）。 */
@@ -937,6 +1903,9 @@ window.__ModuleLoader__.load({
 
     /** 组装注入给面板组件的 api 袋（组件不直接摸 ctx）。 */
     function buildApi(ctx) {
+      /** P3 §5.2 方案 A：remote.officeToPdf 命名空间（可缺挂，一律判空）。 */
+      const pdfNs = safeService(ctx, 'remote.officeToPdf');
+      const previewDirect = !!pdfNs && typeof pdfNs.render === 'function';
       return {
         currentSessionId: () => {
           const store = ctx.sessions && ctx.sessions.list;
@@ -953,6 +1922,14 @@ window.__ModuleLoader__.load({
         subscribeSessions: (listener) => subscribeSessions(ctx, listener),
         subscribeReset: (listener) => subscribeReset(ctx, listener),
         subscribeProgress: (listener) => subscribeProgress(ctx, listener),
+        previewDirect,
+        renderPdf: (path, signal) => {
+          const namespace = safeService(ctx, 'remote.officeToPdf');
+          if (!namespace || typeof namespace.render !== 'function') {
+            return Promise.reject({ code: 'REMOTE_MISSING', name: 'remote.officeToPdf', message: 'remote.officeToPdf is not mounted' });
+          }
+          return namespace.render(path, 'foreground', signal);
+        },
       };
     }
 
@@ -1065,7 +2042,7 @@ window.__ModuleLoader__.load({
             role: 'tabpanel',
             'aria-labelledby': 'dso-tab-docs',
             hidden: tab !== 'docs',
-          }, h(DocsTab, { api, t, sessionId, active: tab === 'docs', openDir })),
+          }, h(DocsTab, { api, t, sessionId, active: tab === 'docs', openDir, openInDocs })),
           h('div', {
             className: 'dso-pane',
             id: 'dso-pane-visio',
@@ -1090,9 +2067,195 @@ window.__ModuleLoader__.load({
     }
     //#endregion
 
-    //#region 7. 组件：DocsTab（文档中心：工作区文件树 / 外部目录双模式 + 读取渲染）
+    //#region 6b. 通用任务轮询 Hook 与进度组件（P2/P3 批量：suite.office.status / suite.cad.status，800ms）
+    /**
+     * 轮询任务状态（与 CadTab 既有单任务轮询同款：800ms、终态停止、AbortController 联动卸载）。
+     * @param {object} api 面板 api 袋
+     * @param {string} taskId 任务 id（空串 = 不轮询）
+     * @param {string} commandName 'suite.cad.status' | 'suite.office.status'
+     * @param {Function} t i18n
+     * @returns {{status:object|null, error:object|null}}
+     */
+    function useTaskPolling(api, taskId, commandName, t) {
+      const [status, setStatus] = React.useState(null);
+      const [error, setError] = React.useState(null);
+      const tRef = React.useRef(t);
+      tRef.current = t;
+
+      React.useEffect(() => {
+        setStatus(null);
+        setError(null);
+        if (!taskId) return undefined;
+        let alive = true;
+        let timer = 0;
+        let inFlight = false;
+        const controller = new AbortController();
+        const stop = () => {
+          if (timer) {
+            window.clearInterval(timer);
+            timer = 0;
+          }
+        };
+        const tick = async () => {
+          if (inFlight || !alive) return;
+          inFlight = true;
+          try {
+            const snapshot = await api.callCommand(commandName, { taskId }, controller.signal);
+            if (!alive) return;
+            setStatus(snapshot);
+            setError(null);
+            const state = snapshot && typeof snapshot.state === 'string' ? snapshot.state : '';
+            if (TASK_TERMINAL.includes(state)) stop();
+          } catch (thrown) {
+            if (!alive) return;
+            const normalized = toPanelError(thrown, tRef.current);
+            if (!normalized.cancelled) setError(normalized);
+            if (normalized.code === 'TASK_NOT_FOUND' || normalized.cancelled) stop();
+          } finally {
+            inFlight = false;
+          }
+        };
+        tick();
+        timer = window.setInterval(tick, 800);
+        return () => {
+          alive = false;
+          stop();
+          controller.abort();
+        };
+      }, [api, commandName, taskId]);
+
+      return { status, error };
+    }
+
+    /**
+     * 通用任务进度块（状态徽标 + 进度条 + 当前项 + 日志 + 取消）。
+     * @param {{t:Function,status:object|null,error:object|null,mode?:'files'|'items',
+     *          onCancel?:Function,cancelling?:boolean,extra?:object|null}} props
+     */
+    function TaskProgress({ t, status, error, mode, onCancel, cancelling, extra }) {
+      const logRef = React.useRef(null);
+      React.useEffect(() => {
+        const element = logRef.current;
+        if (element) element.scrollTop = element.scrollHeight;
+      }, [status]);
+      if (!status && !error) return null;
+      const progress = (status && status.progress) || {};
+      const filesDone = Number(progress.filesDone) || 0;
+      const filesTotal = Number(progress.filesTotal) || 0;
+      const itemsDone = Number(progress.itemsDone) || 0;
+      const itemsTotal = Number(progress.itemsTotal) || 0;
+      const useItems = mode === 'items';
+      const doneCount = useItems ? itemsDone : filesDone;
+      const totalCount = useItems ? itemsTotal : filesTotal;
+      const state = status && typeof status.state === 'string' ? status.state : 'queued';
+      const percent = totalCount > 0
+        ? Math.min(100, Math.round((doneCount / totalCount) * 100))
+        : (state === 'done' ? 100 : 0);
+      const logLines = status && Array.isArray(status.log) ? status.log.slice(-200) : [];
+      const stateLabel = CAD_STATES.includes(state) ? t('cad.state.' + state) : state;
+      const progressLabel = useItems
+        ? fmt(t('cad.queue.progress'), { done: itemsDone, total: itemsTotal })
+        : fmt(t('cad.progress.files'), { done: filesDone, total: filesTotal });
+      const running = !TASK_TERMINAL.includes(state);
+      return h('div', { className: 'dso-stack' },
+        error ? h(ErrorBox, { t, error }) : null,
+        h('div', { className: 'dso-inline' },
+          h('span', { className: cadStateClass(state) }, stateLabel),
+          h('span', { className: 'dso-muted' }, progressLabel),
+          h('span', { className: 'dso-spacer' }),
+          h('span', { className: 'dso-faint' }, percent + '%')),
+        h('div', {
+          className: 'dso-progress',
+          role: 'progressbar',
+          'aria-valuemin': 0,
+          'aria-valuemax': 100,
+          'aria-valuenow': percent,
+        }, h('div', { className: 'dso-progressBar', style: { width: percent + '%' } })),
+        progress.currentFile
+          ? h('div', { className: 'dso-hint' }, fmt(t('cad.progress.current'), { file: progress.currentFile }))
+          : null,
+        extra || null,
+        logLines.length === 0
+          ? h('div', { className: 'dso-hint' }, t('cad.log.empty'))
+          : h('div', { className: 'dso-log', ref: logRef }, logLines.map((line, index) => h('div', {
+            key: 'tlog' + index,
+            className: 'dso-logLine',
+            'data-level': line && typeof line.level === 'string' ? line.level : 'info',
+          },
+          h('span', { className: 'dso-logTime' }, formatClock(line && line.t ? line.t : Date.now())),
+          h('span', null, line && line.msg !== undefined ? String(line.msg) : String(line))))),
+        onCancel && running
+          ? h('div', { className: 'dso-actions' },
+            h('button', {
+              type: 'button',
+              className: 'dso-btn dso-btn--danger',
+              onClick: onCancel,
+              disabled: cancelling === true,
+            }, cancelling ? t('cad.cancel.requested') : t('cad.cancel')))
+          : null);
+    }
+    //#endregion
+
+    //#region 7. 组件：DocsTab（文档中心：工作区文件树 / 外部目录模式 + 读取渲染 + 编辑/排版/预览）
+    /** 由 PDF 字节创建 blob URL（环境不支持时抛 E2012 语义错误）。 */
+    function createPdfObjectUrl(bytes) {
+      if (!bytes || !bytes.length) {
+        throw { code: 'E2011', message: 'preview returned empty pdf' };
+      }
+      if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function' || typeof Blob === 'undefined') {
+        throw { code: 'PREVIEW_UNSUPPORTED', message: 'URL.createObjectURL is unavailable' };
+      }
+      return URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+    }
+
+    /**
+     * 渲染预览双方案（P3 §5.2）：
+     *   方案 A：api.renderPdf（remote.officeToPdf 直连，ctx.get 判空在 buildApi）；
+     *   方案 B：suite.preview 命令（pdfBase64 → Blob）。
+     * 方案 A 任何非取消失败都回落命令，命令仍失败则抛出原始错误（E2012 由调用方提示）。
+     * @returns {Promise<{url:string, missingFonts:string[], scheme:'direct'|'command', generation:any}>}
+     */
+    async function renderPdfPreview(api, path, signal) {
+      let directError = null;
+      if (api.previewDirect && typeof api.renderPdf === 'function') {
+        try {
+          const wrapped = await api.renderPdf(path, signal);
+          if (wrapped && wrapped.ok === true && wrapped.value) {
+            const value = wrapped.value;
+            const bytes = value.data instanceof Uint8Array ? value.data : new Uint8Array(value.data || []);
+            return {
+              url: createPdfObjectUrl(bytes),
+              missingFonts: Array.isArray(value.missingFonts) ? value.missingFonts.map((item) => String(item)) : [],
+              scheme: 'direct',
+              generation: value.generation !== undefined ? value.generation : null,
+            };
+          }
+          directError = normalizeThrown(wrapped && wrapped.error);
+          if (directError.code === 'gateway/cancelled') throw directError;
+        } catch (error) {
+          const normalized = normalizeThrown(error);
+          if (normalized.code === 'gateway/cancelled') throw normalized;
+          directError = normalized;
+        }
+      }
+      try {
+        const result = await api.callCommand('suite.preview', { path }, signal);
+        const bytes = base64ToBytes(result && result.pdfBase64);
+        return {
+          url: createPdfObjectUrl(bytes),
+          missingFonts: result && Array.isArray(result.missingFonts) ? result.missingFonts.map((item) => String(item)) : [],
+          scheme: 'command',
+          generation: result && result.generation !== undefined ? result.generation : null,
+        };
+      } catch (error) {
+        const normalized = normalizeThrown(error);
+        if (normalized.code === 'COMMAND_MISSING' && directError) throw directError;
+        throw normalized;
+      }
+    }
+
     /** 文档中心：左树右阅读区。 */
-    function DocsTab({ api, t, sessionId, active, openDir }) {
+    function DocsTab({ api, t, sessionId, active, openDir, openInDocs }) {
       const [mode, setMode] = React.useState('workspace');
       const [rootPath, setRootPath] = React.useState('');
       const [showAll, setShowAll] = React.useState(false);
@@ -1107,6 +2270,19 @@ window.__ModuleLoader__.load({
       const [meta, setMeta] = React.useState(null);
       const [copied, setCopied] = React.useState(false);
 
+      /* P2/P3 增量：编辑 / 排版 / 预览子页签 + 预览 blob 缓存 + 导出 PDF */
+      const [subTab, setSubTab] = React.useState('edit');
+      const [preview, setPreview] = React.useState({ status: 'idle', url: '', missingFonts: [], scheme: '', generation: null, key: '', error: null });
+      const [previewMax, setPreviewMax] = React.useState(PREVIEW_CACHE_DEFAULT);
+      const [exporting, setExporting] = React.useState(false);
+      const [exportResult, setExportResult] = React.useState(null);
+      const [exportError, setExportError] = React.useState(null);
+      const previewCacheRef = React.useRef(new Map());
+      const previewAbortRef = React.useRef(null);
+      const configLoadedRef = React.useRef(false);
+      const previewMaxRef = React.useRef(PREVIEW_CACHE_DEFAULT);
+      previewMaxRef.current = previewMax;
+
       const modeRef = React.useRef(mode);
       modeRef.current = mode;
       const treeRef = React.useRef(tree);
@@ -1119,6 +2295,11 @@ window.__ModuleLoader__.load({
 
       React.useEffect(() => () => {
         if (abortRef.current) abortRef.current.abort();
+        if (previewAbortRef.current) previewAbortRef.current.abort();
+        for (const entry of previewCacheRef.current.values()) {
+          try { URL.revokeObjectURL(entry.url); } catch { /* 忽略 */ }
+        }
+        previewCacheRef.current.clear();
       }, []);
 
       const putTree = React.useCallback((path, node) => {
@@ -1198,6 +2379,13 @@ window.__ModuleLoader__.load({
         setTree({});
         setExpanded({});
         expandedRef.current = {};
+        // 预览 blob 缓存按文件路径键控；跨会话可能指向不同工作区的同名文件 → 清空。
+        if (previewAbortRef.current) previewAbortRef.current.abort();
+        for (const entry of previewCacheRef.current.values()) {
+          try { URL.revokeObjectURL(entry.url); } catch { /* 忽略 */ }
+        }
+        previewCacheRef.current.clear();
+        setPreview({ status: 'idle', url: '', missingFonts: [], scheme: '', generation: null, key: '', error: null });
         if (sessionId && modeRef.current === 'workspace') loadDir('', true);
       }, [sessionId, loadDir]);
 
@@ -1211,6 +2399,38 @@ window.__ModuleLoader__.load({
         setReadError(null);
         setMeta(null);
       }, [openDir]);
+
+      // 选中文件变化：重置子页签与预览状态（blob 缓存保留，切回时可秒开）。
+      const selectedPath = selected && selected.type === 'file' ? selected.path : '';
+      React.useEffect(() => {
+        if (!selectedPath) return;
+        const ext = extOf(selectedPath);
+        setSubTab(WORD_EXTS.includes(ext) || EXCEL_EXTS.includes(ext) ? 'edit' : 'preview');
+        setPreview((prev) => (prev.key === selectedPath ? prev : { status: 'idle', url: '', missingFonts: [], scheme: '', generation: null, key: '', error: null }));
+        setExportResult(null);
+        setExportError(null);
+      }, [selectedPath]);
+
+      // 预览缓存容量 previewCacheSize（1–10；配置不可读时回落默认 5）。
+      React.useEffect(() => {
+        if (!active || configLoadedRef.current) return;
+        configLoadedRef.current = true;
+        api.callCommand('suite.config.get', {}).then((snapshot) => {
+          const effective = snapshot && isPlainObjectLoose(snapshot.effective) ? snapshot.effective : snapshot;
+          const value = Number(effective && effective.previewCacheSize);
+          if (Number.isInteger(value) && value >= 1 && value <= 10) setPreviewMax(value);
+        }).catch(() => { /* 配置不可读时回落默认 5 */ });
+      }, [active, api]);
+
+      // 连接复位：清空预览缓存并释放 blob URL（P3 §5.2）。
+      useConnectionReset(api, () => {
+        if (previewAbortRef.current) previewAbortRef.current.abort();
+        for (const entry of previewCacheRef.current.values()) {
+          try { URL.revokeObjectURL(entry.url); } catch { /* 忽略 */ }
+        }
+        previewCacheRef.current.clear();
+        setPreview({ status: 'idle', url: '', missingFonts: [], scheme: '', generation: null, key: '', error: null });
+      });
 
       const selectRow = React.useCallback((row) => {
         setSelected(row);
@@ -1318,7 +2538,91 @@ window.__ModuleLoader__.load({
         if (ok) window.setTimeout(() => setCopied(false), 1600);
       }, [api, selected]);
 
+      /**
+       * 渲染预览（P3 §5.2 双方案 + LRU 缓存）：
+       * 命中缓存直接复用 blob URL；未命中走 remote.officeToPdf 直连（方案 A），
+       * 不可用/失败时回落 suite.preview 命令（方案 B，返回 pdfBase64）。
+       */
+      const renderPreview = React.useCallback(async (force) => {
+        const file = selected;
+        if (!file || file.type !== 'file' || !PREVIEW_EXTS.includes(extOf(file.name))) return;
+        if (!sessionId) {
+          setPreview({ status: 'error', url: '', missingFonts: [], scheme: '', generation: null, key: file.path, error: { code: 'NO_SESSION', message: t('common.session.missing') } });
+          return;
+        }
+        const key = file.path;
+        const cache = previewCacheRef.current;
+        if (!force && cache.has(key)) {
+          const entry = cache.get(key);
+          cache.delete(key);
+          cache.set(key, entry);
+          setPreview({ status: 'ready', url: entry.url, missingFonts: entry.missingFonts, scheme: entry.scheme, generation: entry.generation, key, error: null });
+          return;
+        }
+        if (previewAbortRef.current) previewAbortRef.current.abort();
+        const controller = new AbortController();
+        previewAbortRef.current = controller;
+        setPreview({ status: 'busy', url: '', missingFonts: [], scheme: '', generation: null, key, error: null });
+        try {
+          const rendered = await renderPdfPreview(api, key, controller.signal);
+          if (controller.signal.aborted) {
+            try { URL.revokeObjectURL(rendered.url); } catch { /* 忽略 */ }
+            return;
+          }
+          const existing = cache.get(key);
+          if (existing) {
+            try { URL.revokeObjectURL(existing.url); } catch { /* 忽略 */ }
+            cache.delete(key);
+          }
+          const max = Math.max(1, Math.min(10, Number(previewMaxRef.current) || PREVIEW_CACHE_DEFAULT));
+          while (cache.size >= max) {
+            const oldestKey = cache.keys().next().value;
+            const oldest = cache.get(oldestKey);
+            if (oldest) {
+              try { URL.revokeObjectURL(oldest.url); } catch { /* 忽略 */ }
+            }
+            cache.delete(oldestKey);
+          }
+          cache.set(key, { url: rendered.url, missingFonts: rendered.missingFonts, scheme: rendered.scheme, generation: rendered.generation });
+          setPreview({ status: 'ready', url: rendered.url, missingFonts: rendered.missingFonts, scheme: rendered.scheme, generation: rendered.generation, key, error: null });
+        } catch (thrown) {
+          if (controller.signal.aborted) return;
+          const normalized = toPanelError(thrown, t);
+          if (normalized.cancelled) return;
+          const unsupported = normalized.code === 'E2012' || normalized.code === 'PREVIEW_UNSUPPORTED';
+          setPreview({ status: unsupported ? 'unsupported' : 'error', url: '', missingFonts: [], scheme: '', generation: null, key, error: normalized });
+        } finally {
+          if (previewAbortRef.current === controller) previewAbortRef.current = null;
+        }
+      }, [api, selected, sessionId, t]);
+
+      /** 导出 PDF（P3 §5.3：suite.export，新文件不触发备份）。 */
+      const exportPdf = React.useCallback(async () => {
+        if (!selected || selected.type !== 'file' || exporting) return;
+        if (!sessionId) {
+          setExportError({ code: 'NO_SESSION', message: t('common.session.missing') });
+          return;
+        }
+        setExporting(true);
+        setExportError(null);
+        setExportResult(null);
+        try {
+          const result = await api.callCommand('suite.export', { path: selected.path });
+          setExportResult(result && typeof result === 'object' ? result : {});
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setExportError(normalized);
+        } finally {
+          setExporting(false);
+        }
+      }, [api, exporting, selected, sessionId, t]);
+
       const selectedExt = selected && selected.type === 'file' ? extOf(selected.name) : '';
+      const selectedIsWord = WORD_EXTS.includes(selectedExt);
+      const selectedIsExcel = EXCEL_EXTS.includes(selectedExt);
+      const selectedEditable = OFFICE_EXTS.includes(selectedExt);
+      const selectedPreviewable = selected && selected.type === 'file' && PREVIEW_EXTS.includes(selectedExt);
+      const previewForCurrent = preview.key === selectedPath ? preview : { status: 'idle', url: '', missingFonts: [], scheme: '', generation: null, key: selectedPath, error: null };
 
       // ── 左树 ──
       const rows = [];
@@ -1382,16 +2686,21 @@ window.__ModuleLoader__.load({
         if (readError) {
           body = h('div', { className: 'dso-stack' }, h(ErrorBox, { t, error: readError, onRetry: readFile }));
         } else if (reading) {
-          body = h('div', { className: 'dso-cardBody' }, h(Busy, { text: t('docs.reading') }));
+          body = h(Busy, { text: t('docs.reading') });
         } else if (readResult && readResult.path === selected.path) {
-          body = h('div', { className: 'dso-cardBody' }, renderOfficeResult(t, readResult.result));
+          body = renderOfficeResult(t, readResult.result);
         } else {
           body = h(Empty, { text: t('docs.read.prompt') });
         }
+      } else if (PREVIEW_EXTS.includes(selectedExt)) {
+        // ppt/pptx：无文本读取，仅页面预览（P3 §5.2）
+        body = h('div', { className: 'dso-stack' },
+          h('div', { className: 'dso-hint' }, t('docs.preview.hint.other')),
+          h('div', { className: 'dso-hint' }, t('docs.preview.empty')));
       } else if (META_EXTS.includes(selectedExt)) {
         const hint = selectedExt === 'pdf' ? t('docs.preview.hint.pdf') : t('docs.preview.hint.other');
         const info = meta && meta.path === selected.path ? meta : null;
-        body = h('div', { className: 'dso-cardBody', 'data-preview-hook': selectedExt === 'pdf' ? 'officeToPdf' : undefined },
+        body = h('div', { className: 'dso-stack', 'data-preview-hook': selectedExt === 'pdf' ? 'officeToPdf' : undefined },
           h('dl', { className: 'dso-kv' },
             h('dt', null, t('docs.meta.name')),
             h('dd', null, selected.name),
@@ -1405,6 +2714,70 @@ window.__ModuleLoader__.load({
       } else {
         body = h(Empty, { text: t('docs.read.notSupported') });
       }
+
+      // ── 编辑 / 排版 / 预览子页签（P2 §6.1 / P3 §5.2） ──
+      const subTabs = selectedPreviewable
+        ? [
+          selectedEditable ? { id: 'edit', label: 'docs.sub.edit' } : null,
+          selectedIsWord ? { id: 'format', label: 'docs.sub.format' } : null,
+          { id: 'preview', label: 'docs.sub.preview' },
+        ].filter(Boolean)
+        : [];
+      const activeSub = subTabs.some((item) => item.id === subTab) ? subTab : (subTabs.length ? subTabs[0].id : '');
+      const subTabBar = subTabs.length === 0 ? null : h('div', {
+        className: 'dso-subtabs',
+        role: 'tablist',
+        'aria-label': t('docs.title'),
+      }, subTabs.map((item) => h('button', {
+        key: item.id,
+        type: 'button',
+        role: 'tab',
+        className: 'dso-subtab',
+        'aria-selected': activeSub === item.id ? 'true' : 'false',
+        'aria-current': activeSub === item.id ? 'page' : undefined,
+        onClick: () => {
+          setSubTab(item.id);
+          if (item.id === 'preview' && previewForCurrent.status === 'idle') renderPreview(false);
+        },
+      }, t(item.label))));
+
+      let subPanel = null;
+      if (selectedPreviewable) {
+        if (activeSub === 'edit') {
+          subPanel = h(DocsEditPanel, { api, t, path: selected.path, ext: selectedExt, sessionId });
+        } else if (activeSub === 'format') {
+          subPanel = h(DocsFormatPanel, { api, t, path: selected.path, sessionId });
+        } else {
+          subPanel = h(DocsPreviewPanel, {
+            t,
+            preview: previewForCurrent,
+            previewDirect: api.previewDirect === true,
+            cacheSize: previewMax,
+            cacheCount: previewCacheRef.current.size,
+            displayPath: selected.path,
+            onRender: () => renderPreview(false),
+            onRetry: () => renderPreview(true),
+            onExport: exportPdf,
+            exporting,
+            missingSession: !sessionId,
+          });
+        }
+      }
+      const exportArea = exportError
+        ? h(ErrorBox, { t, error: exportError, onRetry: exportPdf })
+        : (exportResult
+          ? h('div', { className: 'dso-okBox' },
+            h('div', null, fmt(t('docs.export.done'), { path: exportResult.outputPath || '—' })),
+            typeof exportResult.size === 'number' ? h('div', { className: 'dso-hint' }, formatBytes(exportResult.size)) : null,
+            h('div', { className: 'dso-actions' },
+              h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => api.copy(exportResult.outputPath) }, t('docs.actions.copyPath')),
+              openInDocs && exportResult.outputPath
+                ? h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => openInDocs(exportResult.outputPath) }, t('cad.result.openInDocs'))
+                : null))
+          : null);
+      const subArea = selectedPreviewable
+        ? h('div', { className: 'dso-stack' }, h('div', { className: 'dso-divider' }), subTabBar, subPanel, exportArea)
+        : null;
 
       const readerCard = h('section', { className: 'dso-card' },
         h('div', { className: 'dso-cardHead' },
@@ -1420,13 +2793,36 @@ window.__ModuleLoader__.load({
                 title: sessionId ? t('docs.read') : t('common.session.missing'),
               }, reading ? t('docs.reading') : t('docs.read'))
               : null,
+            selectedPreviewable
+              ? h('button', {
+                type: 'button',
+                className: 'dso-btn',
+                onClick: () => {
+                  setSubTab('preview');
+                  if (previewForCurrent.status !== 'ready' && previewForCurrent.status !== 'busy') renderPreview(false);
+                },
+                disabled: !sessionId || previewForCurrent.status === 'unsupported' || previewForCurrent.status === 'busy',
+                title: previewForCurrent.status === 'unsupported'
+                  ? t('docs.preview.unsupported')
+                  : (sessionId ? t('docs.preview.render') : t('common.session.missing')),
+              }, previewForCurrent.status === 'busy' ? t('docs.preview.rendering') : t('docs.preview.render'))
+              : null,
+            selectedPreviewable
+              ? h('button', {
+                type: 'button',
+                className: 'dso-btn',
+                onClick: exportPdf,
+                disabled: !sessionId || exporting,
+                title: sessionId ? t('docs.export') : t('common.session.missing'),
+              }, exporting ? t('docs.export.running') : t('docs.export'))
+              : null,
             h('button', {
               type: 'button',
               className: 'dso-btn',
               onClick: copyPath,
               disabled: !selected,
             }, copied ? t('docs.actions.copied') : t('docs.actions.copyPath')))),
-        h('div', { className: 'dso-cardBody' }, body));
+        h('div', { className: 'dso-cardBody' }, body, subArea));
 
       return h('div', { className: 'dso-split' }, treeCard, readerCard);
     }
@@ -1546,9 +2942,735 @@ window.__ModuleLoader__.load({
       }
       return h('pre', { className: 'dso-pre' }, JSON.stringify(info, null, 2));
     }
+
+    /** 编辑表单默认值（按家族）。 */
+    function defaultEditForm(family) {
+      return family === 'excel'
+        ? { action: 'cell', op: 'insert', sheet: '', at: 'B3', value: '', formula: '', name: 'Sheet1', newName: '' }
+        : { action: 'paragraph', op: 'append', at: '1', text: '', style: '正文', level: '1', table: '1', row: '1', col: '1' };
+    }
+
+    /** 排版规则表单默认值。 */
+    function defaultFormatRuleForm() {
+      return { target: 'body', level: '1', fontName: '宋体', fontSize: '12', bold: false, lineSpacing: '1.5', spaceBefore: '', spaceAfter: '', align: '', numbering: '', 'margin.top': '', 'margin.bottom': '', 'margin.left': '', 'margin.right': '', headerText: '', footerText: '' };
+    }
+
+    /**
+     * 编辑子页（P2 §6.1）：Word / Excel 表单 → 指令队列 → suite.edit；
+     * 底部「自动备份」列表 + 恢复（恢复前二次确认）。
+     */
+    function DocsEditPanel({ api, t, path, ext, sessionId }) {
+      const family = WORD_EXTS.includes(ext) ? 'word' : (EXCEL_EXTS.includes(ext) ? 'excel' : '');
+      const [form, setForm] = React.useState(() => defaultEditForm(family));
+      const [queue, setQueue] = React.useState([]);
+      const [formError, setFormError] = React.useState(null);
+      const [applying, setApplying] = React.useState(false);
+      const [result, setResult] = React.useState(null);
+      const [error, setError] = React.useState(null);
+      const [backups, setBackups] = React.useState(null);
+      const [backupError, setBackupError] = React.useState(null);
+      const [backupBusy, setBackupBusy] = React.useState(false);
+      const [restoreId, setRestoreId] = React.useState('');
+      const [restoring, setRestoring] = React.useState('');
+      const [restoreMsg, setRestoreMsg] = React.useState('');
+      const abortRef = React.useRef(null);
+      const tRef = React.useRef(t);
+      tRef.current = t;
+
+      React.useEffect(() => () => {
+        if (abortRef.current) abortRef.current.abort();
+      }, []);
+
+      // 切换文件：清空指令队列与结果（备份列表重新拉取）。
+      React.useEffect(() => {
+        setForm(defaultEditForm(family));
+        setQueue([]);
+        setFormError(null);
+        setResult(null);
+        setError(null);
+        setBackups(null);
+        setBackupError(null);
+        setRestoreId('');
+        setRestoreMsg('');
+      }, [path, family]);
+
+      const loadBackups = React.useCallback(async () => {
+        setBackupBusy(true);
+        setBackupError(null);
+        try {
+          const listing = await api.callCommand('suite.office.backup.list', { path });
+          setBackups(Array.isArray(listing && listing.backups) ? listing.backups : []);
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, tRef.current);
+          if (normalized.code === 'BACKUP_NONE') setBackups([]);
+          else setBackupError(normalized);
+        } finally {
+          setBackupBusy(false);
+        }
+      }, [api, path]);
+
+      React.useEffect(() => {
+        if (!family) return;
+        loadBackups();
+      }, [family, loadBackups]);
+
+      const setValue = (key) => (event) => {
+        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        setForm((prev) => Object.assign({}, prev, { [key]: value }));
+      };
+
+      const changeAction = (event) => {
+        const action = event.target.value;
+        const next = defaultEditForm(family);
+        next.action = action;
+        if (family === 'word') {
+          next.op = action === 'paragraph' ? 'append' : (action === 'heading' ? 'setStyle' : 'setCell');
+        } else if (action === 'sheet') {
+          next.op = 'rename';
+        } else if (action === 'cell') {
+          next.op = '';
+        } else {
+          next.op = 'insert';
+        }
+        setForm((prev) => Object.assign({}, prev, next));
+        setFormError(null);
+      };
+
+      const addOp = () => {
+        const built = buildEditOp(t, family, form);
+        if (!built.ok) {
+          setFormError(built.message);
+          return;
+        }
+        setQueue((prev) => prev.concat([built.op]));
+        setFormError(null);
+      };
+
+      const applyEdits = async () => {
+        if (!queue.length || applying) {
+          if (!queue.length) setFormError(t('docs.edit.queue.empty'));
+          return;
+        }
+        if (abortRef.current) abortRef.current.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
+        setApplying(true);
+        setError(null);
+        setResult(null);
+        try {
+          const applied = await api.callCommand('suite.edit', { path, ops: queue.slice() }, controller.signal);
+          setResult(applied || {});
+          if (!applied || !Array.isArray(applied.applied) || applied.applied.every((row) => !row || row.ok !== false)) {
+            setQueue([]);
+          }
+          loadBackups();
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setError(normalized);
+        } finally {
+          setApplying(false);
+          abortRef.current = null;
+        }
+      };
+
+      const restoreBackup = async (id) => {
+        if (restoring) return;
+        setRestoring(id);
+        setBackupError(null);
+        setRestoreMsg('');
+        try {
+          const restored = await api.callCommand('suite.office.backup.restore', { path, id });
+          setRestoreId('');
+          setRestoreMsg(restored && typeof restored.restoredTo === 'string' ? restored.restoredTo : path);
+          loadBackups();
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setBackupError(normalized);
+        } finally {
+          setRestoring('');
+        }
+      };
+
+      if (!family) return h('div', { className: 'dso-hint' }, t('docs.read.notSupported'));
+
+      const isWord = family === 'word';
+      const actionOptions = isWord ? ['paragraph', 'heading', 'table'] : ['cell', 'row', 'column', 'sheet'];
+      let opOptions = [];
+      if (isWord) {
+        if (form.action === 'paragraph' || form.action === 'heading') opOptions = ['append', 'setText', 'setStyle', 'insert', 'delete'];
+        else opOptions = ['setCell', 'addRow', 'deleteRow', 'addColumn', 'deleteColumn'];
+        if (form.action === 'heading') opOptions = ['setText', 'setStyle', 'insert', 'delete'];
+        if (form.action === 'table') opOptions = ['setCell', 'addRow', 'deleteRow', 'addColumn', 'deleteColumn'];
+      } else if (form.action === 'sheet') {
+        opOptions = ['rename', 'add', 'delete'];
+      } else if (form.action !== 'cell') {
+        opOptions = ['insert', 'delete'];
+      }
+
+      const actionSelect = h('select', { className: 'dso-select', value: form.action, onChange: changeAction },
+        actionOptions.map((action) => h('option', { key: action, value: action }, t('docs.edit.action.' + action))));
+      const opSelect = opOptions.length
+        ? h('select', { className: 'dso-select', value: opOptions.includes(form.op) ? form.op : opOptions[0], onChange: (event) => setForm((prev) => Object.assign({}, prev, { op: event.target.value })) },
+          opOptions.map((op) => h('option', { key: op, value: op }, t('docs.edit.op.' + op))))
+        : null;
+
+      const fields = [];
+      if (isWord) {
+        if (form.action === 'paragraph') {
+          if (form.op !== 'append' && form.op !== 'insert') fields.push(formField(t('docs.edit.at'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.at, onChange: setValue('at') })));
+          if (form.op === 'append' || form.op === 'setText' || form.op === 'insert') fields.push(formField(t('docs.edit.text'), h('input', { className: 'dso-input', value: form.text, onChange: setValue('text') })));
+          if (form.op === 'setStyle') fields.push(formField(t('docs.edit.style'), h('input', { className: 'dso-input', value: form.style, onChange: setValue('style') })));
+          if (form.op === 'insert') fields.push(formField(t('docs.edit.style'), h('input', { className: 'dso-input', value: form.style, onChange: setValue('style') })));
+        } else if (form.action === 'heading') {
+          fields.push(formField(t('docs.edit.level'), h('select', { className: 'dso-select', value: form.level, onChange: setValue('level') },
+            [1, 2, 3].map((level) => h('option', { key: level, value: String(level) }, String(level))))));
+          fields.push(formField(t('docs.edit.at'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.at, onChange: setValue('at') })));
+          if (form.op === 'setText' || form.op === 'insert') fields.push(formField(t('docs.edit.text'), h('input', { className: 'dso-input', value: form.text, onChange: setValue('text') })));
+          if (form.op === 'setStyle') fields.push(formField(t('docs.edit.style'), h('input', { className: 'dso-input', value: form.style, onChange: setValue('style') })));
+        } else {
+          fields.push(formField(t('docs.edit.table'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.table, onChange: setValue('table') })));
+          if (form.op === 'setCell') {
+            fields.push(formField(t('docs.edit.row'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.row, onChange: setValue('row') })));
+            fields.push(formField(t('docs.edit.col'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.col, onChange: setValue('col') })));
+            fields.push(formField(t('docs.edit.text'), h('input', { className: 'dso-input', value: form.text, onChange: setValue('text') })));
+          } else if (form.op === 'deleteRow') {
+            fields.push(formField(t('docs.edit.row'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.row, onChange: setValue('row') })));
+          } else if (form.op === 'addRow') {
+            fields.push(formField(t('docs.edit.at'), h('input', { className: 'dso-input', value: form.at, placeholder: 'end', onChange: setValue('at') })));
+          } else if (form.op === 'deleteColumn') {
+            fields.push(formField(t('docs.edit.col'), h('input', { className: 'dso-input', type: 'number', min: 1, value: form.col, onChange: setValue('col') })));
+          } else {
+            fields.push(formField(t('docs.edit.col'), h('input', { className: 'dso-input', type: 'text', value: form.col, onChange: setValue('col') })));
+          }
+        }
+      } else if (form.action === 'cell') {
+        fields.push(formField(t('docs.edit.sheet'), h('input', { className: 'dso-input', value: form.sheet, onChange: setValue('sheet') })));
+        fields.push(formField(t('docs.edit.at'), h('input', { className: 'dso-input', value: form.at, placeholder: 'B3', onChange: setValue('at') })));
+        fields.push(formField(t('docs.edit.value'), h('input', { className: 'dso-input', value: form.value, onChange: setValue('value') })));
+        fields.push(formField(t('docs.edit.formula'), h('input', { className: 'dso-input', value: form.formula, placeholder: '=SUM(B1:B2)', onChange: setValue('formula') })));
+      } else if (form.action === 'row' || form.action === 'column') {
+        fields.push(formField(t('docs.edit.sheet'), h('input', { className: 'dso-input', value: form.sheet, onChange: setValue('sheet') })));
+        fields.push(formField(t('docs.edit.at'), h('input', {
+          className: 'dso-input',
+          value: form.at,
+          placeholder: form.action === 'row' ? '3' : 'B',
+          onChange: setValue('at'),
+        })));
+      } else {
+        fields.push(formField(t('docs.edit.sheetName'), h('input', { className: 'dso-input', value: form.name, onChange: setValue('name') })));
+        if (form.op === 'rename') fields.push(formField(t('docs.edit.newName'), h('input', { className: 'dso-input', value: form.newName, onChange: setValue('newName') })));
+      }
+
+      const appliedRows = result && Array.isArray(result.applied) ? result.applied : [];
+      const partial = appliedRows.some((row) => row && row.ok === false);
+      const resultArea = result
+        ? h('div', { className: 'dso-stack' },
+          h('div', { className: 'dso-inline' },
+            h('span', { className: partial ? 'dso-badge dso-badge--warn' : 'dso-badge dso-badge--ok' },
+              fmt(t('docs.edit.applied'), { count: appliedRows.length })),
+            result.engine ? h('span', { className: 'dso-faint' }, fmt(t('docs.edit.engine'), { engine: String(result.engine) })) : null,
+            result.outputPath ? h('span', { className: 'dso-mono dso-faint', style: { overflowWrap: 'anywhere' } }, result.outputPath) : null),
+          partial ? h('div', { className: 'dso-warn' }, t('docs.edit.partial')) : null,
+          appliedRows.length === 0
+            ? null
+            : h('table', { className: 'dso-table' },
+              h('thead', null, h('tr', null, h('th', null, '#'), h('th', null, t('docs.edit.op')), h('th', null, 'OK'), h('th', null, ''))),
+              h('tbody', null, appliedRows.map((row, index) => h('tr', { key: 'ap' + index },
+                h('td', null, String(row && row.index !== undefined ? row.index + 1 : index + 1)),
+                h('td', { className: 'dso-mono' }, String(row && (row.op || row.action) ? (row.op || row.action) : '')),
+                h('td', null, h('span', { className: row && row.ok === false ? 'dso-badge dso-badge--error' : 'dso-badge dso-badge--ok' },
+                  row && row.ok === false ? t('common.error.title') : t('diag.engine.available'))),
+                h('td', { className: 'dso-hint' }, row && row.message ? String(row.message) : ''))))),
+          result.backup && (result.backup.path || result.backup.id)
+            ? h('div', { className: 'dso-hint dso-mono' }, fmt(t('docs.edit.backup'), { path: String(result.backup.path || result.backup.id) }))
+            : null)
+        : null;
+
+      const backupRows = Array.isArray(backups) ? backups : [];
+      const backupArea = h('div', { className: 'dso-card' },
+        h('div', { className: 'dso-cardHead' },
+          h('h3', { className: 'dso-cardTitle' }, t('docs.backup.title')),
+          h('span', { className: 'dso-spacer' }),
+          h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: loadBackups, disabled: backupBusy },
+            backupBusy ? t('common.busy') : t('docs.backup.refresh'))),
+        h('div', { className: 'dso-cardBody' },
+          backupError ? h(ErrorBox, { t, error: backupError, onRetry: loadBackups }) : null,
+          restoreMsg ? h('div', { className: 'dso-okBox' }, fmt(t('docs.backup.restored'), { path: restoreMsg })) : null,
+          backupRows.length === 0
+            ? h('div', { className: 'dso-hint' }, t('docs.backup.none'))
+            : h('table', { className: 'dso-table' },
+              h('thead', null, h('tr', null,
+                h('th', null, t('docs.backup.time')),
+                h('th', null, t('docs.backup.id')),
+                h('th', null, t('docs.backup.size')),
+                h('th', null, ''))),
+              h('tbody', null, backupRows.map((entry, index) => {
+                const id = String(entry && entry.id !== undefined ? entry.id : '');
+                const time = entry && entry.time !== undefined ? entry.time : '';
+                return h('tr', { key: 'bk' + index + ':' + id },
+                  h('td', null, typeof time === 'number' ? formatClock(time) : String(time || '—')),
+                  h('td', { className: 'dso-mono' }, id || '—'),
+                  h('td', null, typeof (entry && entry.size) === 'number' ? formatBytes(entry.size) : '—'),
+                  h('td', null, restoreId === id && id
+                    ? h('span', { className: 'dso-inline' },
+                      h('span', { className: 'dso-hint' }, t('docs.backup.confirm')),
+                      h('button', { type: 'button', className: 'dso-btn dso-btn--danger dso-btn--sm', onClick: () => restoreBackup(id), disabled: restoring === id },
+                        restoring === id ? t('common.busy') : t('common.ok')),
+                      h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => setRestoreId('') }, t('common.cancel')))
+                    : h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => setRestoreId(id), disabled: !id || !!restoring },
+                      t('docs.backup.restore'))));
+              })))));
+
+      return h('div', { className: 'dso-stack' },
+        h('div', { className: 'dso-card' },
+          h('div', { className: 'dso-cardHead' },
+            h('h3', { className: 'dso-cardTitle' }, isWord ? t('docs.edit.title.word') : t('docs.edit.title.excel'))),
+          h('div', { className: 'dso-cardBody' },
+            h('div', { className: 'dso-row2' },
+              formField(t('docs.edit.action'), actionSelect),
+              opSelect ? formField(t('docs.edit.op'), opSelect) : null),
+            fields.length ? h('div', { className: 'dso-row2' }, ...fields) : null,
+            h('div', { className: 'dso-hint' }, isWord ? t('docs.edit.hint.word') : t('docs.edit.hint.excel')),
+            formError ? h('div', { className: 'dso-error', role: 'alert' }, formError) : null,
+            h('div', { className: 'dso-actions' },
+              h('button', { type: 'button', className: 'dso-btn', onClick: addOp }, t('docs.edit.add')),
+              h('button', { type: 'button', className: 'dso-btn', onClick: () => setQueue([]), disabled: queue.length === 0 }, t('docs.edit.clear')),
+              h('span', { className: 'dso-spacer' }),
+              h('button', {
+                type: 'button',
+                className: 'dso-btn dso-btn--primary',
+                onClick: applyEdits,
+                disabled: applying || queue.length === 0 || !sessionId,
+                title: sessionId ? t('docs.edit.apply') : t('common.session.missing'),
+              }, applying ? t('docs.edit.applying') : t('docs.edit.apply'))),
+            h('div', { className: 'dso-label' }, fmt(t('docs.edit.queue'), { count: queue.length })),
+            queue.length === 0
+              ? h('div', { className: 'dso-hint' }, t('docs.edit.queue.empty'))
+              : h('ul', { className: 'dso-list' }, queue.map((op, index) => h('li', { key: 'q' + index, className: 'dso-inline' },
+                h('span', { className: 'dso-mono', style: { flex: '1 1 auto', overflowWrap: 'anywhere' } }, JSON.stringify(op)),
+                h('button', {
+                  type: 'button',
+                  className: 'dso-btn dso-btn--sm dso-btn--danger',
+                  onClick: () => setQueue((prev) => prev.filter((_, item) => item !== index)),
+                }, t('docs.edit.remove'))))),
+            error ? h(ErrorBox, { t, error }) : null)),
+        result
+          ? h('div', { className: 'dso-card' },
+            h('div', { className: 'dso-cardHead' }, h('h3', { className: 'dso-cardTitle' }, t('docs.edit.result'))),
+            h('div', { className: 'dso-cardBody' }, resultArea))
+          : null,
+        backupArea);
+    }
+
+    /**
+     * 排版子页（P2 §6.1）：rules 编辑器 + 样式集/模板/占位符 + scope → suite.format；
+     * 批量排版 → suite.format.batch（复用 800ms 任务轮询与取消）。
+     */
+    function DocsFormatPanel({ api, t, path, sessionId }) {
+      const [ruleForm, setRuleForm] = React.useState(defaultFormatRuleForm);
+      const [rules, setRules] = React.useState([]);
+      const [ruleError, setRuleError] = React.useState(null);
+      const [styleSet, setStyleSet] = React.useState('');
+      const [template, setTemplate] = React.useState('');
+      const [placeholders, setPlaceholders] = React.useState([{ key: '标题', value: '' }, { key: '日期', value: '' }]);
+      const [scope, setScope] = React.useState('all');
+      const [headingLevels, setHeadingLevels] = React.useState([1, 2, 3]);
+      const [catalog, setCatalog] = React.useState(null);
+      const [catalogError, setCatalogError] = React.useState(null);
+      const [applying, setApplying] = React.useState(false);
+      const [result, setResult] = React.useState(null);
+      const [error, setError] = React.useState(null);
+      const [batchDir, setBatchDir] = React.useState('');
+      const [batchTaskId, setBatchTaskId] = React.useState('');
+      const [batchStarting, setBatchStarting] = React.useState(false);
+      const [batchError, setBatchError] = React.useState(null);
+      const [batchCancelling, setBatchCancelling] = React.useState(false);
+      const [batchParallel, setBatchParallel] = React.useState('1');
+      const abortRef = React.useRef(null);
+      const batchPoll = useTaskPolling(api, batchTaskId, 'suite.office.status', t);
+
+      React.useEffect(() => () => {
+        if (abortRef.current) abortRef.current.abort();
+      }, []);
+
+      React.useEffect(() => {
+        setRules([]);
+        setRuleError(null);
+        setResult(null);
+        setError(null);
+        setBatchTaskId('');
+        setBatchError(null);
+        setBatchDir('');
+      }, [path]);
+
+      React.useEffect(() => {
+        let alive = true;
+        api.callCommand('suite.templates', {}).then((data) => {
+          if (!alive) return;
+          setCatalog({
+            styles: Array.isArray(data && data.styles) ? data.styles : [],
+            templates: Array.isArray(data && data.templates) ? data.templates : [],
+            hint: data && typeof data.hint === 'string' ? data.hint : '',
+          });
+        }).catch((thrown) => {
+          if (!alive) return;
+          setCatalogError(toPanelError(thrown, t));
+        });
+        return () => { alive = false; };
+      }, [api, t]);
+
+      const setRuleValue = (key) => (event) => {
+        const value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
+        setRuleForm((prev) => Object.assign({}, prev, { [key]: value }));
+      };
+
+      const addRule = () => {
+        const built = buildFormatRule(t, ruleForm);
+        if (!built.ok) {
+          setRuleError(built.message);
+          return;
+        }
+        setRules((prev) => prev.concat([built.rule]));
+        setRuleError(null);
+      };
+
+      const buildArgs = () => buildFormatSpec(t, { rules, styleSet, template, placeholders, scope, headingLevels });
+
+      const applyFormat = async () => {
+        if (applying) return;
+        if (!sessionId) {
+          setError({ code: 'NO_SESSION', message: t('common.session.missing') });
+          return;
+        }
+        const spec = buildArgs();
+        if (!spec.ok) {
+          setError({ code: 'PARAM_INVALID', message: spec.message });
+          return;
+        }
+        if (abortRef.current) abortRef.current.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
+        setApplying(true);
+        setError(null);
+        setResult(null);
+        try {
+          const formatted = await api.callCommand('suite.format', Object.assign({ path }, spec.args), controller.signal);
+          setResult(formatted || {});
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setError(normalized);
+        } finally {
+          setApplying(false);
+          abortRef.current = null;
+        }
+      };
+
+      const chooseBatchDir = async () => {
+        try {
+          const dir = await api.pickDir();
+          if (dir) setBatchDir(dir);
+        } catch (thrown) {
+          setBatchError(toPanelError(thrown, t));
+        }
+      };
+
+      const startBatch = async () => {
+        if (batchStarting) return;
+        if (!sessionId) {
+          setBatchError({ code: 'NO_SESSION', message: t('common.session.missing') });
+          return;
+        }
+        const dir = batchDir.trim();
+        if (!dir) {
+          setBatchError({ code: 'PARAM_INVALID', message: t('cad.input.placeholder') });
+          return;
+        }
+        const spec = buildArgs();
+        if (!spec.ok) {
+          setBatchError({ code: 'PARAM_INVALID', message: spec.message });
+          return;
+        }
+        setBatchStarting(true);
+        setBatchError(null);
+        setBatchTaskId('');
+        try {
+          const args = Object.assign({ dir, parallel: batchParallel === 'auto' ? 'auto' : Number(batchParallel) }, spec.args);
+          const started = await api.callCommand('suite.format.batch', args);
+          const id = started && typeof started.taskId === 'string' ? started.taskId : '';
+          if (!id) throw { code: 'BAD_RESPONSE', message: 'suite.format.batch returned no taskId' };
+          setBatchTaskId(id);
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setBatchError(normalized);
+        } finally {
+          setBatchStarting(false);
+        }
+      };
+
+      const cancelBatch = async () => {
+        if (!batchTaskId || batchCancelling) return;
+        setBatchCancelling(true);
+        try {
+          await api.callCommand('suite.office.cancel', { taskId: batchTaskId });
+        } catch (thrown) {
+          setBatchError(toPanelError(thrown, t));
+        } finally {
+          setBatchCancelling(false);
+        }
+      };
+
+      const styles = catalog && Array.isArray(catalog.styles) ? catalog.styles : [];
+      const templates = catalog && Array.isArray(catalog.templates) ? catalog.templates : [];
+      const ruleSummary = (rule) => {
+        const parts = [t('docs.format.target.' + rule.target)];
+        if (rule.level) parts.push('L' + rule.level);
+        if (rule.font) parts.push([rule.font.name, rule.font.sizePt ? rule.font.sizePt + 'pt' : '', rule.font.bold ? 'B' : ''].filter(Boolean).join(' '));
+        if (rule.paragraph) parts.push([rule.paragraph.lineSpacing ? rule.paragraph.lineSpacing + 'x' : '', rule.paragraph.spaceBeforePt !== undefined ? '↑' + rule.paragraph.spaceBeforePt : '', rule.paragraph.spaceAfterPt !== undefined ? '↓' + rule.paragraph.spaceAfterPt : '', rule.paragraph.align || ''].filter(Boolean).join(' '));
+        if (rule.numbering) parts.push(t('docs.format.numbering.' + rule.numbering));
+        if (rule.page) parts.push(Object.entries(rule.page.marginsMm).map(([side, value]) => side + ' ' + value + 'mm').join(' '));
+        if (rule.header) parts.push(rule.header.text);
+        if (rule.footer) parts.push(rule.footer.text);
+        return parts.filter(Boolean).join(' · ');
+      };
+
+      const target = ruleForm.target;
+      const scopeLevels = [1, 2, 3];
+      const batchStatus = batchPoll.status;
+      const batchOutput = batchStatus && batchStatus.output && typeof batchStatus.output === 'object' ? batchStatus.output : null;
+      const batchFailures = batchOutput && Array.isArray(batchOutput.failures) ? batchOutput.failures : [];
+      const batchExtra = batchFailures.length
+        ? h('div', { className: 'dso-stack' },
+          h('div', { className: 'dso-warn' }, fmt(t('docs.format.batch.failures'), { count: batchFailures.length })),
+          h('ul', { className: 'dso-list' }, batchFailures.map((row, index) => h('li', { key: 'bf' + index, className: 'dso-hint dso-mono' },
+            String(row && row.file) + ' · ' + String(row && row.code) + ' ' + String(row && row.message || '')))))
+        : null;
+
+      return h('div', { className: 'dso-stack' },
+        h('div', { className: 'dso-card' },
+          h('div', { className: 'dso-cardHead' }, h('h3', { className: 'dso-cardTitle' }, t('docs.format.rules'))),
+          h('div', { className: 'dso-cardBody' },
+            h('div', { className: 'dso-row2' },
+              formField(t('docs.format.target'), h('select', { className: 'dso-select', value: target, onChange: setRuleValue('target') },
+                ['heading', 'body', 'page', 'header', 'footer'].map((item) => h('option', { key: item, value: item }, t('docs.format.target.' + item))))),
+              target === 'heading'
+                ? formField(t('docs.format.headingLevel'), h('select', { className: 'dso-select', value: ruleForm.level, onChange: setRuleValue('level') },
+                  [1, 2, 3].map((level) => h('option', { key: level, value: String(level) }, String(level)))))
+                : null),
+            target === 'body' || target === 'heading'
+              ? h('div', { className: 'dso-row2' },
+                formField(t('docs.format.fontName'), h('input', { className: 'dso-input', value: ruleForm.fontName, onChange: setRuleValue('fontName') })),
+                formField(t('docs.format.fontSize'), h('input', { className: 'dso-input', type: 'number', min: 1, max: 200, value: ruleForm.fontSize, onChange: setRuleValue('fontSize') })),
+                h('label', { className: 'dso-check', style: { alignSelf: 'end', paddingBottom: '4px' } },
+                  h('input', { type: 'checkbox', checked: ruleForm.bold === true, onChange: setRuleValue('bold') }),
+                  t('docs.format.bold')))
+              : null,
+            target === 'body' || target === 'heading'
+              ? h('div', { className: 'dso-row2' },
+                formField(t('docs.format.paraLn'), h('input', { className: 'dso-input', type: 'number', step: '0.1', min: 0.5, max: 10, value: ruleForm.lineSpacing, onChange: setRuleValue('lineSpacing') })),
+                formField(t('docs.format.spaceBefore'), h('input', { className: 'dso-input', type: 'number', min: 0, max: 500, value: ruleForm.spaceBefore, onChange: setRuleValue('spaceBefore') })),
+                formField(t('docs.format.spaceAfter'), h('input', { className: 'dso-input', type: 'number', min: 0, max: 500, value: ruleForm.spaceAfter, onChange: setRuleValue('spaceAfter') })),
+                formField(t('docs.format.align'), h('select', { className: 'dso-select', value: ruleForm.align, onChange: setRuleValue('align') },
+                  h('option', { value: '' }, t('docs.format.align.none')),
+                  ['left', 'center', 'right', 'justify'].map((item) => h('option', { key: item, value: item }, item)))),
+                formField(t('docs.format.numbering'), h('select', { className: 'dso-select', value: ruleForm.numbering, onChange: setRuleValue('numbering') },
+                  h('option', { value: '' }, t('docs.format.align.none')),
+                  ['chinese', 'arabic', 'decimalDot', 'none'].map((item) => h('option', { key: item, value: item }, t('docs.format.numbering.' + item))))))
+              : null,
+            target === 'page'
+              ? h('div', { className: 'dso-row2' },
+                formField(t('docs.format.margins'), h('div', { className: 'dso-inline' },
+                  ['top', 'bottom', 'left', 'right'].map((side) => h('input', {
+                    key: side,
+                    className: 'dso-input',
+                    type: 'number',
+                    min: 1,
+                    max: 500,
+                    placeholder: side,
+                    title: side,
+                    value: ruleForm['margin.' + side],
+                    onChange: setRuleValue('margin.' + side),
+                    style: { width: '76px', flex: '0 0 auto' },
+                  })))))
+              : null,
+            target === 'header' || target === 'footer'
+              ? formField(t('docs.format.target.' + target), h('input', { className: 'dso-input', value: target === 'header' ? ruleForm.headerText : ruleForm.footerText, onChange: setRuleValue(target === 'header' ? 'headerText' : 'footerText') }))
+              : null,
+            ruleError ? h('div', { className: 'dso-error', role: 'alert' }, ruleError) : null,
+            h('div', { className: 'dso-actions' },
+              h('button', { type: 'button', className: 'dso-btn', onClick: addRule }, t('docs.format.rule.add')),
+              h('button', { type: 'button', className: 'dso-btn', onClick: () => setRules([]), disabled: rules.length === 0 }, t('docs.edit.clear'))),
+            rules.length === 0
+              ? h('div', { className: 'dso-hint' }, t('docs.format.rule.empty'))
+              : h('ul', { className: 'dso-list' }, rules.map((rule, index) => h('li', { key: 'rule' + index, className: 'dso-inline' },
+                h('span', { className: 'dso-muted', style: { flex: '1 1 auto', overflowWrap: 'anywhere' } }, ruleSummary(rule)),
+                h('button', {
+                  type: 'button',
+                  className: 'dso-btn dso-btn--sm dso-btn--danger',
+                  onClick: () => setRules((prev) => prev.filter((_, item) => item !== index)),
+                }, t('docs.edit.remove')))))),
+            catalogError ? h('div', { className: 'dso-hint dso-error' }, catalogError.message) : null,
+            h('div', { className: 'dso-row2' },
+              formField(t('docs.format.styleSet'), h('select', { className: 'dso-select', value: styleSet, onChange: (event) => setStyleSet(event.target.value) },
+                h('option', { value: '' }, t('common.none')),
+                styles.map((entry) => h('option', { key: 'st' + entry.id, value: entry.id },
+                  String(entry.name || entry.id) + (entry.builtin ? '' : ' *') + (entry.invalid ? ' (!)' : '') + ' · ' + String(entry.rules ?? 0))))),
+              formField(t('docs.format.template'), h('select', {
+                className: 'dso-select',
+                value: template,
+                onChange: (event) => {
+                  const id = event.target.value;
+                  setTemplate(id);
+                  const entry = templates.find((item) => item && item.id === id);
+                  if (entry && Array.isArray(entry.placeholders) && entry.placeholders.length) {
+                    setPlaceholders(entry.placeholders.map((item) => {
+                      if (typeof item === 'string') return { key: item, value: '' };
+                      const key = item && (item.key ?? item.name ?? item.id);
+                      return { key: key === undefined || key === null ? '' : String(key), value: item && item.value !== undefined ? String(item.value) : '' };
+                    }));
+                  }
+                },
+              },
+              h('option', { value: '' }, t('common.none')),
+              templates.map((entry) => h('option', { key: 'tp' + entry.id, value: entry.id },
+                String(entry.name || entry.id) + (entry.builtin ? '' : ' *')))))),
+            template
+              ? h('div', { className: 'dso-stack' },
+                h('div', { className: 'dso-label' }, t('docs.format.placeholders')),
+                placeholders.map((row, index) => h('div', { key: 'ph' + index, className: 'dso-inline' },
+                  h('input', {
+                    className: 'dso-input',
+                    value: row.key,
+                    placeholder: t('docs.format.placeholder.key'),
+                    style: { flex: '1 1 120px', width: 'auto' },
+                    onChange: (event) => setPlaceholders((prev) => prev.map((item, itemIndex) => (itemIndex === index ? Object.assign({}, item, { key: event.target.value }) : item))),
+                  }),
+                  h('input', {
+                    className: 'dso-input',
+                    value: row.value,
+                    placeholder: t('docs.format.placeholder.value'),
+                    style: { flex: '2 1 200px', width: 'auto' },
+                    onChange: (event) => setPlaceholders((prev) => prev.map((item, itemIndex) => (itemIndex === index ? Object.assign({}, item, { value: event.target.value }) : item))),
+                  }),
+                  h('button', {
+                    type: 'button',
+                    className: 'dso-btn dso-btn--sm',
+                    onClick: () => setPlaceholders((prev) => prev.filter((_, itemIndex) => itemIndex !== index)),
+                  }, t('docs.edit.remove')))),
+                h('div', null, h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => setPlaceholders((prev) => prev.concat([{ key: '', value: '' }])) }, t('docs.format.placeholder.add'))))
+              : null,
+            h('div', { className: 'dso-row2' },
+              formField(t('docs.format.scope'), h('select', { className: 'dso-select', value: scope, onChange: (event) => setScope(event.target.value) },
+                h('option', { value: 'all' }, t('docs.format.scope.all')),
+                h('option', { value: 'headings' }, t('docs.format.scope.headings')))),
+              scope === 'headings'
+                ? h('div', { className: 'dso-inline', style: { alignSelf: 'end', paddingBottom: '4px' } },
+                  scopeLevels.map((level) => h('label', { key: 'lv' + level, className: 'dso-check' },
+                    h('input', {
+                      type: 'checkbox',
+                      checked: headingLevels.includes(level),
+                      onChange: (event) => setHeadingLevels((prev) => (event.target.checked
+                        ? prev.concat([level])
+                        : prev.filter((value) => value !== level))),
+                    }),
+                    String(level))))
+                : null),
+            error ? h(ErrorBox, { t, error }) : null,
+            result
+              ? h('div', { className: 'dso-okBox' },
+                h('div', null, fmt(t('docs.format.done'), { path: result.outputPath || path })),
+                result.engine ? h('div', { className: 'dso-hint' }, fmt(t('docs.edit.engine'), { engine: String(result.engine) })) : null,
+                result.backup && result.backup.path ? h('div', { className: 'dso-hint dso-mono' }, fmt(t('docs.edit.backup'), { path: String(result.backup.path) })) : null)
+              : null,
+            h('div', { className: 'dso-actions' },
+              h('button', {
+                type: 'button',
+                className: 'dso-btn dso-btn--primary',
+                onClick: applyFormat,
+                disabled: applying || !sessionId,
+                title: sessionId ? t('docs.format.apply') : t('common.session.missing'),
+              }, applying ? t('docs.format.applying') : t('docs.format.apply')))),
+        h('div', { className: 'dso-card' },
+          h('div', { className: 'dso-cardHead' }, h('h3', { className: 'dso-cardTitle' }, t('docs.format.batch'))),
+          h('div', { className: 'dso-cardBody' },
+            h('div', { className: 'dso-hint' }, t('docs.format.batch.note')),
+            h('div', { className: 'dso-inline' },
+              h('input', {
+                className: 'dso-input',
+                value: batchDir,
+                placeholder: t('docs.format.batch.dir'),
+                style: { flex: '1 1 260px', width: 'auto' },
+                onChange: (event) => setBatchDir(event.target.value),
+              }),
+              h('button', { type: 'button', className: 'dso-btn', onClick: chooseBatchDir, disabled: batchStarting }, t('cad.input.dir'))),
+            h('div', { className: 'dso-row2' },
+              formField(t('cad.parallel'), h('select', { className: 'dso-select', value: batchParallel, onChange: (event) => setBatchParallel(event.target.value) },
+                h('option', { value: 'auto' }, t('cad.parallel.auto')),
+                [1, 2, 3, 4].map((value) => h('option', { key: 'bp' + value, value: String(value) }, String(value))))),
+              h('div', { className: 'dso-inline', style: { alignSelf: 'end' } },
+                h('button', {
+                  type: 'button',
+                  className: 'dso-btn dso-btn--primary',
+                  onClick: startBatch,
+                  disabled: batchStarting || !sessionId || !batchDir.trim(),
+                }, batchStarting ? t('common.busy') : t('docs.format.batch.start')))),
+            batchError ? h(ErrorBox, { t, error: batchError }) : null,
+            batchTaskId
+              ? h('div', { className: 'dso-hint dso-mono' }, fmt(t('docs.format.batch.started'), { taskId: batchTaskId }))
+              : null,
+            batchTaskId
+              ? h(TaskProgress, {
+                t,
+                status: batchPoll.status,
+                error: batchPoll.error,
+                mode: 'files',
+                cancelling: batchCancelling,
+                onCancel: cancelBatch,
+                extra: batchExtra,
+              })
+              : null)));
+    }
+
+    /** 预览子页（P3 §5.2）：按钮 / iframe / missingFonts / E2012 提示 / 导出 PDF。 */
+    function DocsPreviewPanel({ t, preview, previewDirect, cacheSize, cacheCount, displayPath, onRender, onRetry, onExport, exporting, missingSession }) {
+      const status = preview && typeof preview.status === 'string' ? preview.status : 'idle';
+      const missingFonts = preview && Array.isArray(preview.missingFonts) ? preview.missingFonts : [];
+      const head = h('div', { className: 'dso-inline' },
+        h('span', {
+          className: status === 'ready'
+            ? 'dso-badge dso-badge--ok'
+            : (status === 'error' || status === 'unsupported' ? 'dso-badge dso-badge--error' : 'dso-badge dso-badge--idle'),
+        }, status === 'ready'
+          ? t('docs.preview.render')
+          : (status === 'busy'
+            ? t('docs.preview.rendering')
+            : (status === 'unsupported' ? t('docs.preview.unsupported') : (status === 'error' ? t('common.error.title') : t('docs.preview.empty'))))),
+        h('span', { className: 'dso-faint' }, previewDirect ? t('docs.preview.scheme.direct') : t('docs.preview.scheme.command')),
+        missingFonts.length
+          ? h('span', { className: 'dso-badge dso-badge--warn', title: missingFonts.join(', ') }, fmt(t('docs.preview.missingFonts'), { count: missingFonts.length }))
+          : null,
+        h('span', { className: 'dso-spacer' }),
+        h('span', { className: 'dso-faint' }, fmt(t('docs.preview.cached'), { count: cacheCount, max: cacheSize })),
+        h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: onRender, disabled: missingSession || status === 'busy' }, t('docs.preview.retry')),
+        h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: onExport, disabled: missingSession || exporting }, exporting ? t('docs.export.running') : t('docs.export')));
+
+      let content = null;
+      if (status === 'busy') content = h(Busy, { text: t('docs.preview.rendering') });
+      else if (status === 'ready' && preview.url) content = h('iframe', { className: 'dso-previewFrame', src: preview.url, title: displayPath });
+      else if (status === 'unsupported') {
+        content = h('div', { className: 'dso-errorBox' },
+          h('div', null, t('docs.preview.unsupported')),
+          h('div', { className: 'dso-hint' }, t('docs.preview.unsupported.hint')));
+      } else if (status === 'error') {
+        content = h('div', { className: 'dso-stack' },
+          h(ErrorBox, { t, error: preview.error, onRetry }),
+          h('div', { className: 'dso-hint' }, t('docs.preview.unsupported.hint')));
+      } else content = h(Empty, { text: t('docs.preview.empty') });
+
+      return h('div', { className: 'dso-stack' }, head, content);
+    }
     //#endregion
 
-    //#region 8. 组件：VisioTab（Visio 绘图：flowchart JSON 编辑 + 校验 + 运行 + 历史）
+    //#region 8. 组件：VisioTab（flowchart 节点/边 + P2 三类/P3 五类电网模型 + 校验 + 运行 + 历史）
     /** flowchart 模板（与 host/engines/visio-flowchart.ps1 的节点类型一致）。 */
     const FLOWCHART_TEMPLATE_NODES = [
       { id: 'n1', label: '开始', kind: 'start' },
@@ -1611,10 +3733,13 @@ window.__ModuleLoader__.load({
     }
 
     /** Visio 绘图页。 */
+    /** Visio 绘图页：flowchart + P2/P3 电网八类（模型 JSON + 模板 + 校验 + 结果 validations）。 */
     function VisioTab({ api, t, sessionId }) {
+      const [kind, setKind] = React.useState('flowchart');
       const [title, setTitle] = React.useState('');
       const [nodesText, setNodesText] = React.useState(() => JSON.stringify(FLOWCHART_TEMPLATE_NODES, null, 2));
       const [edgesText, setEdgesText] = React.useState(() => JSON.stringify(FLOWCHART_TEMPLATE_EDGES, null, 2));
+      const [modelText, setModelText] = React.useState(() => gridTemplateText(GRID_MODEL_KINDS[0]));
       const [nlText, setNlText] = React.useState('');
       const [outputPath, setOutputPath] = React.useState('');
       const [running, setRunning] = React.useState(false);
@@ -1627,26 +3752,46 @@ window.__ModuleLoader__.load({
         if (abortRef.current) abortRef.current.abort();
       }, []);
 
-      const validation = React.useMemo(() => parseFlowchart(t, nodesText, edgesText), [t, nodesText, edgesText]);
+      const isFlowchart = kind === 'flowchart';
+      const validation = React.useMemo(
+        () => (isFlowchart ? parseFlowchart(t, nodesText, edgesText) : parseGridModel(t, kind, modelText)),
+        [isFlowchart, kind, modelText, nodesText, edgesText, t],
+      );
 
       const pushHistory = React.useCallback((entry) => {
         setHistory((prev) => [Object.assign({ at: Date.now() }, entry)].concat(prev).slice(0, 5));
       }, []);
 
-      const insertTemplate = React.useCallback(() => {
-        setNodesText(JSON.stringify(FLOWCHART_TEMPLATE_NODES, null, 2));
-        setEdgesText(JSON.stringify(FLOWCHART_TEMPLATE_EDGES, null, 2));
+      const changeKind = React.useCallback((next) => {
+        if (!next || next === GRID_KIND_PENDING) return;
+        setKind(next);
+        setResult(null);
+        setError(null);
+        if (next === 'flowchart') return;
+        // 切换图类型：仅当 textarea 仍是内置模板（或为空）时刷新模板，避免覆盖用户编辑。
+        setModelText((prev) => (isBuiltinTemplateText(prev) ? gridTemplateText(next) : prev));
       }, []);
+
+      const insertTemplate = React.useCallback(() => {
+        if (isFlowchart) {
+          setNodesText(JSON.stringify(FLOWCHART_TEMPLATE_NODES, null, 2));
+          setEdgesText(JSON.stringify(FLOWCHART_TEMPLATE_EDGES, null, 2));
+          return;
+        }
+        setModelText(gridTemplateText(kind));
+        setError(null);
+      }, [isFlowchart, kind]);
 
       const chooseDir = React.useCallback(async () => {
         try {
           const dir = await api.pickDir();
           if (!dir) return;
-          setOutputPath(joinPath(dir, 'flowchart-' + formatStamp(Date.now()) + '.vsdx'));
+          const stem = isFlowchart ? 'flowchart' : kind;
+          setOutputPath(joinPath(dir, stem + '-' + formatStamp(Date.now()) + '.vsdx'));
         } catch (picked) {
           setError(toPanelError(picked, t));
         }
-      }, [api, t]);
+      }, [api, isFlowchart, kind, t]);
 
       const run = React.useCallback(async () => {
         if (running) return;
@@ -1662,23 +3807,37 @@ window.__ModuleLoader__.load({
         setError(null);
         setResult(null);
         try {
-          const args = { kind: 'flowchart', title: title.trim(), nodes: validation.nodes, edges: validation.edges };
+          const args = { kind };
+          if (title.trim()) args.title = title.trim();
+          if (isFlowchart) {
+            args.nodes = validation.nodes;
+            args.edges = validation.edges;
+          } else {
+            args.model = validation.model;
+          }
           const trimmed = outputPath.trim();
           if (trimmed) args.outputPath = trimmed;
           const drawn = await api.callCommand('suite.draw', args, controller.signal);
-          setResult(drawn);
-          pushHistory({ ok: true, outputPath: drawn && drawn.outputPath ? String(drawn.outputPath) : '', stats: drawn && drawn.stats });
+          setResult(drawn || {});
+          pushHistory({
+            ok: true,
+            kind,
+            outputPath: drawn && drawn.outputPath ? String(drawn.outputPath) : '',
+            stats: drawn && drawn.stats,
+            pages: drawn && drawn.pages,
+          });
         } catch (thrown) {
           const normalized = toPanelError(thrown, t);
+          if (normalized.code === 'E2024') normalized.hint = t('visio.e2024');
           if (!normalized.cancelled) {
             setError(normalized);
-            pushHistory({ ok: false, code: normalized.code, message: normalized.message });
+            pushHistory({ ok: false, kind, code: normalized.code, message: normalized.message });
           }
         } finally {
           setRunning(false);
           abortRef.current = null;
         }
-      }, [api, outputPath, pushHistory, running, sessionId, t, title, validation]);
+      }, [api, isFlowchart, kind, outputPath, pushHistory, running, sessionId, t, title, validation]);
 
       const abort = React.useCallback(() => {
         if (abortRef.current) abortRef.current.abort();
@@ -1686,16 +3845,37 @@ window.__ModuleLoader__.load({
 
       const field = (label, node) => h('div', { className: 'dso-field' }, h('span', { className: 'dso-label' }, label), node);
 
+      const statLabel = (key) => (STAT_LABEL_KEYS[key] ? t(STAT_LABEL_KEYS[key]) : key);
+      const stats = result && isPlainObjectLoose(result.stats) ? result.stats : null;
+      const statEntries = stats
+        ? Object.entries(stats).filter(([key, value]) => key !== 'pages' && (typeof value === 'number' || typeof value === 'boolean' || typeof value === 'string'))
+        : [];
+      const validationRows = result && Array.isArray(result.validations) ? result.validations : [];
       const historyItems = history.map((entry, index) => {
+        let statsText = '';
+        if (entry.stats) {
+          if (entry.kind === 'flowchart') {
+            statsText = fmt(t('visio.done.stats'), { nodes: entry.stats.nodes, edges: entry.stats.edges });
+          } else {
+            statsText = Object.entries(entry.stats)
+              .filter(([key, value]) => typeof value === 'number' && key !== 'pages')
+              .slice(0, 4)
+              .map(([key, value]) => statLabel(key) + ' ' + value)
+              .join(' · ');
+          }
+        }
         const detail = entry.ok
-          ? (entry.outputPath || '—') + (entry.stats
-            ? ' · ' + fmt(t('visio.done.stats'), { nodes: entry.stats.nodes, edges: entry.stats.edges })
-            : '')
+          ? (entry.outputPath || '—')
+            + (statsText ? ' · ' + statsText : '')
+            + (entry.pages != null ? ' · ' + fmt(t('visio.result.pages'), { pages: entry.pages }) : '')
           : (entry.message || '—');
         return h('li', { key: 'h' + index, className: 'dso-inline' },
           h('span', { className: 'dso-faint dso-mono' }, formatClock(entry.at)),
           h('span', { className: entry.ok ? 'dso-badge dso-badge--ok' : 'dso-badge dso-badge--error' },
             entry.ok ? t('cad.state.done') : t('cad.state.failed')),
+          entry.ok && entry.kind && entry.kind !== 'flowchart'
+            ? h('span', { className: 'dso-badge' }, gridKindLabel(t, entry.kind))
+            : null,
           h('span', { className: 'dso-mono', style: { overflowWrap: 'anywhere' } }, detail));
       });
 
@@ -1705,8 +3885,14 @@ window.__ModuleLoader__.load({
           h('div', { className: 'dso-cardBody' },
             h('div', { className: 'dso-row2' },
               field(t('visio.kind'),
-                h('select', { className: 'dso-select', value: 'flowchart', disabled: true, onChange: () => {} },
-                  h('option', { value: 'flowchart' }, t('visio.kind.flowchart')))),
+                h('select', {
+                  className: 'dso-select',
+                  value: kind,
+                  disabled: running,
+                  onChange: (event) => changeKind(event.target.value),
+                },
+                ['flowchart'].concat(GRID_MODEL_KINDS).map((item) => h('option', { key: item, value: item }, gridKindLabel(t, item))),
+                h('option', { key: GRID_KIND_PENDING, value: GRID_KIND_PENDING, disabled: true }, t('visio.kind.cableRoute')))),
               field(t('visio.titleField'),
                 h('input', {
                   className: 'dso-input',
@@ -1715,29 +3901,43 @@ window.__ModuleLoader__.load({
                   placeholder: t('panel.title'),
                   onChange: (event) => setTitle(event.target.value),
                 }))),
-            field(t('visio.nodes'),
-              h('textarea', {
-                className: 'dso-textarea',
-                value: nodesText,
-                spellCheck: false,
-                onChange: (event) => setNodesText(event.target.value),
-              })),
-            validation.ok || validation.field !== 'nodes'
-              ? null
-              : h('div', { className: 'dso-error', role: 'alert' }, validation.message),
-            field(t('visio.edges'),
-              h('textarea', {
-                className: 'dso-textarea',
-                value: edgesText,
-                spellCheck: false,
-                style: { minHeight: '104px' },
-                onChange: (event) => setEdgesText(event.target.value),
-              })),
-            validation.ok || validation.field !== 'edges'
-              ? null
-              : h('div', { className: 'dso-error', role: 'alert' }, validation.message),
+            h('div', { className: 'dso-hint' }, t('visio.kind.cableRoute.p4hint')),
+            isFlowchart
+              ? h('div', { className: 'dso-stack' },
+                field(t('visio.nodes'),
+                  h('textarea', {
+                    className: 'dso-textarea',
+                    value: nodesText,
+                    spellCheck: false,
+                    onChange: (event) => setNodesText(event.target.value),
+                  })),
+                validation.ok || validation.field !== 'nodes'
+                  ? null
+                  : h('div', { className: 'dso-error', role: 'alert' }, validation.message),
+                field(t('visio.edges'),
+                  h('textarea', {
+                    className: 'dso-textarea',
+                    value: edgesText,
+                    spellCheck: false,
+                    style: { minHeight: '104px' },
+                    onChange: (event) => setEdgesText(event.target.value),
+                  })),
+                validation.ok || validation.field !== 'edges'
+                  ? null
+                  : h('div', { className: 'dso-error', role: 'alert' }, validation.message))
+              : h('div', { className: 'dso-stack' },
+                field(t('visio.model'),
+                  h('textarea', {
+                    className: 'dso-textarea',
+                    value: modelText,
+                    spellCheck: false,
+                    style: { minHeight: '260px' },
+                    onChange: (event) => setModelText(event.target.value),
+                  })),
+                validation.ok ? null : h('div', { className: 'dso-error', role: 'alert' }, validation.message)),
             h('div', { className: 'dso-actions' },
-              h('button', { type: 'button', className: 'dso-btn', onClick: insertTemplate }, t('visio.template')),
+              h('button', { type: 'button', className: 'dso-btn', onClick: insertTemplate, disabled: running },
+                isFlowchart ? t('visio.template') : t('visio.template.model')),
               h('span', { className: validation.ok ? 'dso-badge dso-badge--ok' : 'dso-badge dso-badge--error' },
                 validation.ok ? t('visio.validate.ok') : t('visio.json.invalid'))),
             field(t('visio.nl'),
@@ -1779,9 +3979,25 @@ window.__ModuleLoader__.load({
             h('div', { className: 'dso-cardBody' },
               h('div', { className: 'dso-okBox' },
                 h('div', null, fmt(t('visio.done.saved'), { path: result.outputPath || '—' })),
-                result.stats
-                  ? h('div', { className: 'dso-hint' }, fmt(t('visio.done.stats'), { nodes: result.stats.nodes, edges: result.stats.edges }))
-                  : null)))
+                statEntries.length
+                  ? h('div', { className: 'dso-inline' }, statEntries.map(([key, value]) => h('span', { key: 'st' + key, className: 'dso-badge' },
+                    statLabel(key) + ' ' + String(value))))
+                  : null,
+                result.pages != null
+                  ? h('div', { className: 'dso-hint' }, fmt(t('visio.result.pages'), { pages: result.pages }))
+                  : null),
+              h('div', { className: 'dso-label' }, t('visio.validations')),
+              validationRows.length === 0
+                ? h('div', { className: 'dso-hint' }, t('visio.validations.empty'))
+                : h('ul', { className: 'dso-list' }, validationRows.map((row, index) => {
+                  const level = row && row.level === 'warn' ? 'warn' : 'info';
+                  return h('li', { key: 'val' + index, className: 'dso-inline' },
+                    h('span', { className: level === 'warn' ? 'dso-badge dso-badge--warn' : 'dso-badge' },
+                      level === 'warn' ? t('visio.validations.warn') : t('visio.validations.info')),
+                    h('span', { className: 'dso-muted', style: { overflowWrap: 'anywhere' } },
+                      String(row && row.message !== undefined ? row.message : '')),
+                    row && row.code ? h('span', { className: 'dso-faint dso-mono' }, String(row.code)) : null);
+                }))))
           : null,
         h('div', { className: 'dso-card' },
           h('div', { className: 'dso-cardHead' }, h('h2', { className: 'dso-cardTitle' }, t('visio.history'))),
@@ -1822,6 +4038,23 @@ window.__ModuleLoader__.load({
       const [count, setCount] = React.useState(null);
       const [counting, setCounting] = React.useState(false);
       const [picker, setPicker] = React.useState(null);
+
+      /* P3 增量：图纸目录表 + 批量队列（父任务 kind='cad.queue'） */
+      const [catalogInput, setCatalogInput] = React.useState('');
+      const [catalogSort, setCatalogSort] = React.useState('drawingNo');
+      const [catalogBusy, setCatalogBusy] = React.useState(false);
+      const [catalogResult, setCatalogResult] = React.useState(null);
+      const [catalogError, setCatalogError] = React.useState(null);
+      const [queue, setQueue] = React.useState([]);
+      const [queueTaskId, setQueueTaskId] = React.useState('');
+      const [queueStarting, setQueueStarting] = React.useState(false);
+      const [queueError, setQueueError] = React.useState(null);
+      const [queueCancelling, setQueueCancelling] = React.useState(false);
+      const [pickerTarget, setPickerTarget] = React.useState('input');
+      const catalogAbortRef = React.useRef(null);
+      const queueAbortRef = React.useRef(null);
+      const queuePoll = useTaskPolling(api, queueTaskId, 'suite.cad.status', t);
+
       const logRef = React.useRef(null);
       const startAbortRef = React.useRef(null);
       const tRef = React.useRef(t);
@@ -1829,6 +4062,8 @@ window.__ModuleLoader__.load({
 
       React.useEffect(() => () => {
         if (startAbortRef.current) startAbortRef.current.abort();
+        if (catalogAbortRef.current) catalogAbortRef.current.abort();
+        if (queueAbortRef.current) queueAbortRef.current.abort();
       }, []);
 
       // 输入计数预览（合并场景 = 目录内图纸数；分割场景 = 单文件）。
@@ -1957,7 +4192,8 @@ window.__ModuleLoader__.load({
         }
       }, [api, t]);
 
-      const openPicker = React.useCallback(async () => {
+      const openPicker = React.useCallback(async (target) => {
+        setPickerTarget(typeof target === 'string' ? target : 'input');
         try {
           const dir = await api.pickDir();
           if (!dir) return;
@@ -2020,6 +4256,124 @@ window.__ModuleLoader__.load({
         }
       }, [api, cancelling, t, taskId]);
 
+      /* ── P3 增量：目录表 / 批量队列操作 ── */
+      const addQueuePath = React.useCallback((path) => {
+        const value = String(path ?? '').trim();
+        if (!value) return;
+        setQueue((prev) => (prev.includes(value) ? prev : prev.concat([value])));
+        setQueueError(null);
+      }, []);
+
+      const chooseCatalogInput = React.useCallback(async () => {
+        try {
+          const dir = await api.pickDir();
+          if (!dir) return;
+          setCatalogInput(dir);
+          setCatalogError(null);
+        } catch (error) {
+          setCatalogError(toPanelError(error, t));
+        }
+      }, [api, t]);
+
+      const addQueueDir = React.useCallback(async () => {
+        try {
+          const dir = await api.pickDir();
+          if (!dir) return;
+          addQueuePath(dir);
+        } catch (error) {
+          setQueueError(toPanelError(error, t));
+        }
+      }, [addQueuePath, api, t]);
+
+      const runCatalog = React.useCallback(async () => {
+        if (catalogBusy) return;
+        if (!sessionId) {
+          setCatalogError({ code: 'NO_SESSION', message: t('common.session.missing') });
+          return;
+        }
+        const input = catalogInput.trim();
+        if (!input) {
+          setCatalogError({ code: 'PARAM_INVALID', message: t('cad.catalog.input') });
+          return;
+        }
+        if (catalogAbortRef.current) catalogAbortRef.current.abort();
+        const controller = new AbortController();
+        catalogAbortRef.current = controller;
+        setCatalogBusy(true);
+        setCatalogError(null);
+        setCatalogResult(null);
+        try {
+          const result = await api.callCommand('suite.cad.catalog', { input, sort: catalogSort }, controller.signal);
+          setCatalogResult(result && typeof result === 'object' ? result : {});
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setCatalogError(normalized);
+        } finally {
+          setCatalogBusy(false);
+          catalogAbortRef.current = null;
+        }
+      }, [api, catalogBusy, catalogInput, catalogSort, sessionId, t]);
+
+      const startQueue = React.useCallback(async () => {
+        if (queueStarting) return;
+        if (!sessionId) {
+          setQueueError({ code: 'NO_SESSION', message: t('common.session.missing') });
+          return;
+        }
+        if (queue.length === 0) {
+          setQueueError({ code: 'PARAM_INVALID', message: t('cad.queue.empty') });
+          return;
+        }
+        if (queueAbortRef.current) queueAbortRef.current.abort();
+        const controller = new AbortController();
+        queueAbortRef.current = controller;
+        setQueueStarting(true);
+        setQueueError(null);
+        setQueueTaskId('');
+        try {
+          const started = await api.callCommand('suite.cad.convert', {
+            inputs: queue.slice(),
+            mode,
+            paper,
+            sort: sortMode,
+            parallel: parallel === 'auto' ? 'auto' : Number(parallel),
+          }, controller.signal);
+          const id = started && typeof started.taskId === 'string' ? started.taskId : '';
+          if (!id) throw { code: 'BAD_RESPONSE', message: 'suite.cad.convert returned no taskId' };
+          setQueueTaskId(id);
+        } catch (thrown) {
+          const normalized = toPanelError(thrown, t);
+          if (!normalized.cancelled) setQueueError(normalized);
+        } finally {
+          setQueueStarting(false);
+          queueAbortRef.current = null;
+        }
+      }, [api, mode, paper, parallel, queue, queueStarting, sessionId, sortMode, t]);
+
+      const cancelQueue = React.useCallback(async () => {
+        if (!queueTaskId || queueCancelling) return;
+        setQueueCancelling(true);
+        try {
+          await api.callCommand('suite.cad.cancel', { taskId: queueTaskId });
+        } catch (thrown) {
+          setQueueError(toPanelError(thrown, t));
+        } finally {
+          setQueueCancelling(false);
+        }
+      }, [api, queueCancelling, queueTaskId, t]);
+
+      const pickPickerRow = React.useCallback((row) => {
+        if (!row) return;
+        if (row.type === 'dir') {
+          loadPicker(row.path);
+          return;
+        }
+        if (pickerTarget === 'catalog') setCatalogInput(row.path);
+        else if (pickerTarget === 'queue') addQueuePath(row.path);
+        else setInputPath(row.path);
+        setPicker(null);
+      }, [addQueuePath, loadPicker, pickerTarget]);
+
       const progress = (status && status.progress) || {};
       const filesDone = Number(progress.filesDone) || 0;
       const filesTotal = Number(progress.filesTotal) || 0;
@@ -2037,6 +4391,35 @@ window.__ModuleLoader__.load({
       const running = !!taskId && !CAD_TERMINAL.includes(state);
 
       const stateLabel = CAD_STATES.includes(state) ? t('cad.state.' + state) : state;
+
+      // 目录表字段命中统计（P3 §2.1 result.fields）
+      const catalogFields = catalogResult && isPlainObjectLoose(catalogResult.fields) ? catalogResult.fields : null;
+      const catalogFieldRows = catalogFields
+        ? ['drawingNo', 'title', 'frameSize', 'scale', 'count'].map((key) => ({ key, stat: catalogFields[key] }))
+        : [];
+      // 批量队列父任务输出（完成时：succeeded/failed/failures/outputs）
+      const queueStatus = queuePoll.status;
+      const queueOutput = queueStatus && queueStatus.output && typeof queueStatus.output === 'object' ? queueStatus.output : null;
+      const queueRuntimeState = queueStatus && typeof queueStatus.state === 'string' ? queueStatus.state : (queueTaskId ? 'queued' : 'idle');
+      const queueRunning = !!queueTaskId && !CAD_TERMINAL.includes(queueRuntimeState);
+      const queueFailures = queueOutput && Array.isArray(queueOutput.failures) ? queueOutput.failures : [];
+      const queueOutputs = queueOutput && Array.isArray(queueOutput.outputs) ? queueOutput.outputs : [];
+      const queueExtra = (queueFailures.length || queueOutputs.length)
+        ? h('div', { className: 'dso-stack' },
+          queueFailures.length
+            ? h('div', { className: 'dso-stack' },
+              h('div', { className: 'dso-warn' }, fmt(t('cad.queue.failures'), { count: queueFailures.length })),
+              h('ul', { className: 'dso-list' }, queueFailures.map((row, index) => h('li', { key: 'qf' + index, className: 'dso-hint dso-mono' },
+                '[' + String(row && row.index !== undefined ? row.index : index + 1) + '] ' + String(row && row.input) + ' · ' +
+                String(row && row.code) + ' ' + String(row && row.message || '')))))
+            : null,
+          queueOutputs.length
+            ? h('div', { className: 'dso-stack' },
+              h('div', { className: 'dso-label' }, t('cad.result.title')),
+              h('ul', { className: 'dso-list' }, queueOutputs.map((row, index) => h('li', { key: 'qo' + index, className: 'dso-hint dso-mono' },
+                '[' + String(row && row.index !== undefined ? row.index : index + 1) + '] ' + String(row && row.input) + ' → ' + String(row && row.output || '—')))))
+            : null)
+        : null;
 
       const modeButton = (id, label) => h('button', {
         key: id,
@@ -2069,7 +4452,7 @@ window.__ModuleLoader__.load({
                 }),
                 mode === 'merge'
                   ? h('button', { type: 'button', className: 'dso-btn', onClick: pickInputDir, disabled: running }, t('cad.input.dir'))
-                  : h('button', { type: 'button', className: 'dso-btn', onClick: openPicker, disabled: running }, t('cad.input.browse')),
+                  : h('button', { type: 'button', className: 'dso-btn', onClick: () => openPicker('input'), disabled: running }, t('cad.input.browse')),
                 counting
                   ? h(Busy, { text: t('cad.files.counting') })
                   : (typeof count === 'number'
@@ -2107,6 +4490,109 @@ window.__ModuleLoader__.load({
                   cancelling ? t('cad.cancel.requested') : t('cad.cancel'))
                 : null))),
         startError ? h('div', { className: 'dso-card' }, h('div', { className: 'dso-cardBody' }, h(ErrorBox, { t, error: startError }))) : null,
+        // ── P3 图纸目录表 ──
+        h('div', { className: 'dso-card' },
+          h('div', { className: 'dso-cardHead' }, h('h2', { className: 'dso-cardTitle' }, t('cad.catalog.title'))),
+          h('div', { className: 'dso-cardBody' },
+            h('div', { className: 'dso-inline' },
+              h('input', {
+                className: 'dso-input',
+                type: 'text',
+                value: catalogInput,
+                placeholder: t('cad.catalog.input'),
+                style: { flex: '1 1 300px', width: 'auto' },
+                onChange: (event) => setCatalogInput(event.target.value),
+              }),
+              h('button', { type: 'button', className: 'dso-btn', onClick: chooseCatalogInput, disabled: catalogBusy }, t('cad.input.dir')),
+              h('button', { type: 'button', className: 'dso-btn', onClick: () => openPicker('catalog'), disabled: catalogBusy }, t('cad.input.browse'))),
+            h('div', { className: 'dso-row2' },
+              formField(t('cad.sort'), h('select', { className: 'dso-select', value: catalogSort, onChange: (event) => setCatalogSort(event.target.value) },
+                h('option', { value: 'drawingNo' }, t('cad.sort.drawingNo')),
+                h('option', { value: 'filename' }, t('cad.sort.filename')))),
+              h('div', { className: 'dso-inline', style: { alignSelf: 'end' } },
+                h('button', {
+                  type: 'button',
+                  className: 'dso-btn dso-btn--primary',
+                  onClick: runCatalog,
+                  disabled: catalogBusy || !sessionId || !catalogInput.trim(),
+                }, catalogBusy ? t('cad.catalog.running') : t('cad.catalog.run')))),
+            h('div', { className: 'dso-hint' }, t('cad.catalog.hint')),
+            catalogError ? h(ErrorBox, { t, error: catalogError, onRetry: runCatalog }) : null,
+            catalogResult
+              ? h('div', { className: 'dso-stack' },
+                h('div', { className: 'dso-okBox' },
+                  h('div', null, fmt(t('cad.catalog.done'), { path: catalogResult.outputPath || '—' })),
+                  h('div', { className: 'dso-inline' },
+                    h('span', { className: 'dso-badge' }, fmt(t('cad.catalog.rows'), { rows: catalogResult.rows ?? '—' })),
+                    h('span', { className: 'dso-badge' }, fmt(t('cad.catalog.sheets'), { sheets: catalogResult.sheets ?? '—' })),
+                    h('span', { className: 'dso-badge' }, fmt(t('cad.catalog.engine'), { engine: String(catalogResult.engine || '—') })))),
+                catalogFieldRows.length === 0
+                  ? null
+                  : h('div', { className: 'dso-stack' },
+                    h('div', { className: 'dso-label' }, t('cad.catalog.fields')),
+                    h('table', { className: 'dso-table' },
+                      h('thead', null, h('tr', null,
+                        h('th', null, t('cad.catalog.fields')),
+                        h('th', null, 'hit/total'),
+                        h('th', null, '%'))),
+                      h('tbody', null, catalogFieldRows.map((row) => {
+                        const stat = row.stat && typeof row.stat === 'object' ? row.stat : {};
+                        const rate = Number(stat.rate);
+                        return h('tr', { key: 'cf' + row.key },
+                          h('td', null, t('cad.catalog.field.' + row.key)),
+                          h('td', { className: 'dso-mono' }, String(stat.hit ?? 0) + '/' + String(stat.total ?? 0)),
+                          h('td', { className: 'dso-mono' }, Number.isFinite(rate) ? (Math.round(rate * 1000) / 10) + '%' : '—'));
+                      })))),
+                h('div', { className: 'dso-actions' },
+                  h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => api.copy(catalogResult.outputPath) }, t('docs.actions.copyPath')),
+                  catalogResult.outputPath
+                    ? h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => openInDocs(catalogResult.outputPath) }, t('cad.result.openInDocs'))
+                    : null))
+              : null)),
+        // ── P3 批量队列（inputs → 父任务 kind='cad.queue'） ──
+        h('div', { className: 'dso-card' },
+          h('div', { className: 'dso-cardHead' },
+            h('h2', { className: 'dso-cardTitle' }, t('cad.queue.title')),
+            h('span', { className: 'dso-spacer' }),
+            h('span', { className: 'dso-badge' }, fmt(t('cad.queue.inputs'), { count: queue.length }))),
+          h('div', { className: 'dso-cardBody' },
+            h('div', { className: 'dso-hint' }, t('cad.queue.note')),
+            h('div', { className: 'dso-actions' },
+              h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => openPicker('queue'), disabled: queueStarting }, t('cad.queue.addFile')),
+              h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: addQueueDir, disabled: queueStarting }, t('cad.queue.addDir')),
+              h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => setQueue([]), disabled: queueStarting || queue.length === 0 }, t('cad.queue.clear'))),
+            queue.length === 0
+              ? h('div', { className: 'dso-hint' }, t('cad.queue.empty'))
+              : h('ul', { className: 'dso-list' }, queue.map((item, index) => h('li', { key: 'qi' + index + ':' + item, className: 'dso-inline' },
+                h('span', { className: 'dso-faint dso-mono' }, String(index + 1) + '.'),
+                h('span', { className: 'dso-mono', style: { flex: '1 1 auto', overflowWrap: 'anywhere' } }, item),
+                h('button', {
+                  type: 'button',
+                  className: 'dso-btn dso-btn--sm dso-btn--danger',
+                  onClick: () => setQueue((prev) => prev.filter((_, itemIndex) => itemIndex !== index)),
+                  disabled: queueStarting,
+                }, t('cad.queue.remove'))))),
+            h('div', { className: 'dso-actions' },
+              h('button', {
+                type: 'button',
+                className: 'dso-btn dso-btn--primary',
+                onClick: startQueue,
+                disabled: queueStarting || queueRunning || !sessionId || queue.length === 0,
+              }, queueStarting ? t('common.busy') : t('cad.queue.start'))),
+            queueError ? h(ErrorBox, { t, error: queueError, onRetry: startQueue }) : null,
+            queueTaskId
+              ? h('div', { className: 'dso-stack' },
+                h('div', { className: 'dso-hint dso-mono' }, fmt(t('cad.queue.started'), { taskId: queueTaskId })),
+                h(TaskProgress, {
+                  t,
+                  status: queuePoll.status,
+                  error: queuePoll.error,
+                  mode: 'items',
+                  cancelling: queueCancelling,
+                  onCancel: cancelQueue,
+                  extra: queueExtra,
+                }))
+              : null)),
         picker
           ? h('div', { className: 'dso-card' },
             h('div', { className: 'dso-cardHead' },
@@ -2135,12 +4621,11 @@ window.__ModuleLoader__.load({
                     role: 'button',
                     tabIndex: 0,
                     title: row.path,
-                    onClick: () => (row.type === 'dir' ? loadPicker(row.path) : (setInputPath(row.path), setPicker(null))),
+                    onClick: () => pickPickerRow(row),
                     onKeyDown: (event) => {
                       if (event.key === 'Enter') {
                         event.preventDefault();
-                        if (row.type === 'dir') loadPicker(row.path);
-                        else { setInputPath(row.path); setPicker(null); }
+                        pickPickerRow(row);
                       }
                     },
                   },
@@ -2207,7 +4692,7 @@ window.__ModuleLoader__.load({
       { label: 'ZWCAD', progId: 'ZWCAD.Application', cap: 'diag.cap.zwcad' },
       { label: 'GstarCAD', progId: 'GstarCAD.Application', cap: 'diag.cap.gstarcad' },
     ];
-    /** 可写配置白名单（§2 suite.config.set）。 */
+    /** 可写配置白名单（§2 suite.config.set；P3 增 previewCacheSize）。 */
     const SETTING_SPECS = [
       { key: 'outputRoot', kind: 'text' },
       { key: 'parallel', kind: 'text' },
@@ -2215,10 +4700,11 @@ window.__ModuleLoader__.load({
       { key: 'odaPath', kind: 'text' },
       { key: 'pdfPaper', kind: 'select', options: ['A4-landscape', 'keep'] },
       { key: 'sortMode', kind: 'select', options: ['drawingNo', 'filename'] },
+      { key: 'previewCacheSize', kind: 'number', min: 1, max: 10 },
     ];
 
-    /** 把 suite.env 结果整理成表格行（兼容 v0.1 顶层 ProgID 与 P1 的 cad/oda 结构化字段）。 */
-    function buildEngineRows(env, t) {
+    /** 把 suite.env 结果整理成表格行（兼容 v0.1 顶层 ProgID 与 P1 的 cad/oda 结构化字段；P2/P3 增 venv/COM/预览行）。 */
+    function buildEngineRows(env, t, previewState) {
       const rows = [];
       const platforms = env && env.cad && Array.isArray(env.cad.platforms) ? env.cad.platforms : [];
       const platformByProgId = {};
@@ -2268,6 +4754,63 @@ window.__ModuleLoader__.load({
         version: odaPath || (odaDirs.length > 0 ? String(odaDirs[0]) : ''),
         capability: t('diag.cap.oda'),
       });
+
+      // P2 §6.3：Python venv 状态行（依赖版本 + 健康状态）
+      const venv = (env && env.venv) || {};
+      const packages = venv.packages && typeof venv.packages === 'object' ? venv.packages : {};
+      const venvHealthy = venv.healthy === true;
+      const venvPresent = venv.present === true;
+      const venvVersion = [
+        typeof venv.pythonVersion === 'string' && venv.pythonVersion ? 'Python ' + venv.pythonVersion : '',
+        fmt(t('diag.venv.packages'), { docx: packages.docx || '—', openpyxl: packages.openpyxl || '—' }),
+      ].filter(Boolean).join(' · ');
+      rows.push({
+        key: 'venv',
+        label: t('diag.engine.venv'),
+        present: venvHealthy,
+        degraded: venvPresent && !venvHealthy,
+        version: venvVersion || (venvPresent ? '' : t('diag.venv.missing')),
+        capability: t('diag.cap.venv'),
+        statusText: venvHealthy ? t('diag.venv.healthy') : (venvPresent ? t('diag.venv.unhealthy') : t('diag.engine.missing')),
+        statusClass: venvHealthy ? 'dso-badge dso-badge--ok' : (venvPresent ? 'dso-badge dso-badge--warn' : 'dso-badge dso-badge--idle'),
+      });
+
+      // P2 §6.3：Office COM 可用性行（comUsable 仅在 refresh:true 时实测）
+      const officeCom = (env && env.officeCom) || {};
+      const wordCom = officeCom.word && typeof officeCom.word === 'object' ? officeCom.word : {};
+      const excelCom = officeCom.excel && typeof officeCom.excel === 'object' ? officeCom.excel : {};
+      const wordUsable = wordCom.comUsable;
+      const excelUsable = excelCom.comUsable;
+      const comMeasured = wordUsable === true || wordUsable === false || excelUsable === true || excelUsable === false;
+      const comUsable = wordUsable === true || excelUsable === true;
+      const comVersion = 'Word ' + (wordUsable === true ? '✓' : (wordUsable === false ? '✗' : '—'))
+        + ' · Excel ' + (excelUsable === true ? '✓' : (excelUsable === false ? '✗' : '—'));
+      rows.push({
+        key: 'officeCom',
+        label: t('diag.engine.officeCom'),
+        present: comUsable,
+        version: comMeasured ? comVersion : '',
+        capability: t('diag.cap.officeCom'),
+        statusText: comUsable ? t('diag.com.usable') : (comMeasured ? t('diag.com.unusable') : t('diag.com.unmeasured')),
+        statusClass: comUsable ? 'dso-badge dso-badge--ok' : (comMeasured ? 'dso-badge dso-badge--error' : 'dso-badge dso-badge--idle'),
+      });
+
+      // P3 §5.2：预览渲染服务（suite.preview 探测一次；E2012 → 不可用）
+      const preview = previewState && typeof previewState === 'object' ? previewState : {};
+      const previewAvailable = preview.available === true;
+      const previewKnown = preview.available === true || preview.available === false;
+      const schemeLabel = preview.scheme === 'direct'
+        ? t('diag.preview.direct')
+        : (preview.scheme === 'command' ? t('diag.preview.command') : '');
+      rows.push({
+        key: 'preview',
+        label: t('diag.preview'),
+        present: previewAvailable,
+        version: schemeLabel || (preview.probing ? t('diag.preview.probing') : ''),
+        capability: t('diag.cap.preview') + ' · ' + t('diag.preview.note'),
+        statusText: previewAvailable ? t('diag.preview.available') : (previewKnown ? t('diag.preview.unavailable') : t('diag.preview.unknown')),
+        statusClass: previewAvailable ? 'dso-badge dso-badge--ok' : (previewKnown ? 'dso-badge dso-badge--error' : 'dso-badge dso-badge--idle'),
+      });
       return rows;
     }
 
@@ -2283,6 +4826,9 @@ window.__ModuleLoader__.load({
       const [edits, setEdits] = React.useState({});
       const [savingKey, setSavingKey] = React.useState('');
       const [savedKey, setSavedKey] = React.useState('');
+      /* P3 增量：预览服务可用性（suite.preview 探测一次，E2012 → 不可用） */
+      const [previewState, setPreviewState] = React.useState(null);
+      const [probingPreview, setProbingPreview] = React.useState(false);
       const envRef = React.useRef(env);
       envRef.current = env;
 
@@ -2296,6 +4842,33 @@ window.__ModuleLoader__.load({
           setEnvError(toPanelError(error, t));
         } finally {
           setProbing(false);
+        }
+      }, [api, t]);
+
+      /**
+       * 预览服务探测：spec 要求调用 suite.preview 一次。
+       * 说明：Host 先校验 path 再判 officeToPdf 服务（office-pdf.js），因此必须传一个
+       * 非空但不存在的探针路径：服务缺失 → E2012（不可用）；服务存在 → E1023/E1041
+       * 等路径错误（可用）。
+       */
+      const probePreview = React.useCallback(async () => {
+        setProbingPreview(true);
+        setPreviewState((prev) => Object.assign({}, prev || {}, { probing: true }));
+        try {
+          await api.callCommand('suite.preview', { path: '_preview_probe_.docx' });
+          setPreviewState({ available: true, scheme: api.previewDirect ? 'direct' : 'command' });
+        } catch (error) {
+          const normalized = toPanelError(error, t);
+          if (normalized.code === 'E2012' || normalized.code === 'PREVIEW_UNSUPPORTED') {
+            setPreviewState({ available: false, scheme: null, code: normalized.code, message: normalized.message });
+          } else if (normalized.code === 'COMMAND_MISSING') {
+            setPreviewState({ available: null, scheme: null, code: normalized.code, message: normalized.message });
+          } else {
+            // 命令可达（仅探测参数被拒）：说明渲染服务存在
+            setPreviewState({ available: true, scheme: api.previewDirect ? 'direct' : 'command', note: normalized.code });
+          }
+        } finally {
+          setProbingPreview(false);
         }
       }, [api, t]);
 
@@ -2323,12 +4896,23 @@ window.__ModuleLoader__.load({
         loadConfig();
       }, [active, config, configError, loadConfig]);
 
+      // 首次打开诊断页时探测一次预览服务可用性。
+      React.useEffect(() => {
+        if (!active) return;
+        if (previewState || probingPreview) return;
+        probePreview();
+      }, [active, previewState, probingPreview, probePreview]);
+
       useConnectionReset(api, () => {
         probe(true);
         loadConfig();
+        probePreview();
       });
 
-      const rows = React.useMemo(() => buildEngineRows(env, t), [env, t]);
+      const rows = React.useMemo(
+        () => buildEngineRows(env, t, Object.assign({ probing: probingPreview }, previewState || {})),
+        [env, probingPreview, previewState, t],
+      );
       const available = rows.filter((row) => row.present).map((row) => row.label);
       const cadPresent = rows.some((row) => ['AutoCAD', 'ZWCAD', 'GstarCAD'].includes(row.key) && row.present);
 
@@ -2340,15 +4924,16 @@ window.__ModuleLoader__.load({
         lines.push('officeInstalledVersions: ' + (env && Array.isArray(env.officeInstalledVersions) ? env.officeInstalledVersions.join(', ') : '—'));
         lines.push('visioInstalledVersions: ' + (env && Array.isArray(env.visioInstalledVersions) ? env.visioInstalledVersions.join(', ') : '—'));
         for (const row of rows) {
-          lines.push([row.label, row.present ? t('diag.engine.available') : t('diag.engine.missing'), row.version || '—', row.capability].join(' | '));
+          lines.push([row.label, row.statusText || (row.present ? t('diag.engine.available') : t('diag.engine.missing')), row.version || '—', row.capability].join(' | '));
         }
+        if (previewState) lines.push('preview: ' + JSON.stringify(previewState));
         if (config) lines.push('config: ' + JSON.stringify(config));
         if (envError) lines.push('envError: ' + envError.message);
         if (configError) lines.push('configError: ' + configError.message);
         const ok = await api.copy(lines.join('\n'));
         setCopied(ok);
         if (ok) window.setTimeout(() => setCopied(false), 1600);
-      }, [api, config, configError, env, envError, rows, t]);
+      }, [api, config, configError, env, envError, previewState, rows, t]);
 
       const valueOf = React.useCallback((key) => {
         // suite.config.get/set 返回 { effective, overrides, writableKeys, path, boundary } 信封
@@ -2374,6 +4959,11 @@ window.__ModuleLoader__.load({
             value = raw === 'auto' ? 'auto' : Number(raw);
             if (value !== 'auto' && !(Number.isInteger(value) && value >= 1 && value <= 8)) {
               throw { code: 'CONFIG_INVALID_VALUE', message: t('diag.invalidParallel') };
+            }
+          } else if (spec.key === 'previewCacheSize') {
+            value = Number(raw);
+            if (!Number.isInteger(value) || value < 1 || value > 10) {
+              throw { code: 'CONFIG_INVALID_VALUE', message: t('diag.invalidCacheSize') };
             }
           } else if (typeof raw === 'string') {
             value = raw;
@@ -2414,6 +5004,18 @@ window.__ModuleLoader__.load({
               ? (option === 'keep' ? t('cad.paper.keep') : t('cad.paper.a4landscape'))
               : (option === 'drawingNo' ? t('cad.sort.drawingNo') : t('cad.sort.filename')))));
         }
+        if (spec.kind === 'number') {
+          return h('input', {
+            className: 'dso-input dso-mono',
+            type: 'number',
+            min: spec.min,
+            max: spec.max,
+            step: 1,
+            value: value === undefined || value === null ? '' : String(value),
+            disabled,
+            onChange: (event) => setEdits((prev) => Object.assign({}, prev, { [spec.key]: event.target.value })),
+          });
+        }
         return h('input', {
           className: 'dso-input dso-mono',
           type: 'text',
@@ -2441,8 +5043,12 @@ window.__ModuleLoader__.load({
           h('div', { className: 'dso-cardHead' },
             h('h2', { className: 'dso-cardTitle' }, t('diag.overview')),
             h('span', { className: 'dso-spacer' }),
-            h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: () => probe(true), disabled: probing },
-              probing ? t('diag.probing') : t('diag.probe')),
+            h('button', {
+              type: 'button',
+              className: 'dso-btn dso-btn--sm',
+              onClick: () => { probe(true); probePreview(); },
+              disabled: probing || probingPreview,
+            }, probing || probingPreview ? t('diag.probing') : t('diag.probe')),
             h('button', { type: 'button', className: 'dso-btn dso-btn--sm', onClick: copyDiagnostics },
               copied ? t('diag.copy.done') : t('diag.copy'))),
           h('div', { className: 'dso-cardBody' },
@@ -2464,12 +5070,12 @@ window.__ModuleLoader__.load({
                 h('tbody', null, rows.map((row) => h('tr', { key: row.key },
                   h('td', null, row.label),
                   h('td', null, h('span', {
-                    className: row.present
+                    className: row.statusClass || (row.present
                       ? (row.degraded ? 'dso-badge dso-badge--warn' : 'dso-badge dso-badge--ok')
-                      : 'dso-badge dso-badge--idle',
-                  }, row.present
+                      : 'dso-badge dso-badge--idle'),
+                  }, row.statusText || (row.present
                     ? (row.degraded ? t('diag.engine.degraded') : t('diag.engine.available'))
-                    : t('diag.engine.missing'))),
+                    : t('diag.engine.missing')))),
                   h('td', { className: 'dso-mono' }, row.version || '—'),
                   h('td', { className: 'dso-muted' }, row.capability))))))),
         h('div', { className: 'dso-card' },
