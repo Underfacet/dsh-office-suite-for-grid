@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSH 办公·电网绘图套件 · DSH 市场索引</title>
+  <style>
+    :root { color-scheme: light dark; --fg: #1f2328; --muted: #57606a; --bg: #ffffff; --card: #f6f8fa; --line: #d0d7de; --accent: #0969da; }
+    @media (prefers-color-scheme: dark) { :root { --fg: #e6edf3; --muted: #8b949e; --bg: #0d1117; --card: #161b22; --line: #30363d; --accent: #2f81f7; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    main { max-width: 880px; margin: 0 auto; padding: 40px 20px 64px; }
+    header { display: flex; gap: 18px; align-items: center; border-bottom: 1px solid var(--line); padding-bottom: 22px; }
+    header img { width: 72px; height: 72px; }
+    h1 { margin: 0 0 4px; font-size: 30px; line-height: 1.25; }
+    h1 .en { font-size: 16px; color: var(--muted); font-weight: 500; }
+    h2 { margin: 34px 0 10px; font-size: 20px; }
+    .lead { margin: 18px 0 6px; }
+    .en { color: var(--muted); }
+    code { background: var(--card); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 90%; overflow-wrap: anywhere; }
+    section { border-top: 1px solid var(--line); margin-top: 28px; }
+    ol, ul { padding-left: 22px; }
+    li { margin: 4px 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+    th, td { text-align: left; border-bottom: 1px solid var(--line); padding: 7px 10px; vertical-align: top; }
+    th { color: var(--muted); font-weight: 600; font-size: 14px; }
+    .note { background: var(--card); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; color: var(--muted); font-size: 14px; }
+    footer { margin-top: 40px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 14px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <img src="icon.svg" alt="" width="72" height="72">
+    <div>
+      <h1>DSH 办公·电网绘图套件<br><span class="en">Office &amp; Grid Suite for DSH</span></h1>
+    </div>
+  </header>
+
+  <p class="lead">Word/Excel 阅读编辑排版；GB/T 4728-2022 Visio 电网图（主接线/二次/端子排/地理接线/潮流图等）；CAD 转 PDF（图框自动分割、图签识别生成图纸目录表、批量队列）。Windows，MIT 开源。</p>
+  <p class="lead en">Read, edit and format Word/Excel; draw GB/T 4728 Visio grid diagrams (single-line, protection, terminal strip...); smart CAD-to-PDF conversion with frame split, title-block catalog and batch queue. Windows, MIT.</p>
+
+  <section>
+    <h2>在 DSH 中添加索引</h2>
+    <ol>
+      <li>打开 DSH「插件 → 市场 → 添加索引」。</li>
+      <li>粘贴索引 URL：<code>https://underfacet.github.io/dsh-office-suite-for-grid/index.json</code></li>
+      <li>在「发现」页找到「DSH 办公·电网绘图套件」，按 <code>engines.dsh</code> 兼容性一键安装。</li>
+    </ol>
+    <p class="note">市场抓取索引使用 <code>redirect: "error"</code>：本页 URL 必须直接返回 200，不能是 301 变体（例如 http、大小写主机或 jsDelivr 镜像）。索引缓存 10 分钟。</p>
+  </section>
+
+  <section>
+    <h2>安装渠道</h2>
+    <ul>
+      <li><strong>市场索引</strong>：<a href="https://underfacet.github.io/dsh-office-suite-for-grid/index.json">https://underfacet.github.io/dsh-office-suite-for-grid/index.json</a></li>
+      <li><strong>GitHub Releases</strong>：<a href="https://github.com/Underfacet/dsh-office-suite-for-grid/releases">https://github.com/Underfacet/dsh-office-suite-for-grid/releases</a>，下载 <code>dsh-office-suite-for-grid-&lt;version&gt;.tgz</code> 后在插件管理中安装。</li>
+      <li><strong>npm</strong>：<code>npm install dsh-office-suite-for-grid</code> · <a href="https://www.npmjs.com/package/dsh-office-suite-for-grid">npmjs.com</a></li>
+      <li><strong>本地链接</strong>：克隆 <a href="https://github.com/Underfacet/dsh-office-suite-for-grid">https://github.com/Underfacet/dsh-office-suite-for-grid</a> 后运行 <code>tools\install.ps1</code>。</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>版本</h2>
+    <table>
+      <thead><tr><th>版本</th><th>发布时间（UTC）</th><th>engines.dsh</th></tr></thead>
+      <tbody>
+        <tr><td><code>1.0.0</code></td><td>2026-10-20</td><td><code>&gt;=0.2.0-rc.0 &lt;0.3.0</code></td></tr>
+        <tr><td><code>0.1.0</code></td><td>2025-10-28</td><td><code>&gt;=0.2.0-rc.0 &lt;0.3.0</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>README 摘要</h2>
+    <p>面向电网行业的 DSH 插件：Office 文档/表格阅读、编辑与排版；GB/T 4728 Visio 电网专业图（主接线、配电、拓扑、二次、变电站布置、地理接线、潮流、端子排）；CAD 转 PDF（图框分割、图签目录表、批量队列）。仅 Windows，MIT 协议。</p>
+    <ul>
+      <li>Office：doc/docx/xls/xlsx/ppt/pptx 读取与导出 PDF，Word 结构化编辑、排版、模板与批量任务。</li>
+      <li>Visio：GB/T 4728-2022 符号库，九类图分派，接线校验与结构化错误码。</li>
+      <li>CAD：COM / ODA / PDF 三级链路，自动分割、合并、图号排序与图纸目录表。</li>
+      <li>分发：市场索引 / GitHub Releases / npm / 本地链接四种渠道；发布资产附 SHA256SUMS。</li>
+    </ul>
+  </section>
+
+  <footer>
+    索引 URL：<code>https://underfacet.github.io/dsh-office-suite-for-grid/index.json</code> · 页面生成时间 2026-10-20 04:12:57 UTC · MIT License · Underfacet
+  </footer>
+</main>
+</body>
+</html>

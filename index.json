@@ -1,0 +1,89 @@
+{
+  "format": 1,
+  "title": {
+    "en": "Office & Grid Suite for DSH",
+    "zh": "DSH 办公·电网绘图套件"
+  },
+  "description": {
+    "en": "Read, edit and format Word/Excel; draw GB/T 4728 Visio grid diagrams (single-line, protection, terminal strip...); smart CAD-to-PDF conversion with frame split, title-block catalog and batch queue. Windows, MIT.",
+    "zh": "Word/Excel 阅读编辑排版；GB/T 4728-2022 Visio 电网图（主接线/二次/端子排/地理接线/潮流图等）；CAD 转 PDF（图框自动分割、图签识别生成图纸目录表、批量队列）。Windows，MIT 开源。"
+  },
+  "metadata": {
+    "categories": {
+      "tools": {
+        "title": {
+          "en": "Tools",
+          "zh": "工具"
+        }
+      }
+    },
+    "labels": {
+      "windows": {
+        "title": {
+          "en": "Windows",
+          "zh": "Windows"
+        }
+      }
+    }
+  },
+  "plugins": [
+    {
+      "name": "dsh-office-suite-for-grid",
+      "title": {
+        "en": "Office & Grid Suite for DSH",
+        "zh": "DSH 办公·电网绘图套件"
+      },
+      "description": {
+        "en": "Read, edit and format Word/Excel; draw GB/T 4728 Visio grid diagrams (single-line, protection, terminal strip...); smart CAD-to-PDF conversion with frame split, title-block catalog and batch queue. Windows, MIT.",
+        "zh": "Word/Excel 阅读编辑排版；GB/T 4728-2022 Visio 电网图（主接线/二次/端子排/地理接线/潮流图等）；CAD 转 PDF（图框自动分割、图签识别生成图纸目录表、批量队列）。Windows，MIT 开源。"
+      },
+      "icon": "https://underfacet.github.io/dsh-office-suite-for-grid/icon.svg",
+      "author": "Underfacet",
+      "homepage": "https://github.com/Underfacet/dsh-office-suite-for-grid",
+      "repository": {
+        "url": "https://github.com/Underfacet/dsh-office-suite-for-grid",
+        "directory": "suite"
+      },
+      "metadata": {
+        "category": "tools",
+        "keywords": [
+          "office",
+          "word",
+          "excel",
+          "visio",
+          "cad",
+          "dwg",
+          "pdf",
+          "grid",
+          "电网",
+          "绘图"
+        ],
+        "labels": [
+          "windows"
+        ]
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1792469522,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.0 <0.3.0"
+          }
+        },
+        {
+          "version": "0.1.0",
+          "publishTimestamp": 1761615600,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.0-rc.0 <0.3.0"
+          }
+        }
+      ]
+    }
+  ]
+}
