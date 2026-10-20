@@ -1,5 +1,3 @@
-{
-  "releases": [
-    { "version": "0.1.0", "publishTimestamp": 1761615600 }
-  ]
-}
+[
+  { "version": "0.1.0", "publishTimestamp": 1761615600 }
+]

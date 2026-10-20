@@ -266,7 +266,7 @@ test('负向校验：format / redirect / 包名 / SemVer / 时间戳', () => {
   }, '$.plugins[0].versions');
   expectInvalid((index) => {
     index.plugins[0].versions.push(clone(index.plugins[0].versions[0]));
-  }, '$.plugins[0].versions[1].version');
+  }, `$.plugins[0].versions[${built.index.plugins[0].versions.length}].version`);
 });
 
 test('负向校验：source / engines / 元数据引用', () => {
