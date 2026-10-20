@@ -22,7 +22,7 @@ import {
   validateGridModel,
 } from './host/ops/grid-model.js';
 import { registerPanelCommands } from './host/commands-panel.js';
-import { registerPanelRpc } from './host/panel-rpc.js';
+import { registerPanelRpc, getPanelRpcStatus } from './host/panel-rpc.js';
 
 void fileURLToPath;
 
@@ -289,6 +289,28 @@ export function apply(ctx, config = {}) {
     },
   }));
 
+  // ── 工具：面板 RPC 自检（排查「命令不可用」用；只读） ──
+  disposers.push(ctx.tools.register({
+    name: 'suite_debug',
+    description: '套件自检：返回面板 RPC 路由的注册状态（webServer 是否可用、绑定 origin、注册是否成功、错误信息），用于排查面板「命令不可用」问题。只读，无副作用。',
+    parameters: { type: 'object', properties: {}, additionalProperties: false },
+    output: jsonOutput,
+    async execute() {
+      let web = null;
+      try { web = typeof ctx.get === 'function' ? ctx.get('webServer') : undefined; } catch { web = undefined; }
+      let origin = null;
+      try { origin = web && typeof web.getOrigin === 'function' ? web.getOrigin() : null; } catch { origin = null; }
+      return {
+        panelRpc: getPanelRpcStatus(),
+        liveWebServer: {
+          present: Boolean(web),
+          origin,
+        },
+        processCwd: process.cwd(),
+      };
+    },
+  }));
+
   // ── 命令（界面/输入框可用，与工具同一操作层） ──
   disposers.push(ctx.commands.register({
     name: 'office-env',
@@ -305,7 +327,6 @@ export function apply(ctx, config = {}) {
   disposers.push(registerPanelCommands(ctx, { config }));
   // ── 面板本机 HTTP 路由：与命令注册共用 runSuiteCommand（规避 typert 网关 descriptor） ──
   disposers.push(registerPanelRpc(ctx, config));
-
   // ── 系统提示：指引模型使用本套件工具 ──
   disposers.push(ctx.systemPrompt.section({
     name: 'tool:grid-office-suite',

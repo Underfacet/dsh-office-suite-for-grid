@@ -25,6 +25,21 @@ import { runSuiteCommand } from './commands-panel.js';
 /** 面板 RPC 路由路径（与 client.js 的同源相对地址一致）。 */
 export const PANEL_RPC_PATH = '/office-suite/rpc';
 
+/** 最近一次注册结果（供 suite_debug 工具读取；不含敏感信息）。 */
+const runtimeStatus = {
+  webServer: false,
+  origin: null,
+  registered: false,
+  error: null,
+  path: PANEL_RPC_PATH,
+  at: null,
+};
+
+/** 读取面板 RPC 注册状态快照。 */
+export function getPanelRpcStatus() {
+  return { ...runtimeStatus };
+}
+
 /** 单请求 body 上限（1MB）。 */
 export const MAX_RPC_BODY_BYTES = 1024 * 1024;
 
@@ -217,18 +232,30 @@ export function registerPanelRpc(ctx, config = {}) {
   } catch {
     web = undefined;
   }
+  runtimeStatus.at = new Date().toISOString();
   if (!web || typeof web.register !== 'function') {
+    runtimeStatus.webServer = false;
+    runtimeStatus.registered = false;
+    runtimeStatus.error = 'webServer service unavailable';
     console.warn('[office-suite] webServer 不可用：面板 RPC 路由未注册，面板将无法调用宿主命令');
     return () => {};
   }
+  runtimeStatus.webServer = true;
   try {
+    if (typeof web.getOrigin === 'function') {
+      try { runtimeStatus.origin = web.getOrigin(); } catch { runtimeStatus.origin = null; }
+    }
     const dispose = web.register({
       kind: 'exact',
       path: PANEL_RPC_PATH,
       handler: createHandler(ctx, config),
     });
+    runtimeStatus.registered = true;
+    runtimeStatus.error = null;
     return typeof dispose === 'function' ? dispose : () => {};
   } catch (error) {
+    runtimeStatus.registered = false;
+    runtimeStatus.error = String(error?.message ?? error);
     console.error('[office-suite] 面板 RPC 路由注册失败:', error);
     return () => {};
   }
