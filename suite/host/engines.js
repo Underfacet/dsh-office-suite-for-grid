@@ -4,12 +4,34 @@
  */
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { existsSync } from 'node:fs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const scriptPath = (name) => join(HERE, '..', 'engines', name);
 
 /**
- * 解析本机可用的 PowerShell：优先 pwsh（7+），回退 powershell（5.1）。
+ * 候选 PowerShell 绝对路径（宿主子进程服务的 PATH 可能被净化，裸命令解析不到时兜底）。
+ * 可用环境变量 SUITE_SHELL_PATH 强制指定。
+ */
+function shellCandidates() {
+  const candidates = [];
+  const forced = typeof process.env.SUITE_SHELL_PATH === 'string' ? process.env.SUITE_SHELL_PATH.trim() : '';
+  if (forced) candidates.push(forced);
+  const sysRoot = process.env.SystemRoot || 'C:\\Windows';
+  const programFiles = process.env.ProgramFiles || 'C:\\Program Files';
+  const localApp = process.env.LOCALAPPDATA || '';
+  candidates.push(
+    join(sysRoot, 'System32', 'WindowsPowerShell', 'v1.0', 'powershell.exe'),
+    join(programFiles, 'PowerShell', '7', 'pwsh.exe'),
+    join(programFiles, 'PowerShell', '7-preview', 'pwsh.exe'),
+  );
+  if (localApp) candidates.push(join(localApp, 'Microsoft', 'WindowsApps', 'pwsh.exe'));
+  return candidates;
+}
+
+/**
+ * 解析本机可用的 PowerShell：优先 pwsh（7+），回退 powershell（5.1）；
+ * 裸命令解析失败时按绝对路径候选逐一校验存在性。
  * 两个版本的脚本保持 5.1 兼容语法（不使用 7+ 独有运算符）。
  */
 async function resolveShell(ctx, signal) {
@@ -18,7 +40,15 @@ async function resolveShell(ctx, signal) {
       return await ctx.subprocess.resolveExecutable(name, {}, signal);
     } catch { /* 尝试下一个 */ }
   }
-  throw new Error('本机未找到 PowerShell（pwsh / powershell），套件引擎无法运行');
+  for (const candidate of shellCandidates()) {
+    try {
+      if (candidate && existsSync(candidate)) return candidate;
+    } catch { /* 继续 */ }
+  }
+  throw new Error(
+    '本机未找到 PowerShell：裸命令（pwsh/powershell）解析失败，绝对路径候选也不存在。'
+      + '可通过环境变量 SUITE_SHELL_PATH 指定 powershell.exe 的绝对路径。',
+  );
 }
 
 /**
