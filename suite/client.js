@@ -908,7 +908,7 @@ window.__ModuleLoader__.load({
       '.dso-btn:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover, var(--dsw-alias-bg-layer-2))}',
       '.dso-btn:focus-visible{outline:var(--dsw-focus-ring-width) solid var(--dsw-focus-ring-color,var(--dsw-alias-brand-primary));outline-offset:1px}',
       '.dso-btn:disabled{opacity:.5;cursor:not-allowed}',
-      '.dso-btn--primary{background:var(--dsw-alias-brand-primary);border-color:transparent;color:#fff}',
+      '.dso-btn--primary{background:var(--dsw-alias-brand-primary);border-color:transparent;color:var(--dsw-alias-bg-base)}',
       '.dso-btn--primary:hover:not(:disabled){filter:brightness(.94)}',
       '.dso-btn--danger{color:var(--dsw-alias-state-error-primary);border-color:color-mix(in srgb, var(--dsw-alias-state-error-primary) 45%, transparent)}',
       '.dso-btn--danger:hover:not(:disabled){background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 10%, transparent)}',
