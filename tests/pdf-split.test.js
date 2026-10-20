@@ -264,10 +264,12 @@ test('平面序与自然排序', () => {
   assert.equal(matchBlockName('图框', ['A0', 'A1']), false);
 });
 
-test('边界：默认根 E:\\工作\\2026；越界读写 E1021；allowExternalPaths 只放宽读取', () => {
+test('边界：默认根=仓库根上溯两级；越界读写 E1021；allowExternalPaths 只放宽读取', () => {
   const root = resolveBoundaryRoot({});
   assert.equal(root, DEFAULT_BOUNDARY_ROOT);
-  assert.match(root, /2026$/);
+  // 默认根与机器无关：= tests 目录上溯三级（tests → 仓库根 → 上级 → 上上级）
+  const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+  assert.equal(resolve(root), resolve(repoRoot, '..', '..'));
   assert.throws(
     () => assertInsideRoot('C:\\Windows\\notepad.exe', { write: false, root }),
     (err) => err.code === 'E1021',
